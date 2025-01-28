@@ -1,0 +1,125 @@
+/*
+  Post MediaChrome Styles Start
+*/
+.postContainer {
+    media-time-range {
+        --media-range-track-border-radius: 3px;
+        --media-range-thumb-opacity: 0.7;
+        --media-preview-time-margin: 0 0 -15px;
+        --media-preview-thumbnail-min-height: 80px;
+        --media-control-padding: 12px;
+        --media-range-track-width: 100%;
+    }
+
+    media-loading-indicator {
+        --media-loading-indicator-transition-delay: 1000ms;
+    }
+
+    media-seek-backward-button,
+    media-seek-forward-button {
+        width: 5rem;
+    }
+
+    media-time-display {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    media-play-button,
+    media-time-display,
+    media-mute-button,
+    media-volume-range,
+    media-seek-backward-button,
+    media-time-range,
+    media-seek-forward-button,
+    media-playback-rate-button,
+    media-fullscreen-button {
+        --media-control-background: rgba(0, 0, 0, 0.4);
+    }
+
+    media-controller[mediaisfullscreen] video {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+/*
+  Post MediaChrome Styles End
+*/
+
+/*
+  Message Container MediaChrome Styles End
+*/
+
+.messageContainer {
+
+    media-volume-range,
+    media-time-display,
+    media-volume-range,
+    media-seek-backward-button,
+    media-playback-rate-button,
+    media-seek-forward-button {
+        display: none;
+    }
+
+    video {
+        aspect-ratio: 16 / 9;
+    }
+
+
+    media-controller[mediaisfullscreen] {
+
+        media-volume-range,
+        media-time-display,
+        media-volume-range,
+        media-seek-backward-button,
+        media-playback-rate-button,
+        media-seek-forward-button {
+            display: flex;
+        }
+
+        video {
+            height: 100%;
+            width: 100%;
+        }
+    }
+
+    media-time-range {
+        --media-range-track-border-radius: 3px;
+        --media-range-thumb-opacity: 0.7;
+        --media-preview-time-margin: 0 0 -15px;
+        --media-preview-thumbnail-min-height: 80px;
+        --media-control-padding: 12px;
+        --media-range-track-width: 100%;
+    }
+
+    media-loading-indicator {
+        --media-loading-indicator-transition-delay: 1000ms;
+    }
+
+    media-seek-backward-button,
+    media-seek-forward-button {
+        width: 5rem;
+    }
+
+    media-time-display {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    media-play-button,
+    media-time-display,
+    media-mute-button,
+    media-volume-range,
+    media-seek-backward-button,
+    media-time-range,
+    media-seek-forward-button,
+    media-playback-rate-button,
+    media-fullscreen-button {
+        --media-control-background: rgba(0, 0, 0, 0.4);
+    }
+}
+
+/*
+    Message Container Styles End
+*/

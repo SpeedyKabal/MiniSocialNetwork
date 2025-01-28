@@ -1,0 +1,121 @@
+
+  <div className="w-full lg:w-1/2 max-w-[1024px] flex flex-col justify-between my-6 shadow-lg shadow-slate-500 bg-blue-50/50 ring-2 ring-sky-300 rounded-[2rem]">
+	<div
+	  className={classNames("flex", {
+		"flex-row-reverse": isArabic,
+	  })}
+	>
+	  <p className={`text-sky-900 text-right text-2xl p-2 m-2 w-1/3 flex ${isArabic ? "justify-end" : "justify-start"}`}>
+		{formatTime(post.created_at, i18n.language)}
+	  </p>
+	  <p className="text-sky-900 font-bold text-center text-2xl p-2 m-2 w-1/3">
+		{isArabic
+		  ? `${post.author.last_name} ${post.author.first_name} : ${t(
+			"post.postedBy"
+		  )}`
+		  : `${t("post.postedBy")} : ${post.author.last_name} ${post.author.first_name
+		  }`}
+	  </p>
+	  {post.author.id === currentUser?.id && (
+		<div className={`relative  px-2 my-2 w-1/3 flex ${isArabic ? "justify-start" : "justify-end"}`}>
+		  <button
+			className="text-3xl text-sky-900 transition ease-in-out hover:text-blue-500 hover:rotate-45 duration-150"
+			onClick={() => setPostSettingMenu(!postSettingMenu)}
+		  >
+			<IoSettingsOutline />
+		  </button>
+		  {postSettingMenu === true && (
+			<ul className={`text-2xl absolute top-8 bg-slate-200 rounded-md shadow-lg z-10 ${isArabic ? "left-8" : "right-8"}`}>
+			  <li
+				className="px-4 py-2 hover:bg-blue-200 cursor-pointer"
+				onClick={() => {
+				  alert("This feature is not available yet");
+				  setPostSettingMenu(!postSettingMenu)
+				}}
+			  >
+				{t("post.update")}
+			  </li>
+			  <li
+				className="px-4 py-2 hover:bg-red-300 cursor-pointer"
+				onClick={() => {
+				  openCloseDeleteModel();
+				  setPostSettingMenu(!postSettingMenu);
+				}}
+			  >
+				{t("post.delete")}
+			  </li>
+			</ul>
+		  )}
+		</div>
+	  )}
+	</div>
+
+	{post.media_files && (
+	  <Media urlFile={post.media_files} />
+	)}
+
+	<div className="flex justify-between">
+	  <Link to={`/post/${post.id}`} className="w-full">
+		<div
+		  className="text-sky-900 px-5 my-6 text-3xl font-serif font-semibold whitespace-pre-line"
+		  dir={contentDisplay(post.content) ? "rtl" : "ltr"}
+		>
+		  {showDetails ? (
+			convertLinksInsideMessages(post.content)
+		  ) : post.content.length < 256 ? (
+			convertLinksInsideMessages(post.content)
+		  ) : (
+			<>
+			  <span>{post.content.substr(0, 256)}...</span>
+			  <span className="text-blue-500">{t("post.showmore")}</span>
+			</>
+		  )}
+		</div>
+	  </Link>
+
+
+	</div>
+
+	{showDetails && (
+	  <>
+		<Reactions post_id={post.id} />
+		<Comments post_id={post.id} />
+	  </>
+	)}
+
+	{deleteModel && (
+	  <li className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20">
+		<div className="bg-white">
+			<!-- Modal Header --> 
+		  <div className="bg-indigo-500 text-white px-4 py-2 flex justify-between">
+			<h2 className=" text-2xl font-semibold">
+			  {t("post.deletepost")}
+			</h2>
+		  </div>
+			<!-- Modal Body --> 
+		  <div className="p-6 text-2xl">
+			<p>{t("post.deleteconfpost")}</p>
+		  </div>
+			<!-- Modal Footer --> 
+		  <div className="border-t px-4 py-2 flex justify-end space-x-4">
+			<button
+			  onClick={() => openCloseDeleteModel()}
+			  className="px-5 py-2 bg-slate-500 hover:bg-slate-400 text-white text-xl  rounded-md w-full sm:w-auto"
+			>
+			  {t("post.cancel")}
+			</button>
+			<button
+			  onClick={() => {
+				handleDeletePost(post.id);
+				openCloseDeleteModel();
+			  }}
+			  className="px-5 py-2 bg-indigo-500 hover:bg-indigo-300 text-white text-xl  rounded-md w-full sm:w-auto"
+			>
+			  {t("post.delete")}
+			</button>
+		  </div>
+		</div>
+	  </li>
+	)}
+
+  </div>

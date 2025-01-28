@@ -1,0 +1,12 @@
+#Backend Skipped Files and Folders
+backend/media/
+!backend/media/profile_pic.png
+backend/backend/__init__.py
+backend/backend/__pycache__/
+backend/api/__init__.py
+backend/api/__pycache__/
+backend/api/migrations/
+
+#FrontEnd Skipped Files and Folders
+
+frontend/node_modules/

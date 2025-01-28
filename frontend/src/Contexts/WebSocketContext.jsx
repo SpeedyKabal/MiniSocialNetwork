@@ -1,0 +1,90 @@
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useUser } from "./Usercontext";
+
+const WebSocketContext = createContext(null);
+
+export const WebSocketProvider = ({ children }) => {
+  const currentUser = useUser();
+  const [onlineStatus, setOnlineStatus] = useState({});
+  const webSocketRef = useRef(null);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (
+        webSocketRef.current &&
+        webSocketRef.current.readyState === WebSocket.OPEN
+      ) {
+        webSocketRef.current.send(
+          JSON.stringify({
+            command: "Online",
+            user: parseInt(currentUser?.id),
+            message: "isOffline",
+          })
+        );
+      }
+    };
+    const userConnect = async () => {
+      if (currentUser && !webSocketRef.current) {
+        try {
+          webSocketRef.current = new WebSocket(
+            "ws://127.0.0.1:8001/ws/online/"
+          );
+          webSocketRef.current.onopen = () => {
+            window.addEventListener("beforeunload", handleBeforeUnload);
+            setOnlineStatus(webSocketRef.current);
+          };
+          webSocketRef.current.onerror = (error) => {
+            console.error("WebSocket error:", error);
+            webSocketRef.current = null;
+            setOnlineStatus({});
+          };
+          webSocketRef.current.onclose = () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            webSocketRef.current = null;
+            setOnlineStatus({});
+          };
+        } catch (error) {
+          console.error("Failed to connect to WebSocket:", error);
+        }
+      }
+    };
+    setTimeout(() => {
+      userConnect();
+    }, 1500);
+
+    return () => {
+      if (webSocketRef.current) {
+        webSocketRef.current.close();
+        webSocketRef.current = null;
+      }
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      setOnlineStatus({});
+    };
+  }, []);
+
+  useEffect(() => {
+    if (currentUser && webSocketRef.current) {
+      webSocketRef.current.send(
+        JSON.stringify({
+          command: "Online",
+          user: currentUser?.id,
+          message: "isOnline",
+        })
+      );
+    }
+  }, [onlineStatus]);
+
+  return (
+    <WebSocketContext.Provider value={onlineStatus}>
+      {children}
+    </WebSocketContext.Provider>
+  );
+};
+
+export const useWebSocket = () => {
+  const socket = useContext(WebSocketContext);
+  if (!socket) {
+    throw new Error("useWebSocket must be used within a WebSocketProvider");
+  }
+  return socket;
+};
