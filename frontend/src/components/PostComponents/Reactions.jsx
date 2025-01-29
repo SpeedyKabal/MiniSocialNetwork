@@ -93,53 +93,82 @@ function Reactions({ post_id }) {
   };
 
   const showReactions = (reactionType) => {
-    setShowUsersReactions(allReactions.filter((ele) => ele.reaction == reactionType));
+    setShowUsersReactions(
+      allReactions.filter((ele) => ele.reaction == reactionType)
+    );
   };
 
   return (
     <div className="post-actions flex justify-between">
-      <div className="flex flex-col items-center gap-2 m-4" >
+      <div className="flex flex-col items-center gap-2 m-4">
         <button
           onClick={() => handleReaction("Like")}
-          className={classNames("px-5 cursor-pointer", {
+          className={classNames("px-3 cursor-pointer", {
             "text-green-500": userReactions == "Like",
             "text-sky-900 hover:text-green-500": userReactions != "Like",
           })}
         >
-          <ThumbsUp size={40} />
+          <ThumbsUp size={30} />
         </button>
-        <button className="text-sky-900 text-xl" onClick={() => showReactions("Like")}>{reactions.Likes}</button>
+        <button
+          className="text-sky-900 text-lg"
+          onClick={() => showReactions("Like")}
+        >
+          {reactions.Likes}
+        </button>
       </div>
-      <div className="flex flex-col items-center gap-2 m-4" >
+      <div className="flex flex-col items-center gap-2 m-4">
         <button
           onClick={() => handleReaction("Dislike")}
-          className={classNames("px-5 cursor-pointer", {
+          className={classNames("px-3 cursor-pointer", {
             "text-red-500": userReactions == "Dislike",
             "text-sky-900 hover:text-red-500": userReactions != "Dislike",
           })}
         >
-          <ThumbsDown size={40} />
+          <ThumbsDown size={30} />
         </button>
-        <button className="text-sky-900 text-xl" onClick={() => showReactions("Dislike")}>{reactions.Dislikes}</button>
+        <button
+          className="text-sky-900 text-lg"
+          onClick={() => showReactions("Dislike")}
+        >
+          {reactions.Dislikes}
+        </button>
       </div>
       {showUsersReactions.length > 0 && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg drop-shadow-lg w-96">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-sky-900">User that reacted</h2>
+              <h2 className="text-xl font-bold text-sky-900">
+                User that reacted
+              </h2>
               <button
                 onClick={() => setShowUsersReactions([])}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
             <div className="max-h-96 overflow-y-auto">
               {showUsersReactions.map((reaction, index) => (
-                <div key={index} className="py-2 border-b border-gray-200 last:border-0">
-                  <p className="text-sky-900 text-lg">{reaction.user.last_name} {reaction.user.first_name}</p>
+                <div
+                  key={index}
+                  className="py-2 border-b border-gray-200 last:border-0"
+                >
+                  <p className="text-sky-900 text-lg">
+                    {reaction.user.last_name} {reaction.user.first_name}
+                  </p>
                 </div>
               ))}
             </div>

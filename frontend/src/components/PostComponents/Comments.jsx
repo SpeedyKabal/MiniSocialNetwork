@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../../Contexts/Usercontext";
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { IoSettingsOutline } from "react-icons/io5";
 import api from "../../api";
@@ -84,26 +84,20 @@ function Comments({ post_id }) {
 
   return (
     <div>
-      <div className="flex justify-center mb-4">
-        <span className={`text-sky-900 text-3xl`}>{t("post.comments")}</span>
+      <div className="flex justify-center mb-1">
+        <span className={`text-sky-900 text-lg`}>{t("post.comments")}</span>
       </div>
 
       {isArabic ? (
-        <form
-          onSubmit={handleComment}
-          className="flex flex-row-reverse w-full"
-        >
+        <form onSubmit={handleComment} className="flex flex-row-reverse w-full">
           <input
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="أكتب تعليقك هنا"
-            className="w-full text-right h-[3rem] px-3 py-1 mx-2 text-2xl rounded-lg outline-1 outline-blue-400 outline"
+            className="w-full text-right h-[2rem] px-3 py-1 mx-2 text-lg rounded-lg outline-1 outline-blue-400 outline"
           />
-          <button
-            type="submit"
-            className="text-blue-500 hover:bg-blue-200"
-          >
-            <ChevronLeft size={50} />
+          <button type="submit" className="text-blue-500 hover:bg-blue-200 ">
+            <ChevronLeft size={35} strokeWidth={3} absoluteStrokeWidth />
           </button>
         </form>
       ) : (
@@ -112,31 +106,34 @@ function Comments({ post_id }) {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder={t("post.commentplaceholder")}
-            className="w-full h-[3rem] px-3 py-1 mx-2 text-2xl rounded-lg outline-1 outline-blue-400 outline"
+            className="w-full h-[2rem] px-3 mx-2 text-lg rounded-lg outline-1 outline-blue-400 outline"
           />
           <button
             type="submit"
-            className="text-blue-500 hover:bg-blue-200"
+            className="text-blue-500 hover:bg-blue-200 rounded-lg"
           >
-            <ChevronRight size={50} strokeWidth={3} absoluteStrokeWidth />
+            <ChevronRight size={35} strokeWidth={3} absoluteStrokeWidth />
           </button>
         </form>
       )}
 
       {comments.length > 0 ? (
         comments.map((ele) => (
-          <div className="flex my-4" key={ele.id}>
+          <div className="flex my-4 relative" key={ele.id}>
             <div className="px-2">
-              <img className="rounded-full size-20" src={ele.profile_pic} />
+              <img
+                className="rounded-full size-10 lg:size-15"
+                src={ele.profile_pic}
+              />
             </div>
             <div className="flex flex-col justify-center gap-2 w-[90%]">
-              <span className={`text-sky-900 text-2xl font-bold`}>
+              <span className={`text-sky-900 text-md lg:text-lg font-bold`}>
                 {ele.user.last_name} {ele.user.first_name}
               </span>
-              <div className="flex justify-between bg-blue-300/50 ring-2 ring-sky-300 rounded-xl py-2 px-2 mr-3">
+              <div className="flex justify-between bg-blue-300/50 ring-2 ring-sky-300 rounded-xl py-1 px-2 mr-3">
                 {updateContentid !== ele.id ? (
                   <div
-                    className="text-sky-900 text-xl flex items-center font-semibold px-2 mx-2 w-full"
+                    className="text-sky-900 text-lg flex items-center font-semibold px-2 mx-2 w-full"
                     dir={contentDisplay(ele.content) ? "rtl" : "ltr"}
                   >
                     {ele.content}
@@ -146,7 +143,7 @@ function Comments({ post_id }) {
                     <input
                       value={updateContent}
                       type="text"
-                      className="w-full h-[3rem] px-3 py-1 mx-2 text-2xl rounded-lg outline-1 outline-blue-400 outline bg-green-200/80"
+                      className="w-full h-[2.5rem] px-3 py-2 mx-2 text-lg rounded-lg outline-1 outline-blue-400 outline bg-green-200/80"
                       onChange={(e) => setUpdateContent(e.target.value)}
                     />
                     <button
@@ -154,15 +151,21 @@ function Comments({ post_id }) {
                       onClick={() => {
                         handleUpdatingCommment(ele.id);
                       }}
-                      className="text-blue-500 absolute top-0 right-0"
+                      className="text-blue-500 hover:bg-blue-200 rounded-lg absolute top-0 right-0 translate-x-2"
                     >
-                      <ChevronRight size={50} strokeWidth={3} absoluteStrokeWidth />
+                      <ChevronRight
+                        size={40}
+                        strokeWidth={3}
+                        absoluteStrokeWidth
+                      />
                     </button>
                   </div>
                 )}
 
                 <div className="flex items-center">
-                  <span className={`text-sky-900 p-2 mr-2 whitespace-nowrap`}>
+                  <span
+                    className={`text-sky-900 p-2 mr-2 whitespace-nowrap text-sm lg:text-md`}
+                  >
                     {formatTime(ele.timeCreated, i18n.language)}
                   </span>
                   {currentUser?.id === ele.user.id && (
@@ -171,15 +174,15 @@ function Comments({ post_id }) {
                         onClick={() => {
                           toggleDropDownList(ele.id);
                         }}
-                        className={`text-sky-900 text-3xl duration-300 px-2 mx-2 transition ease-in-out delay-150 hover:text-blue-500 hover:rotate-45`}
+                        className={`text-sky-900 cursor-pointer text-xl lg:text-2xl duration-300 px-2 mx-2 transition ease-in-out delay-150 hover:text-blue-500 hover:rotate-90`}
                       >
                         <IoSettingsOutline />
                       </button>
 
                       {commentSettingMenu === ele.id && (
-                        <ul className="mt-2 w-48 bg-slate-200 rounded-md drop-shadow-lg z-10 absolute top-7 left-4">
+                        <ul className="mt-2 w-32 bg-slate-200 rounded-lg drop-shadow-lg z-10 absolute top-5 right-0 lg:left-0">
                           <li
-                            className="px-4 py-2 hover:bg-blue-200 cursor-pointer"
+                            className="px-2 py-2 hover:bg-blue-200 cursor-pointer"
                             onClick={() => {
                               setUpdateContentid(ele.id);
                               setUpdateContent(ele.content);
@@ -189,49 +192,11 @@ function Comments({ post_id }) {
                             {t("post.update")}
                           </li>
                           <li
-                            className="px-4 py-2 hover:bg-red-300 cursor-pointer"
+                            className="px-2 py-2 hover:bg-red-300 cursor-pointer rounded-lg"
                             onClick={openCloseDeleteModel}
                           >
                             {t("post.delete")}
                           </li>
-                          {deleteModel && (
-                            <li className="fixed inset-0 bg-black/75 bg-opacity-50 flex justify-center items-center z-20">
-                              <div className="bg-white">
-                                {/* <!-- Modal Header --> */}
-                                <div className="bg-indigo-500 text-white px-4 py-2 flex justify-between">
-                                  <h2 className=" text-2xl font-semibold">
-                                    {t("post.deletecomment")}
-                                  </h2>
-                                </div>
-                                {/* <!-- Modal Body --> */}
-                                <div className="p-6 text-2xl">
-                                  <p>{t("post.deleteconf")}</p>
-                                </div>
-                                {/* <!-- Modal Footer --> */}
-                                <div className="border-t px-4 py-2 flex justify-end space-x-4">
-                                  <button
-                                    onClick={() => {
-                                      toggleDropDownList(0);
-                                      openCloseDeleteModel();
-                                    }}
-                                    className="px-5 py-2 bg-slate-500 hover:bg-slate-400 text-white text-xl  rounded-md w-full sm:w-auto"
-                                  >
-                                    {t("post.cancel")}
-                                  </button>
-                                  <button
-                                    onClick={() => {
-                                      toggleDropDownList(0);
-                                      handleDeleteCommment(ele.id);
-                                      openCloseDeleteModel();
-                                    }}
-                                    className="px-5 py-2 bg-indigo-500 hover:bg-indigo-300 text-white text-xl  rounded-md w-full sm:w-auto"
-                                  >
-                                    {t("post.delete")}
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                          )}
                         </ul>
                       )}
                     </div>
@@ -239,6 +204,44 @@ function Comments({ post_id }) {
                 </div>
               </div>
             </div>
+            {deleteModel && (
+              <li className="absolute inset-0 bg-black/75 bg-opacity-50 flex justify-center items-center z-20 rounded-lg">
+                <div className="bg-white">
+                  {/* <!-- Modal Header --> */}
+                  <div className="bg-indigo-500 text-white px-4 py-2 flex justify-between">
+                    <h2 className="text-md lg:text-lg font-semibold">
+                      {t("post.deletecomment")}
+                    </h2>
+                  </div>
+                  {/* <!-- Modal Body --> */}
+                  <div className="p-6 text-md lg:text-lg">
+                    <p>{t("post.deleteconf")}</p>
+                  </div>
+                  {/* <!-- Modal Footer --> */}
+                  <div className="border-t px-4 py-2 flex justify-end space-x-4">
+                    <button
+                      onClick={() => {
+                        toggleDropDownList(0);
+                        openCloseDeleteModel();
+                      }}
+                      className="px-3 py-2 bg-slate-500 hover:bg-slate-400 text-white text-md lg:text-lg  rounded-md w-full sm:w-auto"
+                    >
+                      {t("post.cancel")}
+                    </button>
+                    <button
+                      onClick={() => {
+                        toggleDropDownList(0);
+                        handleDeleteCommment(ele.id);
+                        openCloseDeleteModel();
+                      }}
+                      className="px-3 py-2 bg-indigo-500 hover:bg-indigo-300 text-white text-md lg:text-lg  rounded-md w-full sm:w-auto"
+                    >
+                      {t("post.delete")}
+                    </button>
+                  </div>
+                </div>
+              </li>
+            )}
           </div>
         ))
       ) : (

@@ -52,40 +52,40 @@ function Login() {
   return (
     <div>
       <div className="flex h-screen flex-wrap justify-center align-middle items-center">
-        <div className="mx-auto px-5 w-full flex flex-col align-middle justify-center items-center">
+        <div className="mx-auto w-full flex flex-col align-middle justify-center items-center">
           <ChangeLanguages />
           <form
             onSubmit={handleSubmit}
-            className="bg-blue-200/90 px-20 flex flex-col gap-10 items-center justify-center align-middle mx-auto h-auto shadow-slate-500 drop-shadow-lg mt-4"
+            className="w-full lg:w-1/2 bg-blue-200/50 rounded-xl py-5 flex flex-col gap-2 items-center justify-center align-middle mx-auto h-auto drop-shadow-lg mt-2"
           >
-            <h1 className="w-full text-black text-center text-6xl">Login</h1>
+            <h1 className="w-full text-black text-center text-4xl p-2">Login</h1>
             {error && (
-              <div className="text-red-800 text-2xl font-semibold">
+              <div className="text-red-800 p-2 text-xl font-semibold">
                 {error}
               </div>
             )}
             {location.search && (
-              <div className="text-green-800 text-2xl font-semibold bg-green-100 p-4 rounded-lg">
+              <div className="text-green-800 text-xl font-semibold bg-green-100 p-2 rounded-lg">
                 {decodeURIComponent(location.search.split("=")[1])}
               </div>
             )}
             <input
               type="text"
               name="username"
-              className="form-input h-20 px-6 rounded-lg border-2 border-solid border-green-500 text-2xl"
+              className="w-1/2 h-[4rem] px-4 rounded-lg border-2 border-green-500 text-xl"
               ref={usernameInput}
               placeholder={t("forms.userOrEmail")}
             />
-            <div className="relative form-input h-10 rounded-lg mx-5">
+            <div className="relative h-[4rem] rounded-lg w-full flex justify-center">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                className="form-input h-20 px-6 rounded-lg border-2 border-solid border-green-500 text-2xl"
+                className="w-1/2 h-[4rem] px-4 rounded-lg border-2 border-green-500 text-xl"
                 placeholder={t("forms.password")}
               />
               <button
                 type="button"
-                className="text-black dark:text-white text-[24px] absolute top-[50%] right-3"
+                className="text-black dark:text-white text-[2rem] absolute top-[50%] right-[30%] -translate-y-[50%] "
                 onClick={() => {
                   setShowPassword((prev) => !prev);
                 }}
@@ -97,25 +97,25 @@ function Login() {
             {loading && <Loading />}
             <button
               type="submit"
-              className="form-button text-center text-green-100 bg-indigo-500 hover:bg-indigo-200 text-3xl py-3 w-1/2 rounded-lg my-4"
+              className="cursor-pointer text-center text-green-100 bg-indigo-500 hover:text-white hover:bg-blue-500 text-2xl py-4 w-1/2 rounded-lg my-2"
             >
               {t("forms.login")}
             </button>
           </form>
 
-          <div className="bg-indigo-200/95 rounded-lg px-2 py-5 my-4">
+          <div className="bg-indigo-200/95 rounded-lg px-2 py-2 my-2">
             <Link
               to="/change-password"
-              className="text-2xl text-blue-600 hover:text-red-600"
+              className="text-xl text-blue-600 hover:text-red-600"
             >
               {t("forms.resetPassword")}
             </Link>
           </div>
-          <div className="bg-indigo-200/95 rounded-lg px-2 py-5">
-            <span className="text-2xl px-4">{t("forms.no_account")}</span>
+          <div className="bg-indigo-200/95 rounded-lg px-2 py-2">
+            <span className="text-xl px-4">{t("forms.no_account")}</span>
             <Link
               to="/register"
-              className="text-2xl text-blue-600 hover:text-red-600"
+              className="text-xl text-blue-600 hover:text-red-600"
             >
               {t("forms.register")}
             </Link>

@@ -162,45 +162,45 @@ function Home() {
       {loading && <Loading />}
       <div className="flex justify-center">
         <div className="mx-2 sm:w-full">
-          <div className="bg-white rounded-lg drop-shadow-lg lg:p-4 my-2 mx-auto lg:w-2/3">
+          <div className="bg-white rounded-lg drop-shadow-lg p-1 lg:p-2 my-1 mx-auto lg:w-2/3">
             <div className="flex items-center lg:space-x-4 mb-4">
-              <div className="size-10 lg:size-20 rounded-full bg-gray-200 flex items-center justify-center">
-                <img src={currentUser.profile_pic} alt="CurrentUserProfilePic" className="size-10 lg:size-20 rounded-full object-cover" />
+              <div className="size-10 lg:size-15 rounded-full bg-gray-200 flex items-center justify-center">
+                <img src={currentUser.profile_pic} alt="CurrentUserProfilePic" className="size-10 lg:size-15 rounded-full object-cover" />
               </div>
               <div className="flex-1">
                 <textarea name="" id="" rows={1} placeholder={t("createPostModel.placeholder")} onChange={handelPostInput} ref={textareaRef} value={newPost}
-                  className="resize-none text-2xl w-full px-1 py-2 lg:px-8 lg:py-4 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-2xl scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200"></textarea>
+                  className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200"></textarea>
               </div>
             </div>
             <div className="flex items-center justify-between">
               <div className="flex">
                 <button
                   onClick={() => handleFileUpload('image')}
-                  className="relative flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                  className="relative flex items-center space-x-2 px-1 lg:px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <Image className="size-6 lg:size-10" />
-                  <span className="text-md lg:text-2xl">Photo</span>
+                  <Image className="size-6 lg:size-8" />
+                  <span className="text-md lg:text-xl">Photo</span>
                 </button>
                 <button
                   onClick={() => handleFileUpload('video')}
                   className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <Video className="size-6 lg:size-10" />
-                  <span className="text-md lg:text-2xl">Video</span>
+                  <Video className="size-6 lg:size-8" />
+                  <span className="text-md lg:text-xl">Video</span>
                 </button>
                 <button
                   onClick={() => handleFileUpload('audio')}
                   className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  <Music className="size-6 lg:size-10" />
-                  <span className="text-md lg:text-2xl">Audio</span>
+                  <Music className="size-6 lg:size-8" />
+                  <span className="text-md lg:text-xl">Audio</span>
                 </button>
               </div>
-              <button onClick={handelCreatePost} className="bg-blue-600 text-white px-6 py-2 lg:px-12 lg:py-4 lg:text-3xl rounded-full hover:bg-blue-700 transition-colors">
+              <button onClick={handelCreatePost} className="bg-blue-600 text-white px-6 py-2 lg:px-8 lg:py-2 lg:text-xl rounded-full hover:bg-blue-700 transition-colors">
                 {t("createPostModel.cpost")}
               </button>
             </div>
-            <div className="flex gap-4 overflow-x-auto max-w-[90vw] scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200">
+            <div className="flex items-center gap-4 overflow-x-auto max-w-[90vw] scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200">
               {filePreviews.map((file, index) => {
                 if (file.type === 'image') {
                   return (
@@ -208,23 +208,23 @@ function Home() {
                       <img
                         src={file.url}
                         alt={`Image Preview ${index + 1}`}
-                        className="w-32 h-48 min-w-32 min-h-48 object-cover flex rounded-md"
+                        className="w-32 h-32 min-w-32 min-h-32 object-cover flex rounded-md"
                       />
                       <div className=" absolute bottom-[50%] left-0 h-5 bg-blue-500" data-id={index} style={{ width: `${file.progress}%` }}></div>
-                      <span className="text-2xl text-green-700">{file.status}</span>
+                      <span className="text-lg text-green-700">{file.status}</span>
                       <CircleX className="absolute top-0 right-0 cursor-pointer text-red-200 hover:text-red-500" onClick={() => handelDeleteItem(index)} />
                     </div>
                   );
                 } else if (file.type === 'video') {
                   return (
-                    <div key={index} className="relative w-48 h-48 min-w-48 min-h-48 flex flex-col items-center">
+                    <div key={index} className="relative w-32 h-32 min-w-32 min-h-32 flex flex-col items-center">
                       <video
                         src={file.url}
                         controls
                         className="w-full h-full object-cover rounded-md"
                       />
                       <div className=" absolute bottom-[50%] left-0 h-5 bg-blue-500" data-id={index} style={{ width: `${file.progress}%` }}></div>
-                      <span className="text-2xl text-green-700">{file.status}</span>
+                      <span className="text-lg text-green-700">{file.status}</span>
                       <CircleX className="absolute top-0 right-0 cursor-pointer text-red-200 hover:text-red-500" onClick={() => handelDeleteItem(index)} />
                     </div>
                   );
@@ -237,7 +237,7 @@ function Home() {
                         Your browser does not support the audio element.
                       </audio>
                       <div className=" absolute bottom-[50%] left-0 h-5 bg-blue-500" data-id={index} style={{ width: `${file.progress}%` }}></div>
-                      <span className="text-2xl text-green-700">{file.status}</span>
+                      <span className="text-lg text-green-700">{file.status}</span>
                       <CircleX className="absolute top-0 right-0 cursor-pointer text-red-200 hover:text-red-500" onClick={() => handelDeleteItem(index)} />
                     </div>
                   );
@@ -248,7 +248,7 @@ function Home() {
 
           </div>
           <div className="flex flex-col items-center">
-            <h2 className="text-black text-[2rem] text-center my-2 py-2">
+            <h2 className="text-black text-[2rem] text-center my-2">
               {t("home.postPage")}
             </h2>
             {post.map((post) => (
