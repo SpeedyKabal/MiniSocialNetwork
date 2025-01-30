@@ -7,6 +7,9 @@ import { useTranslation } from "react-i18next";
 import { Music, Video, Image, CircleX } from "lucide-react";
 import { useUser } from '../Contexts/Usercontext'
 import { contentDisplay } from "../services/Utilities";
+import { FilePreview } from '../types/types'
+import { useFileUpload } from '../customhooks/useFileUpload'
+import { FilePreviews } from "../components/FilePreviews";
 
 type Post = {
   id: number,
@@ -24,21 +27,21 @@ type Post = {
   mediaFiles: string[],
 }
 
-type FilePreview = {
-  type: string;
-  url: string;
-  name: string;
-  file: File;
-  progress: number;
-  status: string;
-}
+// type FilePreview = {
+//   type: string;
+//   url: string;
+//   name: string;
+//   file: File;
+//   progress: number;
+//   status: string;
+// }
 
 
 function Home() {
   const currentUser = useUser();
   const [post, setPost] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState<string>("");
-  const [filePreviews, setFilePreviews] = useState<FilePreview[]>([]);
+  const { filePreviews, handleUpload, deleteFile, updateFile, resetFiles } = useFileUpload();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -83,25 +86,32 @@ function Home() {
             const fileFormData = new FormData();
             fileFormData.append("file", file.file);
             fileFormData.append("post", newPostID);
-            setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, status: "Uploading" } : prev));
+            // setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, status: "Uploading" } : prev));
+            updateFile(file.id, { status: "Uploading" });
             await api.post("api/post/upload-file/", fileFormData, {
               headers: { "Content-Type": "Multipart/form-data" },
               onUploadProgress: (progressEvent) => {
                 if (progressEvent.total) {
                   const uploadingProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                  setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, progress: uploadingProgress } : prev));
-                  if (uploadingProgress > 99) {
-                    setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, status: "Processing" } : prev));
-                  }
+                  // setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, progress: uploadingProgress } : prev));
+                  // if (uploadingProgress > 99) {
+                  //   setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, status: "Processing" } : prev));
+                  // }
+                  updateFile(file.id, {
+                    progress: uploadingProgress,
+                    status: uploadingProgress > 99 ? "Processing" : "Uploading"
+                  });
                 }
               }
             }).then((res) => {
-              if (res.status == 201) {
-                setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, status: "Success" } : prev));
-              }
+              // if (res.status == 201) {
+              //   setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, status: "Success" } : prev));
+              // }
+              updateFile(file.id, { status: "Success" });
             }).catch((err) => {
               console.error("File upload failed", file.name, err);
-              setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, status: "Error" } : prev));
+              // setFilePreviews((prevState) => prevState.map((prev) => prev.name == file.name ? { ...prev, status: "Error" } : prev));
+              updateFile(file.id, { status: "Error" });
             })
           }
         }
@@ -112,7 +122,8 @@ function Home() {
           .get(`/api/post/${newPostID}/`) // Fetch the specific post by ID
           .then((res) => setPost((prevState) => [res.data, ...prevState]))
           .catch((err) => alert(err)).finally(() => {
-            setFilePreviews([]);
+            //setFilePreviews([]);
+            resetFiles();
             setNewPost("");
           })
       });
@@ -131,31 +142,27 @@ function Home() {
     }
   }
 
-  function handleFileUpload(type: string): void {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.multiple = true;
-    input.accept = type === 'image' ? 'image/*' : type === 'video' ? 'video/*' : 'audio/*';
-    input.onchange = (e: Event) => {
-      const files = (e.target as HTMLInputElement).files;
-      if (files) {
-        const newFilePreviews = Array.from(files).map((ele) => ({
-          type: ele.type.split('/')[0],
-          url: URL.createObjectURL(ele),
-          name: ele.name,
-          file: ele,
-          progress: 0,
-          status: "Idle",
-        }));
-        setFilePreviews((prevPreviews) => [...prevPreviews, ...newFilePreviews]);
-      }
-    };
-    input.click();
-  };
-
-  function handelDeleteItem(index: number): void {
-    setFilePreviews(filePreviews.filter((_, i) => i !== index));
-  }
+  // function handleFileUpload(type: string): void {
+  //   const input = document.createElement('input');
+  //   input.type = 'file';
+  //   input.multiple = true;
+  //   input.accept = type === 'image' ? 'image/*' : type === 'video' ? 'video/*' : 'audio/*';
+  //   input.onchange = (e: Event) => {
+  //     const files = (e.target as HTMLInputElement).files;
+  //     if (files) {
+  //       const newFilePreviews = Array.from(files).map((ele) => ({
+  //         type: ele.type.split('/')[0],
+  //         url: URL.createObjectURL(ele),
+  //         name: ele.name,
+  //         file: ele,
+  //         progress: 0,
+  //         status: "Idle",
+  //       }));
+  //       setFilePreviews((prevPreviews) => [...prevPreviews, ...newFilePreviews]);
+  //     }
+  //   };
+  //   input.click();
+  // };
 
   return (
     <div className="w-full">
@@ -175,21 +182,21 @@ function Home() {
             <div className="flex items-center justify-between">
               <div className="flex">
                 <button
-                  onClick={() => handleFileUpload('image')}
+                  onClick={() => handleUpload({ accept: 'image/*' })}
                   className="relative flex items-center space-x-2 px-1 lg:px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Image className="size-6 lg:size-8" />
                   <span className="text-md lg:text-xl">Photo</span>
                 </button>
                 <button
-                  onClick={() => handleFileUpload('video')}
+                  onClick={() => handleUpload({ accept: 'video/*' })}
                   className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Video className="size-6 lg:size-8" />
                   <span className="text-md lg:text-xl">Video</span>
                 </button>
                 <button
-                  onClick={() => handleFileUpload('audio')}
+                  onClick={() => handleUpload({ accept: 'audio/*' })}
                   className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Music className="size-6 lg:size-8" />
@@ -201,7 +208,8 @@ function Home() {
               </button>
             </div>
             <div className="flex items-center gap-4 overflow-x-auto max-w-[90vw] scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200">
-              {filePreviews.map((file, index) => {
+
+              {/* {filePreviews.map((file, index) => {
                 if (file.type === 'image') {
                   return (
                     <div key={index} className="relative flex flex-col items-center">
@@ -243,7 +251,14 @@ function Home() {
                   );
                 }
                 return null;
-              })}
+              })} */}
+              {filePreviews.map((file: FilePreview, index: React.Key | null | undefined) => (
+                <FilePreviews
+                  key={index}
+                  file={file}
+                  onDelete={() => deleteFile(index)}
+                />
+              ))}
             </div>
 
           </div>

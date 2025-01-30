@@ -14,3 +14,13 @@ export type Post = {
     media_files: string[] | null;
     author: Utilisateur;
   };
+
+export interface FilePreview {
+  id:string,
+  type: string;
+  url: string;
+  name: string;
+  file: File;
+  progress: number;
+  status: string;
+}
