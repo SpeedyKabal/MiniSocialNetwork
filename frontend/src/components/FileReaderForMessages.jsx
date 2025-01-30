@@ -8,7 +8,6 @@ import {
 import { FaFileExcel, FaFilePowerpoint } from "react-icons/fa";
 
 function FileReaderForMessages({ fileLink }) {
-
   const getFileExtension = fileLink.split(".").pop().toLowerCase();
 
   const renderFile = () => {
@@ -17,7 +16,7 @@ function FileReaderForMessages({ fileLink }) {
       return (
         <a
           href={fileLink}
-          className=" text-[12rem] text-blue-400 hover:text-blue-800"
+          className=" text-[8rem] text-blue-400 hover:text-blue-800"
         >
           <FaFileWord />
         </a>
@@ -27,7 +26,7 @@ function FileReaderForMessages({ fileLink }) {
       return (
         <a
           href={fileLink}
-          className="text-[12rem] text-blue-400 hover:text-blue-800"
+          className="text-[8rem] text-blue-400 hover:text-blue-800"
         >
           <FaFileExcel />
         </a>
@@ -37,7 +36,7 @@ function FileReaderForMessages({ fileLink }) {
       return (
         <a
           href={fileLink}
-          className="text-[12rem] text-blue-400 hover:text-blue-800"
+          className="text-[8rem] text-blue-400 hover:text-blue-800"
         >
           <FaFilePowerpoint />
         </a>
@@ -48,7 +47,7 @@ function FileReaderForMessages({ fileLink }) {
         <a
           href={fileLink}
           target="_blank"
-          className="text-[12rem] text-blue-400 hover:text-blue-800"
+          className="text-[8rem] text-blue-400 hover:text-blue-800"
         >
           <FaFilePdf />
         </a>
@@ -58,7 +57,7 @@ function FileReaderForMessages({ fileLink }) {
       return (
         <a
           href={fileLink}
-          className="text-[12rem] text-blue-400 hover:text-blue-800"
+          className="text-[8rem] text-blue-400 hover:text-blue-800"
         >
           <FaFileZipper />
         </a>
@@ -68,7 +67,7 @@ function FileReaderForMessages({ fileLink }) {
       return (
         <a
           href={fileLink}
-          className="text-[12rem] text-blue-400 hover:text-blue-800"
+          className="text-[8rem] text-blue-400 hover:text-blue-800"
         >
           <FaFileCircleQuestion />
         </a>

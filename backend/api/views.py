@@ -226,10 +226,10 @@ class FileUploadMessage(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request, *args, **kwargs):
-        post_id = request.data.get("message_id")  # Get the associated post ID
+        messageid = request.data.get("message_id")  # Get the associated post ID
         file = request.FILES.get("file")   # Get the uploaded file
         try:
-            message = Message.objects.get(pk=post_id)
+            message = Message.objects.get(pk=messageid)
             # Save the file and associate it with the post
             File.objects.create(file=file, message=message)
             return Response({"message": "File uploaded successfully"}, status=status.HTTP_201_CREATED)
@@ -364,11 +364,11 @@ class SendMessageView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     
     def perform_create(self, serializer):
-        sender = self.request.data.get("sender_id")
+        sender = self.request.user
         reciever = self.request.data.get("reciever_id")
         content = self.request.data.get("message")
         if serializer.is_valid():
-            serializer.save(sender_id=sender, reciever_id = reciever,message = content)
+            serializer.save(sender=sender, reciever_id = reciever,message = content)
             return Response(status=status.HTTP_204_NO_CONTENT)
    
         

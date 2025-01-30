@@ -18,6 +18,8 @@ import {
   contentDisplay,
 } from "../services/Utilities";
 import Media from "../components/PostComponents/Media";
+import { useFileUpload } from "../CustomHooks/useFileUpload";
+import { FilePreviews } from "../components/FilePreviews";
 
 const Messages = () => {
   const currentUser = useUser(); // This hold Current User infos
@@ -30,7 +32,8 @@ const Messages = () => {
   const [indexuser, setIndexUser] = useState(null); // This hold the Index of the Clicked User on User Array
   const [messageInput, setMessageInput] = useState(""); // This hold the text tosend as a Message
   const [roomName, setRoomName] = useState(null); //This hold the ID of Websocket for RealTime chatting
-  const [inputFile, setInputFile] = useState([]); //This Hold The files that current user want to send
+  const { filePreviews, handleUpload, deleteFile, updateFile, resetFiles } =
+    useFileUpload(); //This Hold The files that current user want to send
   const [loading, setLoading] = useState(false); //This for showing Loading component
   const [cancelFileSeletingButton, setCancelSelectingFileButton] =
     useState(false); //This boolean for cancelling selecting a file
@@ -95,21 +98,19 @@ const Messages = () => {
     scrollToBottom();
   };
 
-  const handleFileChange = (e) => {
-    setInputFile(Array.from(e.target.files));
-  };
+  // const handleFileChange = (e) => {
+  //   setInputFile(Array.from(e.target.files));
+  // };
 
   const sendMessage = async (e) => {
     e.preventDefault();
     setCancelSelectingFileButton(true);
     if (user) {
       const messageContent = new FormData();
-      messageContent.append("sender_id", currentUser?.id);
       messageContent.append("reciever_id", user.id);
-
+      let newMessageid = 0;
       if (messageInput.trim() === "") {
         alert("Message Vide !!");
-        setLoading(false);
         setCancelSelectingFileButton(false);
         return;
       } else {
@@ -119,11 +120,45 @@ const Messages = () => {
         .post("api/message/create/", messageContent)
         .then(async (res) => {
           if (res.status === 201) {
-            //await api.post("api/message/upload-file/");
+            newMessageid = res.data.id;
+            for (const file of filePreviews) {
+              const fileFormData = new FormData();
+              fileFormData.append("file", file.file);
+              fileFormData.append("message_id", newMessageid);
+              updateFile(file.id, { status: "Uploading" });
+              await api
+                .post("api/message/upload-file/", fileFormData, {
+                  headers: { "Content-Type": "multipart/form-data" },
+                  onUploadProgress: (pregressEvent) => {
+                    if (pregressEvent.total) {
+                      const uploadingProgress = Math.round(
+                        (pregressEvent.loaded * 100) / pregressEvent.total
+                      );
+                      updateFile(file.id, {
+                        progress: uploadingProgress,
+                        status:
+                          uploadingProgress > 99 ? "Processing" : "Uploading",
+                      });
+                    }
+                  },
+                })
+                .then((res) => {
+                  if (res.status == 201) {
+                    updateFile(file.id, { status: "Success" });
+                  }
+                })
+                .catch((err) => {
+                  console.error("File upload failed", file.name, err);
+                  updateFile(file.id, { status: "Error" });
+                });
+            }
+            console.log("sender_id :", currentUser?.id);
+            console.log("receiver_id :", res.data.reciever.id);
+            console.log("message_id :", res.data.id);
             const messageContentforWebSocket = {
               sender_id: currentUser?.id,
               receiver_id: res.data.reciever.id,
-              message: res.data.message,
+              message_id: res.data.id,
             };
             WebSocketInstance.sendaMessage(messageContentforWebSocket);
           }
@@ -132,8 +167,8 @@ const Messages = () => {
               JSON.stringify({
                 command: "SendMessage",
                 sender: currentUser.id,
-                reciever: user.id,
-                message: messageContent.get("message"),
+                reciever: res.data.reciever.id,
+                message: res.data.message,
               })
             );
           }
@@ -142,11 +177,10 @@ const Messages = () => {
           alert(err);
         })
         .finally(() => {
-          //onlineSocket.send(JSON.stringify({}));
-          setProgress(0);
           setMessageInput("");
-          setInputFile([]);
+          resetFiles();
           setCancelSelectingFileButton(false);
+          setLoading(false);
         });
     } else {
       alert("Message Content not Valid !!");
@@ -157,7 +191,7 @@ const Messages = () => {
     setNoMoreMessages(false);
     setMessages([]);
     setsocketMessages([]);
-    setInputFile([]);
+    // setInputFile([]);
     setContacts(true);
 
     // Generate storage key for this conversation
@@ -284,9 +318,9 @@ const Messages = () => {
     }
   };
 
-  const cancelSelectingFile = () => {
-    setInputFile([]);
-  };
+  // const cancelSelectingFile = () => {
+  //   setInputFile([]);
+  // };
 
   return (
     <div className="flex flex-col mb-4">
@@ -297,8 +331,9 @@ const Messages = () => {
           <div className="flex border-1 border-blue-200 rounded drop-shadow-lg h-full">
             {/* <!-- Left --> */}
             <div
-              className={`lg:w-1/3 ${!contacts ? "w-full" : "w-0"
-                }  border-1 border-blue-200 flex flex-col overflow-scroll`}
+              className={`lg:w-1/3 ${
+                !contacts ? "w-full" : "w-0"
+              }  border-1 border-blue-200 flex flex-col overflow-scroll`}
             >
               <User
                 UserClicked={fetchMessages}
@@ -309,8 +344,9 @@ const Messages = () => {
 
             {/* <!-- Right --> */}
             <div
-              className={`lg:w-3/4 ${contacts ? "w-full" : "w-0"
-                } flex flex-col border-1  border-blue-200`}
+              className={`lg:w-3/4 ${
+                contacts ? "w-full" : "w-0"
+              } flex flex-col border-1  border-blue-200`}
             >
               {/* <!-- Header --> */}
               <div className="py-1 px-3 bg-grey-lighter flex flex-row justify-stretch items-center">
@@ -335,8 +371,9 @@ const Messages = () => {
                   <div className="flex items-center">
                     <div>
                       <img
-                        className={`w-10 h-10 rounded-full ${contacts ? "ml-2" : ""
-                          }`}
+                        className={`w-10 h-10 rounded-full ${
+                          contacts ? "ml-2" : ""
+                        }`}
                         src={user?.profile_pic}
                       />
                     </div>
@@ -542,6 +579,7 @@ const Messages = () => {
                       />
                       <label
                         htmlFor="inputFile"
+                        onClick={handleUpload}
                         className="cursor-pointer hover:bg-green-500  bg-blue-500 size-[2rem] mx-1 flex justify-center items-center"
                       >
                         <span
@@ -551,54 +589,21 @@ const Messages = () => {
                           <MdAttachFile />
                         </span>
                       </label>
-                      {inputFile.length > 0 && (
-                        <div className="absolute -top-10 left-0 flex flex-col rounded-lg gap-2 px-2 w-2/3 bg-slate-500/50 ">
-                          {inputFile?.map((ele, index) => (
-                            <div className="flex" key={index}>
-                              <div className="w-[95%] flex flex-col gap-1">
-                                <p>
-                                  <span className=" inline-block text-md text-blue-200 mr-2">
-                                    <FaFile />
-                                  </span>
-                                  <span className="text-blue-900 text-sm">
-                                    {ele.name}
-                                  </span>
-                                </p>
-                                <div
-                                  className="flex bg-blue-500 h-4"
-                                  style={{ width: `${progress}%` }}
-                                >
-                                  <span className="ml-[100%] text-white text-sm">
-                                    {progress}%
-                                  </span>
-                                </div>
-                              </div>
-                              <button
-                                className="text-[1.5rem] text-blue-700 hover:text-red-700 disabled:text-slate-600"
-                                onClick={cancelSelectingFile}
-                                disabled={cancelFileSeletingButton}
-                              >
-                                <MdCancel />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      <div className="absolute -top-32 left-0 flex rounded-lg gap-2 px-2 max-w-2/3 bg-slate-500/80 overflow-auto z-20">
+                        {filePreviews.map((file, index) => (
+                          <FilePreviews
+                            key={index}
+                            file={file}
+                            onDelete={() => deleteFile(index)}
+                          />
+                        ))}
+                      </div>
 
-                      <input
-                        type="file"
-                        id="inputFile"
-                        name="inputFile"
-                        capture="environment"
-                        className="hidden"
-                        multiple
-                        accept="audio/*, video/*, image/*, .pdf, .doc, .docx, .xls, .xlsx, .rar, .zip, .txt, .ppt, .pptx, "
-                        onChange={handleFileChange}
-                      />
                       <button
                         type="submit"
                         title="Click to Send Message"
                         className="bg-blue-500 text-white hover:bg-green-500 text-[2rem]"
+                        disabled={messageInput.trim() === ""}
                       >
                         <IoIosArrowForward />
                       </button>

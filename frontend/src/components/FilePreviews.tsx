@@ -48,9 +48,9 @@ export const FilePreviews = ({
     default:
       containerClass = "relative flex flex-col items-center w-32 h-32 min-w-32 min-h-32";
       content = (
-        <div className="flex flex-col items-center justify-center h-full gap-2">
+        <div className="flex flex-col items-center justify-center max-w-full h-full gap-2">
           <FileIcon className="w-12 h-12 text-gray-400" />
-          <span className="text-sm text-center truncate px-2">{file.name}</span>
+          <p className="text-sm text-center truncate w-30 text-wrap ">{file.name}</p>
         </div>
       );
   }
@@ -62,7 +62,7 @@ export const FilePreviews = ({
         className="absolute bottom-[50%] left-0 h-5 bg-blue-500"
         style={{ width: `${file.progress}%` }}
       />
-      <span className="text-lg text-green-700">{file.status}</span>
+      <span className="text-lg text-red-700">{file.status}</span>
       <CircleX
         className="absolute top-0 right-0 cursor-pointer text-red-200 hover:text-red-500"
         onClick={onDelete}

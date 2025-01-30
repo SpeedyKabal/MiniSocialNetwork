@@ -3,6 +3,8 @@ from datetime import datetime
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from api.models import Message, Employee
+from api.serializers import MessageSerializers
+from django.conf import settings
 
 
 class AsyncChatConsumer(AsyncWebsocketConsumer):
@@ -30,6 +32,7 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         # Handle received data here
+        print("Chat Class : " , data)
         try:
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -37,7 +40,7 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'sender_id':data['sender_id'],
                     'receiver_id':data['receiver_id'],
-                    'message': data['message'],
+                    'message_id': data['message_id'],
                     'command': 'chat_message'
                 }
             )
@@ -48,33 +51,37 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
             
     
     async def chat_message(self, event):
-        message = await self.fetchMessageFromDatabase(event)
-        if not message:
+        serialized_message = await self.fetchMessageFromDatabase(event['message_id'])
+        if not serialized_message:
             return await self.send(text_data=json.dumps({
                 'message' : "Error",
                 'command': 'chat_message'
             }))
-        MessageDate = message.date_created
-        if message:
+        if serialized_message:
             await self.send(text_data=json.dumps({
-            'sender_id':message.sender_id,
-            'receiver_id':message.reciever_id,
-            'dateMessage' : f'{MessageDate}',
-            'is_read' : message.is_read,
-            'message' : message.message,
-            'command': 'chat_message'
+                'sender_id': serialized_message['sender']['id'],  # Access nested sender ID
+                'receiver_id': serialized_message['reciever']['id'],  # Access nested receiver ID
+                'dateMessage': serialized_message['date_created'],
+                'is_read': serialized_message['is_read'],
+                'message': serialized_message['message'],
+                'mediaFiles': serialized_message['mediaFiles'],  # Include media files from serializer
+                'command': 'chat_message'
             }))
             
             
              
     @database_sync_to_async
-    def fetchMessageFromDatabase(self, event):
+    def fetchMessageFromDatabase(self, id):
        # Wrap the synchronous database call with sync_to_async
-        return Message.objects.filter(
-                sender_id=event["sender_id"],
-                reciever_id=event["receiver_id"],
-                message=event["message"]
-            ).last()
+       try:
+           message = Message.objects.get(pk=id)
+       except Message.DoesNotExist:
+           return None
+       messageSerialized = MessageSerializers(message).data
+       domain = "http://127.0.0.1:8000"
+       for file in messageSerialized.get("mediaFiles", []):
+           file["file"] = f"{domain}{file['file']}"
+       return messageSerialized
 
 
 active_users = {}
