@@ -1,4 +1,4 @@
-export type Utilisateur = {
+export interface Utilisateur {
     id: number;
     username: string;
     email: string | null;
@@ -7,13 +7,21 @@ export type Utilisateur = {
   };
 
 
-export type Post = {
-    id: number;
-    content: string;
-    created_at: Date;
-    media_files: string[] | null;
-    author: Utilisateur;
-  };
+export interface Post {
+    id: number,
+    content: string,
+    created_at: string,
+    author: {
+      id: 1,
+      first_name: string,
+      last_name: string,
+      profile_pic: string
+    },
+    job: string,
+    reactions: number,
+    comments: number,
+    mediaFiles: string[],
+  }
 
 export interface FilePreview {
   id:string,

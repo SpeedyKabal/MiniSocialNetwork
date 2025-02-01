@@ -144,17 +144,15 @@ function Profile() {
   };
 
   return (
-    <div className=" max-w-full">
+    <div className="max-w-full p-4 bg-gray-100">
       {loading && <Loading />}
-      <div className="flex mx-auto">
+      <div className="flex flex-col items-center mx-auto">
         {Object.keys(employee).length > 0 && (
-          <div className="flex flex-col gap-12 w-full items-center ">
-            <div className="group w-[300px] h-[300px] my-6 rounded-full overflow-hidden bg-indigo-200 relative">
-              <div className="w-full h-full absolute bg-black/70 flex justify-center items-center bottom-0 opacity-0 group-hover:opacity-100  transition-all duration-300">
-                <label
-                  htmlFor="profilePic"
-                  className="text-[5rem] rotate-180 py-2 px-2 text-white cursor-pointer"
-                >
+          <div className="flex flex-col gap-12 w-full items-center">
+            {/* Profile Picture Section */}
+            <div className="group w-72 h-72 my-6 rounded-full overflow-hidden bg-blue-200 relative shadow-lg">
+              <div className="w-full h-full absolute bg-black/70 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <label htmlFor="profilePic" className="text-5xl text-white cursor-pointer">
                   <MdOutlineSystemUpdateAlt />
                 </label>
                 <input
@@ -166,18 +164,16 @@ function Profile() {
                   onChange={changeProfilePic}
                 />
               </div>
-              <img
-                src={employee.profile_pic}
-                alt="ProfilePicture"
-                className=" object-cover w-full h-full"
-              />
+              <img src={employee.profile_pic} alt="Profile" className="object-cover w-full h-full" />
             </div>
-            <div className="bg-indigo-200/95 drop-shadow-lg w-full flex flex-col border-2 border-green-500 border-solid rounded-3xl py-12">
-              <div className="flex flex-wrap justify-between mb-8 px-12">
-                <div className="text-4xl">{t("forms.userinfos")}</div>
+
+            {/* User Information Section */}
+            <div className="bg-white shadow-lg w-full flex flex-col border-2 border-blue-500 rounded-3xl py-12">
+              <div className="flex justify-between mb-8 px-12">
+                <div className="text-4xl text-blue-700">{t("forms.userinfos")}</div>
                 {updateUserTrigger ? (
                   <div
-                    className="text-5xl cursor-pointer text-indigo-500 hover:text-red-300 transition-colors duration-300"
+                    className="text-5xl cursor-pointer text-blue-500 hover:text-red-300 transition-colors duration-300"
                     onClick={() => {
                       sendUpdateUser();
                       setUpdateUserTrigger(false);
@@ -187,11 +183,10 @@ function Profile() {
                   </div>
                 ) : (
                   <div
-                    className="text-5xl cursor-pointer text-indigo-500 hover:text-red-300 transition-colors duration-300"
+                    className="text-5xl cursor-pointer text-blue-500 hover:text-red-300 transition-colors duration-300"
                     onClick={() => {
                       setUpdateUserTrigger(true);
                       setNewUpdateUser({
-                        ...newUpdateUser,
                         username: employee.user.username,
                         email: employee.user.email,
                         first_name: employee.user.first_name,
@@ -204,95 +199,34 @@ function Profile() {
                 )}
               </div>
               <div className="flex flex-col gap-5 py-4 px-1">
-                <div className="flex justify-around flex-wrap">
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.username")}
-                    </label>
+                {['username', 'email', 'first_name', 'last_name'].map((field) => (
+                  <div key={field} className="flex flex-col w-full md:w-3/4 mx-auto">
+                    <label className="px-2 py-2 text-3xl font-semibold text-blue-700">{t(`forms.${field}`)}</label>
                     {updateUserTrigger ? (
                       <input
-                        type="text"
-                        id="username"
-                        name="username"
-                        value={newUpdateUser.username}
+                        type={field === 'email' ? 'email' : 'text'}
+                        name={field}
+                        value={newUpdateUser[field]}
                         onChange={handleUpdateUser}
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
+                        className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg"
                       />
                     ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee.user.username}
+                      <div className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg">
+                        {employee.user[field]}
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.email")}
-                    </label>
-                    {updateUserTrigger ? (
-                      <input
-                        type="email"
-                        name="email"
-                        id="email"
-                        value={newUpdateUser.email}
-                        onChange={handleUpdateUser}
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
-                      />
-                    ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee.user.email}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-around flex-wrap">
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.firstname")}
-                    </label>
-                    {updateUserTrigger ? (
-                      <input
-                        type="text"
-                        name="first_name"
-                        id="first_name"
-                        value={newUpdateUser.first_name}
-                        onChange={handleUpdateUser}
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
-                      />
-                    ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee.user.first_name}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.lastname")}
-                    </label>
-                    {updateUserTrigger ? (
-                      <input
-                        type="text"
-                        name="last_name"
-                        id="last_name"
-                        value={newUpdateUser.last_name}
-                        onChange={handleUpdateUser}
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
-                      />
-                    ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee.user.last_name}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
-            <div className="bg-indigo-200/95 shadow-2xl w-full flex flex-col border-2 border-green-500 border-solid rounded-3xl py-12">
+
+            {/* Employee Information Section */}
+            <div className="bg-white shadow-2xl w-full flex flex-col border-2 border-blue-500 rounded-3xl py-12">
               <div className="flex justify-between mb-8 px-12">
-                <div className="text-4xl">{t("forms.emplinfo")}</div>
+                <div className="text-4xl text-blue-700">{t("forms.emplinfo")}</div>
                 {updateEmployeeTrigger ? (
                   <div
-                    className="text-5xl cursor-pointer text-indigo-500 hover:text-red-300 transition-colors duration-300"
+                    className="text-5xl cursor-pointer text-blue-500 hover:text-red-300 transition-colors duration-300"
                     onClick={() => {
                       setUpdateEmployeeTrigger(false);
                       sendUpdateEmployee();
@@ -302,11 +236,10 @@ function Profile() {
                   </div>
                 ) : (
                   <div
-                    className="text-5xl cursor-pointer text-indigo-500 hover:text-red-300 transition-colors duration-300"
+                    className="text-5xl cursor-pointer text-blue-500 hover:text-red-300 transition-colors duration-300"
                     onClick={() => {
                       setUpdateEmployeeTrigger(true);
                       setNewUpdateEmployee({
-                        ...newUpdateEmployee,
                         phone: employee.phone,
                         adress: employee.adress,
                         position: employee.position,
@@ -320,141 +253,40 @@ function Profile() {
                   </div>
                 )}
               </div>
-              <div className="w-full flex flex-col justify-around py-4 px-4">
-                <div className="flex justify-around flex-wrap">
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.phone")}
-                    </label>
+              <div className="flex flex-col gap-5 py-4 px-1">
+                {['phone', 'adress', 'position', 'gender', 'recruitmentDate', 'birthday'].map((field) => (
+                  <div key={field} className="flex flex-col w-full md:w-3/4 mx-auto">
+                    <label className="px-2 py-2 text-3xl font-semibold text-blue-700">{t(`forms.${field}`)}</label>
                     {updateEmployeeTrigger ? (
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-                        value={newUpdateEmployee.phone}
-                        onChange={handleUpdateEmployee}
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
-                      />
+                      field === 'position' || field === 'gender' ? (
+                        <select
+                          name={field}
+                          value={newUpdateEmployee[field]}
+                          onChange={handleUpdateEmployee}
+                          className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg"
+                        >
+                          {employeeForm?.[field]?.map((ele) => (
+                            <option key={ele.value} value={ele.value}>
+                              {ele.label}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type={field === 'phone' ? 'tel' : 'date'}
+                          name={field}
+                          value={newUpdateEmployee[field]}
+                          onChange={handleUpdateEmployee}
+                          className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg"
+                        />
+                      )
                     ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee.phone && formatPhoneNumber(employee.phone)}
+                      <div className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg">
+                        {field === 'phone' ? formatPhoneNumber(employee[field]) : employee[field]}
                       </div>
                     )}
                   </div>
-
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.adress")}
-                    </label>
-                    {updateEmployeeTrigger ? (
-                      <input
-                        type="text"
-                        id="adress"
-                        name="adress"
-                        value={newUpdateEmployee.adress}
-                        onChange={handleUpdateEmployee}
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
-                      />
-                    ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee.adress}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-around flex-wrap">
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.position")}
-                    </label>
-                    {updateEmployeeTrigger ? (
-                      <select
-                        name="position"
-                        id="position"
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
-                        value={newUpdateEmployee.position}
-                        onChange={handleUpdateEmployee}
-                      >
-                        {employeeForm?.position.map((ele) => (
-                          <option key={ele.value} value={ele.value}>
-                            {ele.label}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee.position && getPositionLabel()}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.gender")}
-                    </label>
-                    {updateEmployeeTrigger ? (
-                      <select
-                        name="gender"
-                        id="gender"
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
-                        value={newUpdateEmployee.gender}
-                        onChange={handleUpdateEmployee}
-                      >
-                        {employeeForm?.gender?.map((ele) => (
-                          <option key={ele.value} value={ele.value}>
-                            {ele.label}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee?.gender}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="flex justify-around flex-wrap">
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.recdate")}
-                    </label>
-                    {updateEmployeeTrigger ? (
-                      <input
-                        type="date"
-                        name="recruitmentDate"
-                        id="recruitmentDate"
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
-                        value={newUpdateEmployee.recruitmentDate}
-                        onChange={handleUpdateEmployee}
-                      />
-                    ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee.recruitmentDate}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col w-full md:w-[650px] h-auto">
-                    <label className="px-2 py-2 mx-4 text-3xl font-semibold">
-                      {t("forms.birthday")}
-                    </label>
-                    {updateEmployeeTrigger ? (
-                      <input
-                        type="date"
-                        name="birthday"
-                        id="birthday"
-                        className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg"
-                        value={newUpdateEmployee.birthday}
-                        onChange={handleUpdateEmployee}
-                      />
-                    ) : (
-                      <div className="h-[60px] md:h-[40px] w-full px-4 flex items-center	text-3xl text-green-800 font-semibold border-2 border-indigo-300 border-solid rounded-2xl drop-shadow-lg">
-                        {employee.birthday}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>

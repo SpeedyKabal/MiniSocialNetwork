@@ -59,9 +59,7 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
               />
             )}
           </div>
-
           <Media urlFile={post.mediaFiles} />
-
           {showDetails ? (
             <p
               className="text-gray-800 mb-4 whitespace-pre-line text-xl leading-relaxed ml-2"
@@ -79,6 +77,8 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
               </p>
             </Link>
           )}
+
+          <hr className={`w-[50%] text-blue-500  ${contentDisplay(post.content) ? "ml-auto" : ""}`} style={{ float: contentDisplay(post.content) ? 'right' : 'none', background: 'linear-gradient(to right, red, blue, red)', height: '2px', border: 'none' }} />
 
           {showDetails ? (
             <>

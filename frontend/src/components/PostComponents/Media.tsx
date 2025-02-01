@@ -59,6 +59,7 @@ const Media: React.FC<MediaProps> = ({ urlFile }) => {
                 <img
                   src={file.file}
                   alt="PostImage-0"
+                  loading="lazy"
                   className="object-cover cursor-pointer rounded-lg"
                   onClick={() => setIsLightboxOpen(index)} // Open the lightbox starting from the clicked image
                 />

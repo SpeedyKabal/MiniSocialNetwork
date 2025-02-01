@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useUser } from "./Usercontext";
+import { ACCESS_TOKEN } from '../constants'
+import api from '../api'
 
 const WebSocketContext = createContext(null);
 
@@ -26,8 +28,14 @@ export const WebSocketProvider = ({ children }) => {
     const userConnect = async () => {
       if (currentUser && !webSocketRef.current) {
         try {
+          const token = localStorage.getItem(ACCESS_TOKEN)
+          if (!token) {
+            console.error("Can't Connect, No Authentication is Provided!");
+            return;
+          }
+
           webSocketRef.current = new WebSocket(
-            "ws://127.0.0.1:8001/ws/online/"
+            `ws://127.0.0.1:8000/ws/online/?token=${token}`
           );
           webSocketRef.current.onopen = () => {
             window.addEventListener("beforeunload", handleBeforeUnload);

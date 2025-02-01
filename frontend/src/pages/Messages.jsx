@@ -47,7 +47,7 @@ const Messages = () => {
   // Start a Websocket Channel for Two Users
   useEffect(() => {
     if (roomName) {
-      WebSocketInstance.connect("ws://127.0.0.1:8001/ws/chat/", roomName);
+      WebSocketInstance.connect("ws://127.0.0.1:8000/ws/chat/", roomName);
 
       WebSocketInstance.addCallback(
         "chat_message",
@@ -97,10 +97,6 @@ const Messages = () => {
     });
     scrollToBottom();
   };
-
-  // const handleFileChange = (e) => {
-  //   setInputFile(Array.from(e.target.files));
-  // };
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -191,7 +187,6 @@ const Messages = () => {
     setNoMoreMessages(false);
     setMessages([]);
     setsocketMessages([]);
-    // setInputFile([]);
     setContacts(true);
 
     // Generate storage key for this conversation
@@ -331,9 +326,8 @@ const Messages = () => {
           <div className="flex border-1 border-blue-200 rounded drop-shadow-lg h-full">
             {/* <!-- Left --> */}
             <div
-              className={`lg:w-1/3 ${
-                !contacts ? "w-full" : "w-0"
-              }  border-1 border-blue-200 flex flex-col overflow-scroll`}
+              className={`lg:w-1/3 ${!contacts ? "w-full" : "w-0"
+                }  border-1 border-blue-200 flex flex-col overflow-scroll`}
             >
               <User
                 UserClicked={fetchMessages}
@@ -344,9 +338,8 @@ const Messages = () => {
 
             {/* <!-- Right --> */}
             <div
-              className={`lg:w-3/4 ${
-                contacts ? "w-full" : "w-0"
-              } flex flex-col border-1  border-blue-200`}
+              className={`lg:w-3/4 ${contacts ? "w-full" : "w-0"
+                } flex flex-col border-1  border-blue-200`}
             >
               {/* <!-- Header --> */}
               <div className="py-1 px-3 bg-grey-lighter flex flex-row justify-stretch items-center">
@@ -371,9 +364,8 @@ const Messages = () => {
                   <div className="flex items-center">
                     <div>
                       <img
-                        className={`w-10 h-10 rounded-full ${
-                          contacts ? "ml-2" : ""
-                        }`}
+                        className={`w-10 h-10 rounded-full ${contacts ? "ml-2" : ""
+                          }`}
                         src={user?.profile_pic}
                       />
                     </div>

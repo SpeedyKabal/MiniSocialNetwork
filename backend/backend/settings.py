@@ -31,7 +31,8 @@ SECRET_KEY = 'django-insecure-0zmn9%&@ex&r9cgh2+&v40ia*0r&kvwabpbu-ez-hyu30@7*^b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "*"]
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:5173/"]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -50,8 +51,8 @@ SIMPLE_JWT = {
 # Application definition
 
 INSTALLED_APPS = [
-    'api',
     'daphne',
+    'api',
     'rest_framework',
     'corsheaders',
     'django.contrib.admin',

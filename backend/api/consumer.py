@@ -84,23 +84,21 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
        return messageSerialized
 
 
-active_users = {}
+
 
 class AsyncOnlineConsumer(AsyncChatConsumer):
-    
     async def connect(self):
         try:
             self.room_group_name = 'chat_online'
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-            await self.accept()
-            #print(f"AsyncOnlineConsumer : {self.channel_name}")
+            self.user = self.scope["user"]
+            now = datetime.now()
+            now_time = now.strftime("%H:%M:%S")
             
-            if self.room_group_name in active_users:
-                active_users[self.room_group_name] += 1
-            else:
-                active_users[self.room_group_name] = 1
+            print(self.user)
+            await self.accept()
                 
-            print("Number Online :", active_users)
+            #print("User :", self.user, "Connected on", now_time)
                 
         except Exception as e:
             print(f'Error during online connect: {e}')
@@ -108,12 +106,11 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
 
     async def disconnect(self, close_code):
         try:
-            active_users[self.room_group_name] -= 1
-            if active_users[self.room_group_name] <= 0:
-                await self.makeAllUsersOffline()
+            now = datetime.now()
+            now_time = now.strftime("%H:%M:%S")
             print("WebSocket disconnect received with close code:", close_code)
+            print("User ", self.scope['user'], "Disconnected on :", now_time)
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-            print("Number rest Connected :" , active_users)
         except Exception as e:
             print(f"Error during online disconnect: {e}")
 
