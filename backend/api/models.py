@@ -114,6 +114,7 @@ class Employee(models.Model):
     birthday = models.DateField(null=True, blank=True)
     recruitmentDate = models.DateField(null=True, blank=True)
     profile_pic = models.ImageField(null=True,blank=True, default='profile_pic.png')
+    cover_pic = models.ImageField(null=True,blank=True, default='cover_pic.jpg')
     isOnline = models.BooleanField(default=False)
 
 

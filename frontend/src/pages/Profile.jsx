@@ -1,14 +1,26 @@
 import { useEffect, useState } from "react";
 import api from "../api";
-import { MdOutlineSystemUpdateAlt } from "react-icons/md";
-import { FaRegEdit, FaRegSave } from "react-icons/fa";
+import { FaRegSave } from "react-icons/fa";
 import Loading from "../components/Extensions/Loading";
 import { useTranslation } from "react-i18next";
+import { formatPhoneNumber } from "../services/Utilities";
 
 function Profile() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [employee, setEmployee] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    username: "",
+    adress: "",
+    position: "",
+    recruitmentDate: "",
+    birthday: "",
+    phone: "",
+  });
   const [employeeForm, setEmployeeForm] = useState({
     gender: [
       { value: "Male", label: "Male" },
@@ -16,281 +28,353 @@ function Profile() {
     ],
     position: [],
   });
-  const [updateUserTrigger, setUpdateUserTrigger] = useState(false);
-  const [updateEmployeeTrigger, setUpdateEmployeeTrigger] = useState(false);
-  const [newUpdateUser, setNewUpdateUser] = useState({
-    username: "",
-    email: "",
-    first_name: "",
-    last_name: "",
-  });
-  const [newUpdateEmployee, setNewUpdateEmployee] = useState({
-    phone: "",
-    adress: "",
-    position: "",
-    gender: "",
-    recruitmentDate: "",
-    birthday: "",
-  });
 
   useEffect(() => {
-    const EmployeeInfos = async () => {
-      setLoading(true);
-      await api
-        .get("/api/myprofile/")
-        .then((res) => res.data)
-        .then((data) => {
-          setEmployee(data);
-        })
-        .catch((err) => alert(err))
-        .finally(async () => {
-          await api
-            .get("api/myprofile/getpositions/")
-            .then((resp) => {
-              setEmployeeForm({ ...employeeForm, position: resp.data });
-            })
-            .catch((err) => alert(err))
-            .finally(() => setLoading(false));
-        });
-    };
+    if (isEditing) {
+      setFormData({
+        first_name: employee.user?.first_name || "",
+        last_name: employee.user?.last_name || "",
+        email: employee.user?.email || "",
+        username: employee.user?.username || "",
+        adress: employee.adress || "",
+        position: employee.position || "",
+        recruitmentDate: employee.recruitmentDate || "",
+        birthday: employee.birthday || "",
+        phone: employee.phone || "",
+      });
+    }
+  }, [isEditing]);
 
-    EmployeeInfos();
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoading(true);
+      try {
+        const response = await api.get("/api/myprofile/");
+        const data = response.data;
+        setEmployee(data);
+      } catch (err) {
+        alert(err);
+      } finally {
+        await api
+          .get("api/myprofile/getpositions/")
+          .then((resp) => {
+            setEmployeeForm({ ...employeeForm, position: resp.data });
+          })
+          .catch((err) => alert(err))
+          .finally(() => setLoading(false));
+      }
+    };
+    fetchProfile();
   }, []);
 
-  const formatPhoneNumber = (num) => {
-    if (num.length !== 10) {
-      return "Invalid phone number (must be a 10-digit number)";
-    } else {
-      return num
-        .replace(/^(\d{2})/, "($1) ")
-        .replace(/(\d{2})(\d{2})(\d{2})(\d{2})/, "$1 $2 $3 $4");
-    }
-  };
-
-  const getPositionLabel = () => {
-    const position = employeeForm.position.find(
-      (pos) => pos.value === employee.position
-    );
-    return position ? position.label : "";
-  };
-
-  const handleUpdateUser = (e) => {
-    setNewUpdateUser({
-      ...newUpdateUser,
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleUpdateEmployee = (e) => {
-    setNewUpdateEmployee({
-      ...newUpdateEmployee,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const sendUpdateUser = async () => {
-    setLoading(true);
-    const firstName = newUpdateUser.first_name;
-    const firstNameFirstChar = firstName.charAt(0);
-    const firstNameFirstCharCapitalized = firstNameFirstChar.toUpperCase();
-    const firstNameRemainingText = firstName.slice(1).toLowerCase();
-    const capitalizedFirstName =
-      firstNameFirstCharCapitalized + firstNameRemainingText;
-    await api
-      .put(`api/updateuserinfos/${employee.user.id}/`, {
-        username: newUpdateUser.username.toLowerCase(),
-        email: newUpdateUser.email,
-        first_name: capitalizedFirstName,
-        last_name: newUpdateUser.last_name.toUpperCase(),
-        password: newUpdateUser.password,
-      })
-      .catch((err) => alert(err))
-      .finally(() => setLoading(false));
-  };
-
-  const sendUpdateEmployee = async () => {
-    setLoading(true);
-    const employeeForm = new FormData();
-    employeeForm.append("gender", newUpdateEmployee.gender);
-    employeeForm.append("phone", newUpdateEmployee.phone);
-    employeeForm.append("adress", newUpdateEmployee.adress);
-    employeeForm.append("position", newUpdateEmployee.position);
-    employeeForm.append("recruitmentDate", newUpdateEmployee.recruitmentDate);
-    employeeForm.append("birthday", newUpdateEmployee.birthday);
-    await api
-      .put("api/myprofile/updateemployee/", employeeForm)
-      .then((resp) => resp.data)
-      .then((data) => setEmployee((prev) => ({ ...prev, ...data })))
-      .catch((err) => alert(err))
-      .finally(() => setLoading(false));
-  };
-
-  const changeProfilePic = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setLoading(true);
-      const formdata = new FormData();
-      formdata.append("profile_pic", file);
-      await api
-        .put("api/myprofile/updateProfilePicture/", formdata, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-        .catch((err) => alert(err))
-        .finally(() => {
-          setLoading(false);
-          location.reload();
-        });
-    }
+  const handleSave = async () => {
+    // setLoading(true);
+    // try {
+    //   await api.put(`/api/updateuserinfos/${employee.user?.id}/`, {
+    //     ...formData,
+    //     last_name: formData.last_name.toUpperCase(),
+    //   });
+    //   setIsEditing(false);
+    //   location.reload();
+    // } catch (err) {
+    //   alert(err);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
-    <div className="max-w-full p-4 bg-gray-100">
+    <div className="w-full lg:w-[75%] mx-auto p-8 bg-white rounded-3xl shadow-lg">
       {loading && <Loading />}
-      <div className="flex flex-col items-center mx-auto">
-        {Object.keys(employee).length > 0 && (
-          <div className="flex flex-col gap-12 w-full items-center">
-            {/* Profile Picture Section */}
-            <div className="group w-72 h-72 my-6 rounded-full overflow-hidden bg-blue-200 relative shadow-lg">
-              <div className="w-full h-full absolute bg-black/70 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <label htmlFor="profilePic" className="text-5xl text-white cursor-pointer">
-                  <MdOutlineSystemUpdateAlt />
-                </label>
+      {/* Profile Picture */}
+      <div className="mb-1">
+        <img
+          src="https://www.techgrapple.com/wp-content/uploads/2016/03/John-Lennon-Quote-FaceBook-Cover.jpg"
+          alt=""
+          className="w-full aspect-8/2 object-cover rounded-2xl"
+        />
+        <div className="relative">
+          <img
+            src={employee.profile_pic}
+            alt="Profile"
+            className="size-32 lg:size-48 rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4"
+          />
+        </div>
+      </div>
+
+      {/* Header Section */}
+      <div className="flex flex-wrap items-center justify-between mt-20 mb-5">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900">
+            {employee.user?.first_name} {employee.user?.last_name}
+          </h1>
+          <p className="text-xl text-gray-600">{employee.user?.email}</p>
+        </div>
+        <div className="flex gap-4 justify-center items-center">
+          {isEditing ? (
+            <>
+              <button
+                onClick={() => setIsEditing(false)}
+                className="px-6 py-2 text-lg font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                className="px-6 py-2 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+              >
+                <FaRegSave className="text-xl" />
+                Save Changes
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="px-6 py-2 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+            >
+              Edit Profile
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="flex flex-wrap gap-6 mb-4">
+        <div className="p-6 bg-gray-50 rounded-xl">
+          <p className="text-sm text-gray-500 mb-2">Last seen</p>
+          <p className="text-lg font-semibold">1 Mar, 2025</p>
+        </div>
+        <div className="p-6 bg-gray-50 rounded-xl">
+          <p className="text-sm text-gray-500 mb-2">Posts</p>
+          <p className="text-lg font-semibold">4 Mar, 2025</p>
+        </div>
+        <div className="p-6 bg-gray-50 rounded-xl">
+          <p className="text-sm text-gray-500 mb-2">Reactions</p>
+          <p className="text-lg font-semibold">$118.00</p>
+        </div>
+        <div className="p-6 bg-gray-50 rounded-xl">
+          <p className="text-sm text-gray-500 mb-2">Comments</p>
+          <p className="text-lg font-semibold">$0.00</p>
+        </div>
+      </div>
+
+      {/* Profile Content */}
+      <div className="grid grid-cols-1 gap-12">
+        <div className="flex flex-col gap-6 px-2">
+          {/* Name Section */}
+          <div className="flex flex-wrap justify-between items-center">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("forms.firstname")}
+              </label>
+              {isEditing ? (
                 <input
-                  type="file"
-                  name="profilePic"
-                  id="profilePic"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={changeProfilePic}
+                  type="text"
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-              </div>
-              <img src={employee.profile_pic} alt="Profile" className="object-cover w-full h-full" />
+              ) : (
+                <div className="text-lg px-4 text-gray-900 space-y-2">
+                  <p>{employee.user?.first_name}</p>
+                </div>
+              )}
             </div>
-
-            {/* User Information Section */}
-            <div className="bg-white shadow-lg w-full flex flex-col border-2 border-blue-500 rounded-3xl py-12">
-              <div className="flex justify-between mb-8 px-12">
-                <div className="text-4xl text-blue-700">{t("forms.userinfos")}</div>
-                {updateUserTrigger ? (
-                  <div
-                    className="text-5xl cursor-pointer text-blue-500 hover:text-red-300 transition-colors duration-300"
-                    onClick={() => {
-                      sendUpdateUser();
-                      setUpdateUserTrigger(false);
-                    }}
-                  >
-                    <FaRegSave />
-                  </div>
-                ) : (
-                  <div
-                    className="text-5xl cursor-pointer text-blue-500 hover:text-red-300 transition-colors duration-300"
-                    onClick={() => {
-                      setUpdateUserTrigger(true);
-                      setNewUpdateUser({
-                        username: employee.user.username,
-                        email: employee.user.email,
-                        first_name: employee.user.first_name,
-                        last_name: employee.user.last_name,
-                      });
-                    }}
-                  >
-                    <FaRegEdit />
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col gap-5 py-4 px-1">
-                {['username', 'email', 'first_name', 'last_name'].map((field) => (
-                  <div key={field} className="flex flex-col w-full md:w-3/4 mx-auto">
-                    <label className="px-2 py-2 text-3xl font-semibold text-blue-700">{t(`forms.${field}`)}</label>
-                    {updateUserTrigger ? (
-                      <input
-                        type={field === 'email' ? 'email' : 'text'}
-                        name={field}
-                        value={newUpdateUser[field]}
-                        onChange={handleUpdateUser}
-                        className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg"
-                      />
-                    ) : (
-                      <div className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg">
-                        {employee.user[field]}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Employee Information Section */}
-            <div className="bg-white shadow-2xl w-full flex flex-col border-2 border-blue-500 rounded-3xl py-12">
-              <div className="flex justify-between mb-8 px-12">
-                <div className="text-4xl text-blue-700">{t("forms.emplinfo")}</div>
-                {updateEmployeeTrigger ? (
-                  <div
-                    className="text-5xl cursor-pointer text-blue-500 hover:text-red-300 transition-colors duration-300"
-                    onClick={() => {
-                      setUpdateEmployeeTrigger(false);
-                      sendUpdateEmployee();
-                    }}
-                  >
-                    <FaRegSave />
-                  </div>
-                ) : (
-                  <div
-                    className="text-5xl cursor-pointer text-blue-500 hover:text-red-300 transition-colors duration-300"
-                    onClick={() => {
-                      setUpdateEmployeeTrigger(true);
-                      setNewUpdateEmployee({
-                        phone: employee.phone,
-                        adress: employee.adress,
-                        position: employee.position,
-                        gender: employee.gender,
-                        recruitmentDate: employee.recruitmentDate,
-                        birthday: employee.birthday,
-                      });
-                    }}
-                  >
-                    <FaRegEdit />
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col gap-5 py-4 px-1">
-                {['phone', 'adress', 'position', 'gender', 'recruitmentDate', 'birthday'].map((field) => (
-                  <div key={field} className="flex flex-col w-full md:w-3/4 mx-auto">
-                    <label className="px-2 py-2 text-3xl font-semibold text-blue-700">{t(`forms.${field}`)}</label>
-                    {updateEmployeeTrigger ? (
-                      field === 'position' || field === 'gender' ? (
-                        <select
-                          name={field}
-                          value={newUpdateEmployee[field]}
-                          onChange={handleUpdateEmployee}
-                          className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg"
-                        >
-                          {employeeForm?.[field]?.map((ele) => (
-                            <option key={ele.value} value={ele.value}>
-                              {ele.label}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <input
-                          type={field === 'phone' ? 'tel' : 'date'}
-                          name={field}
-                          value={newUpdateEmployee[field]}
-                          onChange={handleUpdateEmployee}
-                          className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg"
-                        />
-                      )
-                    ) : (
-                      <div className="h-14 md:h-10 w-full px-4 text-3xl text-blue-800 font-semibold border-2 border-blue-300 rounded-2xl shadow-lg">
-                        {field === 'phone' ? formatPhoneNumber(employee[field]) : employee[field]}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("forms.lastname")}
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              ) : (
+                <div className="text-lg px-4 text-gray-900 space-y-2">
+                  <p>{employee.user?.last_name}</p>
+                </div>
+              )}
             </div>
           </div>
-        )}
+
+          {/* Email Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email address
+            </label>
+            {isEditing ? (
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            ) : (
+              <div className="text-lg px-4 text-gray-900">
+                <p>{employee.user?.email}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Position and gender Section */}
+          <div className="flex flex-wrap justify-between items-center">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Position
+              </label>
+              {isEditing ? (
+                <select className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  {employeeForm.position.map((pos) => (
+                    <option
+                      key={pos.value}
+                      value={pos.value}
+                      defaultValue={formData.position}
+                    >
+                      {pos.label}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p className="text-lg px-4 text-gray-900">
+                  {employee.position}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Gender
+              </label>
+              {isEditing ? (
+                <select className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  {employeeForm.gender.map((gen) => (
+                    <option key={gen.value} value={gen.value}>
+                      {gen.label}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <p className="text-lg px-4 text-gray-900">{employee.gender}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Recrutement and Birthday Date Section */}
+          <div className="flex flex-wrap justify-between items-center">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Recrutement Date
+              </label>
+              {isEditing ? (
+                <input
+                  type="date"
+                  name="text"
+                  value={formData.recruitmentDate}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              ) : (
+                <div className="text-lg px-4 text-gray-900">
+                  <p>{employee.recruitmentDate}</p>
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Birthday Date
+              </label>
+              {isEditing ? (
+                <input
+                  type="date"
+                  name="text"
+                  value={formData.birthday}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              ) : (
+                <div className="text-lg px-4 text-gray-900">
+                  <p>{employee.birthday}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Adress and Phone Section */}
+          <div className="flex  flex-wrap justify-between items-center">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("forms.adress")}
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="first_name"
+                  value={formData.adress}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              ) : (
+                <div className="text-lg px-4 text-gray-900 space-y-2">
+                  <p>{employee.adress}</p>
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                {t("forms.phone")}
+              </label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="last_name"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              ) : (
+                <div className="text-lg px-4 text-gray-900 space-y-2">
+                  <p>{formatPhoneNumber(employee.phone)}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Username Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Username
+            </label>
+            {isEditing ? (
+              <div className="flex">
+                <span className="px-4 py-3 bg-gray-100 border border-r-0 rounded-l-lg text-gray-500">
+                  hdjapp.dz/profile/
+                </span>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleInputChange}
+                  className="flex-1 px-4 py-3 border rounded-r-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            ) : (
+              <p className="text-lg px-4 text-gray-900">
+                hdjapp.dz/profile/{employee.user?.username}
+              </p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

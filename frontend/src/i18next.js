@@ -13,6 +13,7 @@ i18next
         translation: {
           forms: {
             login: "Log IN",
+            signup: "Sign Up",
             username: "Username",
             userOrEmail: "Username or Email",
             password: "Password",
@@ -91,6 +92,7 @@ i18next
         translation: {
           forms: {
             login: "Connecté",
+            signup: "Inscription",
             username: "Utilisateur",
             userOrEmail: "Utilisateur ou Email",
             firstname: "Prenom",
@@ -161,7 +163,8 @@ i18next
             serachSelectPlacholder: "Rechercher un utilisateur",
             moreMessages: "Plus de Messages",
             noMoreMessages: "Pas Plus de Messages Disponibles",
-            noUserSelected: "Cliquez sur un utilisateur pour commencer à discuter avec eux",
+            noUserSelected:
+              "Cliquez sur un utilisateur pour commencer à discuter avec eux",
           },
         },
       },
@@ -169,6 +172,7 @@ i18next
         translation: {
           forms: {
             login: "تسجيل الدخول",
+            signup: "إنشاء حساب",
             username: "إسم المستخدم",
             userOrEmail: "إسم المستخدم أو البريد الإلكتروني",
             firstname: "الإسم",
