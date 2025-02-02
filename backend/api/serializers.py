@@ -117,7 +117,7 @@ class UserSerializersForِCurrentUser(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name", "profile_pic"]
+        fields = ["id","username", "first_name", "last_name", "profile_pic"]
       
         
     def get_profile_pic(self, obj):
@@ -283,7 +283,7 @@ class EmployeeSerializers(serializers.ModelSerializer):
     
     class Meta:
         model = Employee
-        fields = ["id","user","gender","phone", "adress", "position","recruitmentDate", "birthday", "profile_pic"]
+        fields = ["id","user","gender","phone", "adress", "position","recruitmentDate", "birthday", "profile_pic","cover_pic", "last_seen", "isOnline"]
         extra_kwargs = {"user":{"read_only":True}}
         
 

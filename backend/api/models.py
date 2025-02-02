@@ -116,6 +116,7 @@ class Employee(models.Model):
     profile_pic = models.ImageField(null=True,blank=True, default='profile_pic.png')
     cover_pic = models.ImageField(null=True,blank=True, default='cover_pic.jpg')
     isOnline = models.BooleanField(default=False)
+    last_seen = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
 
 
     def full_name(self):

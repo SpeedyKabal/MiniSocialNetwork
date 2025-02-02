@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import api from "../api";
 import { FaRegSave } from "react-icons/fa";
 import Loading from "../components/Extensions/Loading";
 import { useTranslation } from "react-i18next";
-import { formatPhoneNumber } from "../services/Utilities";
+import { formatPhoneNumber, formatTime, getClientResolutionClass } from "../services/Utilities";
+import { useUser } from "../contexts/UserContext";
 
 function Profile() {
+  const currentUser = useUser();
+  const { username } = useParams();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [employee, setEmployee] = useState({});
@@ -47,14 +51,15 @@ function Profile() {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      setLoading(true);
       try {
-        const response = await api.get("/api/myprofile/");
+        const response = await api.get(`/api/profile/${username}/`);
         const data = response.data;
         setEmployee(data);
       } catch (err) {
         alert(err);
-      } finally {
+      };
+
+      try {
         await api
           .get("api/myprofile/getpositions/")
           .then((resp) => {
@@ -62,7 +67,10 @@ function Profile() {
           })
           .catch((err) => alert(err))
           .finally(() => setLoading(false));
-      }
+      } catch (err) {
+        alert(err);
+      };
+
     };
     fetchProfile();
   }, []);
@@ -96,15 +104,15 @@ function Profile() {
       {/* Profile Picture */}
       <div className="mb-1">
         <img
-          src="https://www.techgrapple.com/wp-content/uploads/2016/03/John-Lennon-Quote-FaceBook-Cover.jpg"
-          alt=""
+          src={employee.cover_pic}
+          alt="CoverPicture"
           className="w-full aspect-8/2 object-cover rounded-2xl"
         />
         <div className="relative">
           <img
             src={employee.profile_pic}
             alt="Profile"
-            className="size-32 lg:size-48 rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4"
+            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${getClientResolutionClass() == "phone" ? "size-32" : getClientResolutionClass() == "desktop720" ? "size-48" : getClientResolutionClass() == "desktop786" ? "size-56" : "size-72"}`}
           />
         </div>
       </div>
@@ -117,49 +125,60 @@ function Profile() {
           </h1>
           <p className="text-xl text-gray-600">{employee.user?.email}</p>
         </div>
-        <div className="flex gap-4 justify-center items-center">
-          {isEditing ? (
-            <>
+        {currentUser?.id === employee.user?.id && (
+          <div className="flex gap-4 justify-center items-center">
+            {isEditing ? (
+              <>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="px-6 py-2 text-lg font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="px-6 py-2 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                >
+                  <FaRegSave className="text-xl" />
+                  Save Changes
+                </button>
+              </>
+            ) : (
               <button
-                onClick={() => setIsEditing(false)}
-                className="px-6 py-2 text-lg font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
+                onClick={() => setIsEditing(true)}
+                className="px-6 py-2 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
               >
-                Cancel
+                Edit Profile
               </button>
-              <button
-                onClick={handleSave}
-                className="px-6 py-2 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2"
-              >
-                <FaRegSave className="text-xl" />
-                Save Changes
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="px-6 py-2 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-            >
-              Edit Profile
-            </button>
-          )}
-        </div>
+            )}
+          </div>
+        )}
+
       </div>
 
       {/* Stats Grid */}
-      <div className="flex flex-wrap gap-6 mb-4">
-        <div className="p-6 bg-gray-50 rounded-xl">
-          <p className="text-sm text-gray-500 mb-2">Last seen</p>
-          <p className="text-lg font-semibold">1 Mar, 2025</p>
-        </div>
-        <div className="p-6 bg-gray-50 rounded-xl">
+      <div className="flex flex-wrap lg:flex-nowrap gap-1 mb-4">
+
+        {employee.isOnline ? (
+          <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl border-2 border-green-500 animate-pulse transition-opacity duration-1000 ease-in-out">
+            <p className="text-sm text-gray-500 mb-2">Online</p>
+            <p className="text-lg font-semibold">Now</p>
+          </div>
+        ) : (
+          <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
+            <p className="text-sm text-gray-500 mb-2">Last seen</p>
+            <p className="text-lg font-semibold">{formatTime(employee.last_seen)}</p>
+          </div>
+        )}
+        <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
           <p className="text-sm text-gray-500 mb-2">Posts</p>
           <p className="text-lg font-semibold">4 Mar, 2025</p>
         </div>
-        <div className="p-6 bg-gray-50 rounded-xl">
+        <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
           <p className="text-sm text-gray-500 mb-2">Reactions</p>
           <p className="text-lg font-semibold">$118.00</p>
         </div>
-        <div className="p-6 bg-gray-50 rounded-xl">
+        <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
           <p className="text-sm text-gray-500 mb-2">Comments</p>
           <p className="text-lg font-semibold">$0.00</p>
         </div>

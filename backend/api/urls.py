@@ -37,7 +37,7 @@ urlpatterns = [
     path("verifyresetcode/", views.VerifyResetCodeView.as_view(), name="VerifyResetCode"),
     
     #Get Employee Information API LINK
-    path("myprofile/", views.ActualEmployeeView.as_view(), name="getMyProfile"),
+    path("profile/<str:username>/", views.ActualEmployeeView.as_view(), name="getMyProfile"),
     path("myprofile/getpositions/", views.get_positions, name="getMyProfilePositions"),
     path("myprofile/getgender/", views.get_genders, name="getMyProfileGender"),
     path("myprofile/updateProfilePicture/", views.UpdateProfilePictureView.as_view(), name="UpdateProfilePicture"),

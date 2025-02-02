@@ -55,7 +55,7 @@ const router = createBrowserRouter(
         <Route index element={<Home />} />
         <Route path="post/:id" element={<SinglePost />} />
         <Route path="messages" element={<Messages />} />
-        <Route path="myprofile" element={<Profile />} />
+        <Route path="profile/:username" element={<Profile />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<NotFound />} />
       </Route>

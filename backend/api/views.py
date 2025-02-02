@@ -458,7 +458,12 @@ class ActualEmployeeView(generics.RetrieveAPIView):
 
 
     def get_object(self):
-        currentProfile = Employee.objects.get(user=self.request.user)
+        user_username = self.kwargs.get('username')
+        print(user_username)
+        user = User.objects.get(username=user_username)
+        print(user)
+        currentProfile = Employee.objects.get(user=user)
+        print(currentProfile)
         return currentProfile 
     
 

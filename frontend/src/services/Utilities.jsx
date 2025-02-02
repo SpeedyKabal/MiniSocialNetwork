@@ -139,7 +139,7 @@ export const getFilesType = (files) => {
   });
 };
 
-//
+// Get the resolution of the client's screen
 export const getClientResolutionClass = () => {
   const width = window.innerWidth;
 
@@ -155,7 +155,7 @@ export const getClientResolutionClass = () => {
   return "unknown";
 };
 
-//
+// Format phone number to be more readable
 export const formatPhoneNumber = (num) => {
   if (!num || num.length !== 10) {
     return "Invalid phone number (must be a 10-digit number)";
