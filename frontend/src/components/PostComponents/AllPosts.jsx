@@ -44,10 +44,10 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
                 className="size-10 lg:size-15  rounded-full object-cover"
               />
               <div>
-                <h3 className="font-semibold text-gray-900 text-md lg:text-lg">
+                <h3 className="font-semibold text-gray-900 text-sm lg:text-lg">
                   {post.author.last_name} {post.author.first_name}
                 </h3>
-                <p className="text-sm text-gray-500 text-sm lg:text-md">
+                <p className="text-sm text-gray-500 lg:text-md">
                   {post.job} · {formatTime(post.created_at, i18n.language)}
                 </p>
               </div>
@@ -78,7 +78,17 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
             </Link>
           )}
 
-          <hr className={`w-[50%] text-blue-500  ${contentDisplay(post.content) ? "ml-auto" : ""}`} style={{ float: contentDisplay(post.content) ? 'right' : 'none', background: 'linear-gradient(to right, red, blue, red)', height: '2px', border: 'none' }} />
+          <hr
+            className={`w-[50%] text-blue-500  ${
+              contentDisplay(post.content) ? "ml-auto" : ""
+            }`}
+            style={{
+              float: contentDisplay(post.content) ? "right" : "none",
+              background: "linear-gradient(to right, red, blue, red)",
+              height: "2px",
+              border: "none",
+            }}
+          />
 
           {showDetails ? (
             <>

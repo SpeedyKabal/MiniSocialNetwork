@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useUser } from "../../Contexts/Usercontext";
-import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { IoSettingsOutline } from "react-icons/io5";
 import api from "../../api";
-import { formatTime, contentDisplay } from "../../services/Utilities";
+import {
+  formatTime,
+  contentDisplay,
+  adjustTextareaHeight,
+} from "../../services/Utilities";
 
 function Comments({ post_id }) {
   const currentUser = useUser();
@@ -13,18 +16,27 @@ function Comments({ post_id }) {
   const [comment, setComment] = useState(""); // this hold the comment by the user to submit to the post
   const [comments, setComments] = useState([]); // this hold all comments by all users to the post
   const [commentSettingMenu, setCommentSettingMenu] = useState(0); // this will open DropDownList to either Update or Delete a comment
-  const [deleteModel, setDeleteModel] = useState(false); // This Model will Show when Clicked on Delete Comment
+  const [deleteModel, setDeleteModel] = useState(null); // This Model will Show when Clicked on Delete Comment
   const [updateContent, setUpdateContent] = useState(""); // this hold the updated comment by the user to submit to the post
   const [updateContentid, setUpdateContentid] = useState(null); // this hold the id comment that user want to update
-
+  const textareaRef = useRef(null);
+  const textareaRefUpdate = useRef(null);
   const isArabic = i18n.language == "ar";
 
   useEffect(() => {
     fetchComments();
   }, []);
 
-  const openCloseDeleteModel = () => {
-    setDeleteModel(!deleteModel);
+  useEffect(() => {
+    adjustTextareaHeight(textareaRef);
+  }, [comment]);
+
+  useEffect(() => {
+    adjustTextareaHeight(textareaRefUpdate);
+  }, [updateContent]);
+
+  const openCloseDeleteModel = (idNumber) => {
+    setDeleteModel(deleteModel === idNumber ? null : idNumber);
   };
 
   const fetchComments = async () => {
@@ -102,12 +114,17 @@ function Comments({ post_id }) {
         </form>
       ) : (
         <form onSubmit={handleComment} className="flex w-full">
-          <input
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
+          <textarea
+            name=""
+            id=""
+            rows={1}
             placeholder={t("post.commentplaceholder")}
-            className="w-full h-[2rem] px-3 mx-2 text-lg rounded-lg outline-1 outline-blue-400 outline"
-          />
+            onChange={(e) => setComment(e.target.value)}
+            ref={textareaRef}
+            value={comment}
+            className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl"
+          ></textarea>
+
           <button
             type="submit"
             className="text-blue-500 hover:bg-blue-200 rounded-lg"
@@ -133,19 +150,22 @@ function Comments({ post_id }) {
               <div className="flex justify-between bg-blue-300/50 ring-2 ring-sky-300 rounded-xl py-1 px-2 mr-3">
                 {updateContentid !== ele.id ? (
                   <div
-                    className="text-sky-900 text-lg flex items-center font-semibold px-2 mx-2 w-full"
+                    className="text-sky-900 whitespace-pre-line text-lg flex items-center font-semibold px-2 mx-2 w-full"
                     dir={contentDisplay(ele.content) ? "rtl" : "ltr"}
                   >
                     {ele.content}
                   </div>
                 ) : (
                   <div className="relative w-full mx-2">
-                    <input
-                      value={updateContent}
-                      type="text"
-                      className="w-full h-[2.5rem] px-3 py-2 mx-2 text-lg rounded-lg outline-1 outline-blue-400 outline bg-green-200/80"
+                    <textarea
+                      name=""
+                      id=""
+                      rows={1}
                       onChange={(e) => setUpdateContent(e.target.value)}
-                    />
+                      ref={textareaRefUpdate}
+                      value={updateContent}
+                      className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl"
+                    ></textarea>
                     <button
                       type="button"
                       onClick={() => {
@@ -193,7 +213,7 @@ function Comments({ post_id }) {
                           </li>
                           <li
                             className="px-2 py-2 hover:bg-red-300 cursor-pointer rounded-lg"
-                            onClick={openCloseDeleteModel}
+                            onClick={() => openCloseDeleteModel(ele.id)}
                           >
                             {t("post.delete")}
                           </li>
@@ -204,7 +224,7 @@ function Comments({ post_id }) {
                 </div>
               </div>
             </div>
-            {deleteModel && (
+            {deleteModel === ele.id && (
               <li className="absolute inset-0 bg-black/75 bg-opacity-50 flex justify-center items-center z-20 rounded-lg">
                 <div className="bg-white">
                   {/* <!-- Modal Header --> */}
@@ -222,7 +242,7 @@ function Comments({ post_id }) {
                     <button
                       onClick={() => {
                         toggleDropDownList(0);
-                        openCloseDeleteModel();
+                        openCloseDeleteModel(ele.id);
                       }}
                       className="px-3 py-2 bg-slate-500 hover:bg-slate-400 text-white text-md lg:text-lg  rounded-md w-full sm:w-auto"
                     >
@@ -232,7 +252,7 @@ function Comments({ post_id }) {
                       onClick={() => {
                         toggleDropDownList(0);
                         handleDeleteCommment(ele.id);
-                        openCloseDeleteModel();
+                        openCloseDeleteModel(ele.id);
                       }}
                       className="px-3 py-2 bg-indigo-500 hover:bg-indigo-300 text-white text-md lg:text-lg  rounded-md w-full sm:w-auto"
                     >

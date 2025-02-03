@@ -165,3 +165,11 @@ export const formatPhoneNumber = (num) => {
       .replace(/(\d{2})(\d{2})(\d{2})(\d{2})/, "$1 $2 $3 $4");
   }
 };
+
+// Automatically adjust the height of the textarea based on its scroll height
+export const adjustTextareaHeight = (textareaRef) => {
+  if (textareaRef.current && textareaRef.current.scrollHeight < 150) {
+    textareaRef.current.style.height = "auto"; // Reset the height
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set the height to the scrollHeight
+  }
+};

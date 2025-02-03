@@ -5,7 +5,7 @@ import { useUser } from "../../Contexts/Usercontext";
 import { useWebSocket } from "../../Contexts/WebSocketContext";
 import "i18next";
 import { useTranslation } from "react-i18next";
-import { Home, Users, Bell, MessageSquare, User, Search } from "lucide-react";
+import { Home, Bell, MessageSquare, Search } from "lucide-react";
 import UserDropdown from "./UserDropdown";
 
 const Navbar = () => {

@@ -65,7 +65,7 @@ function PostDropdown({ onEdit, onDelete }) {
               </button>
               <button
                 onClick={() => {
-                  onDelete;
+                  onDelete();
                   openCloseDeleteModel();
                 }}
                 className="px-2 py-2 bg-indigo-500 hover:bg-red-700 text-white text-lg  rounded-md w-full sm:w-auto"

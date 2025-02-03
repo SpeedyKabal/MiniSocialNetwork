@@ -355,7 +355,7 @@ class DeleteCommentView(generics.DestroyAPIView):
             comment.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Comment.DoesNotExist:
-            return Response({"detail" : "Reation Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail" : "Comment Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND)
 
 
 #Messages Views
@@ -379,11 +379,11 @@ class ListMessageView(generics.ListAPIView):
     def get_queryset(self):
         try:
             senderID = self.request.GET.get('sender')
-            recieverID = self.request.GET.get('reciever')
+            recieverID = self.request.user
             last_message_date = self.request.GET.get('last_message_date')
             unread_ids = self.request.GET.getlist('unread_ids[]')
             if senderID and recieverID:
-                unread_messages = Message.objects.filter(reciever=self.request.user, sender_id=senderID, is_read=False)
+                unread_messages = Message.objects.filter(reciever=recieverID, sender_id=senderID, is_read=False)
                 for message in unread_messages:
                     message.is_read = True
                     message.save()
@@ -391,9 +391,9 @@ class ListMessageView(generics.ListAPIView):
                 unread_messages_query = Message.objects.filter(id__in=unread_ids) if unread_ids else Message.objects.none()
                 
                 if last_message_date:
-                    last_messages_query = Message.objects.filter((Q(sender_id = senderID, reciever_id = recieverID) | Q(sender_id = recieverID, reciever_id = senderID)) & Q(date_created__gt=last_message_date))
+                    last_messages_query = Message.objects.filter((Q(sender_id = senderID, reciever=recieverID) | Q(sender =recieverID, reciever_id = senderID)) & Q(date_created__gt=last_message_date))
                 else:
-                    last_messages_query = Message.objects.filter(Q(sender_id = senderID, reciever_id = recieverID) | Q(sender_id = recieverID, reciever_id = senderID))
+                    last_messages_query = Message.objects.filter(Q(sender_id = senderID, reciever=recieverID) | Q(sender=recieverID, reciever_id = senderID))
 
                 base_query = list(chain(last_messages_query, unread_messages_query))
                 

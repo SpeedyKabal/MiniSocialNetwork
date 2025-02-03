@@ -6,7 +6,7 @@ import Loading from "../components/Extensions/Loading";
 import { useTranslation } from "react-i18next";
 import { Music, Video, Image, CircleX } from "lucide-react";
 import { useUser } from '../Contexts/Usercontext'
-import { contentDisplay } from "../services/Utilities";
+import { contentDisplay, adjustTextareaHeight } from "../services/Utilities";
 import { FilePreview, Post } from '../types/types'
 import { useFileUpload } from '../customhooks/useFileUpload'
 import { FilePreviews } from "../components/FilePreviews";
@@ -22,12 +22,7 @@ function Home() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    // Automatically adjust the height of the textarea based on its scroll height
-    if (textareaRef.current && textareaRef.current.scrollHeight < 200) {
-      textareaRef.current.style.height = "auto"; // Reset the height
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set the height to the scrollHeight
-    }
-
+    adjustTextareaHeight(textareaRef);
   }, [newPost]);
 
   useEffect(() => {
@@ -122,7 +117,7 @@ function Home() {
               </div>
               <div className="flex-1">
                 <textarea name="" id="" rows={1} placeholder={t("createPostModel.placeholder")} onChange={handlePostInput} ref={textareaRef} value={newPost}
-                  className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200"></textarea>
+                  className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl"></textarea>
               </div>
             </div>
             <div className="flex items-center justify-between">
@@ -153,7 +148,7 @@ function Home() {
                 {t("createPostModel.cpost")}
               </button>
             </div>
-            <div className="flex items-center gap-4 overflow-x-auto max-w-[90vw] scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200">
+            <div className="flex items-center gap-4 overflow-x-auto max-w-[90vw]">
 
               {filePreviews.map((file: FilePreview, index: React.Key | null | undefined) => (
                 <FilePreviews

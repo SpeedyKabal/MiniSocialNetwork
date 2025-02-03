@@ -43,6 +43,7 @@ const Messages = () => {
   const [contacts, setContacts] = useState(false); //Used in Mobile views Either show User or Show Messages
   const [noMoreMessages, setNoMoreMessages] = useState(false); //This for showing "More Messages" Button
   const newMessageAudio = new Audio("/Sounds/newmessage.wav");
+  const textareaRef = useRef(null);
 
   // Start a Websocket Channel for Two Users
   useEffect(() => {
@@ -78,6 +79,13 @@ const Messages = () => {
     }
   }, [onlineSocket]);
 
+  useEffect(() => {
+    // Automatically adjust the height of the textarea based on its scroll height
+    if (textareaRef.current && textareaRef.current.scrollHeight < 200) {
+      textareaRef.current.style.height = "auto"; // Reset the height
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set the height to the scrollHeight
+    }
+  }, [messageInput]);
   const handleReceivedSocketMessages = (data) => {
     setsocketMessages((prevMessages) => {
       const newMessages = [...prevMessages, data];
@@ -267,6 +275,7 @@ const Messages = () => {
           JSON.stringify({
             command: "ReadMessages",
             user: currentUser?.id,
+            sender: senderID,
           })
         );
       } catch (e) {
@@ -326,8 +335,9 @@ const Messages = () => {
           <div className="flex border-1 border-blue-200 rounded drop-shadow-lg h-full">
             {/* <!-- Left --> */}
             <div
-              className={`lg:w-1/3 ${!contacts ? "w-full" : "w-0"
-                }  border-1 border-blue-200 flex flex-col overflow-scroll`}
+              className={`lg:w-1/3 ${
+                !contacts ? "w-full" : "w-0"
+              }  border-1 border-blue-200 flex flex-col overflow-scroll`}
             >
               <User
                 UserClicked={fetchMessages}
@@ -338,8 +348,9 @@ const Messages = () => {
 
             {/* <!-- Right --> */}
             <div
-              className={`lg:w-3/4 ${contacts ? "w-full" : "w-0"
-                } flex flex-col border-1  border-blue-200`}
+              className={`lg:w-3/4 ${
+                contacts ? "w-full" : "w-0"
+              } flex flex-col border-1  border-blue-200`}
             >
               {/* <!-- Header --> */}
               <div className="py-1 px-3 bg-grey-lighter flex flex-row justify-stretch items-center">
@@ -364,8 +375,9 @@ const Messages = () => {
                   <div className="flex items-center">
                     <div>
                       <img
-                        className={`w-10 h-10 rounded-full ${contacts ? "ml-2" : ""
-                          }`}
+                        className={`w-10 h-10 rounded-full ${
+                          contacts ? "ml-2" : ""
+                        }`}
                         src={user?.profile_pic}
                       />
                     </div>
@@ -561,14 +573,18 @@ const Messages = () => {
                 >
                   <div className="bg-grey-lighter px-2 py-2 ">
                     <div className="mx-2 flex items-center">
-                      <input
-                        className="w-full border-2 border-blue-200 rounded px-2 py-1 text-md"
-                        type="text"
-                        value={messageInput}
+                      <textarea
+                        name=""
+                        id=""
+                        rows={1}
+                        placeholder={t("createPostModel.placeholder")}
                         onChange={(e) => {
                           setMessageInput(e.target.value);
                         }}
-                      />
+                        ref={textareaRef}
+                        value={messageInput}
+                        className="resize-none w-full border-2 border-blue-200 rounded px-2 py-1 text-md"
+                      ></textarea>
                       <label
                         htmlFor="inputFile"
                         onClick={handleUpload}

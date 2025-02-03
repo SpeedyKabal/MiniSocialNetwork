@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useUser } from "./Usercontext";
-import { ACCESS_TOKEN } from '../constants'
-import api from '../api'
+import { ACCESS_TOKEN } from "../constants";
 
 const WebSocketContext = createContext(null);
 
@@ -28,7 +27,7 @@ export const WebSocketProvider = ({ children }) => {
     const userConnect = async () => {
       if (currentUser && !webSocketRef.current) {
         try {
-          const token = localStorage.getItem(ACCESS_TOKEN)
+          const token = localStorage.getItem(ACCESS_TOKEN);
           if (!token) {
             console.error("Can't Connect, No Authentication is Provided!");
             return;
