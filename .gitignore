@@ -6,7 +6,8 @@ backend/backend/__pycache__/
 backend/api/__init__.py
 backend/api/__pycache__/
 backend/api/migrations/
-
+backend/.env
 #FrontEnd Skipped Files and Folders
 
 frontend/node_modules/
+
