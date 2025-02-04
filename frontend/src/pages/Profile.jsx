@@ -4,7 +4,11 @@ import api from "../api";
 import { FaRegSave } from "react-icons/fa";
 import Loading from "../components/Extensions/Loading";
 import { useTranslation } from "react-i18next";
-import { formatPhoneNumber, formatTime, getClientResolutionClass } from "../services/Utilities";
+import {
+  formatPhoneNumber,
+  formatTime,
+  getClientResolutionClass,
+} from "../services/Utilities";
 import { useUser } from "../contexts/UserContext";
 
 function Profile() {
@@ -20,7 +24,8 @@ function Profile() {
     email: "",
     username: "",
     adress: "",
-    position: "",
+    genre: [],
+    position: [],
     recruitmentDate: "",
     birthday: "",
     phone: "",
@@ -41,7 +46,8 @@ function Profile() {
         email: employee.user?.email || "",
         username: employee.user?.username || "",
         adress: employee.adress || "",
-        position: employee.position || "",
+        genre: employee.genre || [],
+        position: employee.position || [],
         recruitmentDate: employee.recruitmentDate || "",
         birthday: employee.birthday || "",
         phone: employee.phone || "",
@@ -57,7 +63,7 @@ function Profile() {
         setEmployee(data);
       } catch (err) {
         alert(err);
-      };
+      }
 
       try {
         await api
@@ -69,8 +75,7 @@ function Profile() {
           .finally(() => setLoading(false));
       } catch (err) {
         alert(err);
-      };
-
+      }
     };
     fetchProfile();
   }, []);
@@ -112,7 +117,15 @@ function Profile() {
           <img
             src={employee.profile_pic}
             alt="Profile"
-            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${getClientResolutionClass() == "phone" ? "size-32" : getClientResolutionClass() == "desktop720" ? "size-48" : getClientResolutionClass() == "desktop786" ? "size-56" : "size-72"}`}
+            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${
+              getClientResolutionClass() == "phone"
+                ? "size-32"
+                : getClientResolutionClass() == "desktop720"
+                ? "size-48"
+                : getClientResolutionClass() == "desktop786"
+                ? "size-56"
+                : "size-72"
+            }`}
           />
         </div>
       </div>
@@ -153,12 +166,10 @@ function Profile() {
             )}
           </div>
         )}
-
       </div>
 
       {/* Stats Grid */}
       <div className="flex flex-wrap lg:flex-nowrap gap-1 mb-4">
-
         {employee.isOnline ? (
           <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl border-2 border-green-500 animate-pulse transition-opacity duration-1000 ease-in-out">
             <p className="text-sm text-gray-500 mb-2">Online</p>
@@ -167,7 +178,9 @@ function Profile() {
         ) : (
           <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
             <p className="text-sm text-gray-500 mb-2">Last seen</p>
-            <p className="text-lg font-semibold">{formatTime(employee.last_seen)}</p>
+            <p className="text-lg font-semibold">
+              {formatTime(employee.last_seen)}
+            </p>
           </div>
         )}
         <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
@@ -254,7 +267,10 @@ function Profile() {
                 Position
               </label>
               {isEditing ? (
-                <select className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <select
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  name="position"
+                >
                   {employeeForm.position.map((pos) => (
                     <option
                       key={pos.value}
@@ -276,7 +292,10 @@ function Profile() {
                 Gender
               </label>
               {isEditing ? (
-                <select className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <select
+                  name="genre"
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
                   {employeeForm.gender.map((gen) => (
                     <option key={gen.value} value={gen.value}>
                       {gen.label}
@@ -298,7 +317,7 @@ function Profile() {
               {isEditing ? (
                 <input
                   type="date"
-                  name="text"
+                  name="recruitmentDate"
                   value={formData.recruitmentDate}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -316,7 +335,7 @@ function Profile() {
               {isEditing ? (
                 <input
                   type="date"
-                  name="text"
+                  name="birthday"
                   value={formData.birthday}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -338,7 +357,7 @@ function Profile() {
               {isEditing ? (
                 <input
                   type="text"
-                  name="first_name"
+                  name="adress"
                   value={formData.adress}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -356,7 +375,7 @@ function Profile() {
               {isEditing ? (
                 <input
                   type="text"
-                  name="last_name"
+                  name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"

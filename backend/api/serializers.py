@@ -52,7 +52,7 @@ class UserSerializersForLastMessage(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name","last_message", "profile_pic", "isOnline"]
+        fields = ["id","username", "first_name", "last_name","last_message", "profile_pic", "isOnline"]
     
     def get_last_message(self, obj):
         user = self.context['request'].user
@@ -109,7 +109,7 @@ class UserSerializersForLastMessage(serializers.ModelSerializer):
 class UserSerializersForMessages(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "first_name", "last_name"]
+        fields = ["id", "first_name", "last_name", "username"]
         
         
 class UserSerializersForِCurrentUser(serializers.ModelSerializer):

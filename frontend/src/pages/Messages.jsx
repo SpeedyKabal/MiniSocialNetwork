@@ -1,5 +1,6 @@
 import api from "../api";
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { IoCheckmarkSharp } from "react-icons/io5";
@@ -382,9 +383,12 @@ const Messages = () => {
                       />
                     </div>
                     <div className="ml-4">
-                      <p className="text-grey-darkest text-md font-bold">
+                      <Link
+                        to={`/profile/${user.username}`}
+                        className="text-grey-darkest text-md font-bold cursor-pointer"
+                      >
                         {user.first_name} {user.last_name}
-                      </p>
+                      </Link>
                     </div>
                   </div>
                 ) : (
