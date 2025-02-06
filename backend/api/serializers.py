@@ -159,6 +159,11 @@ class PostSerializers(serializers.ModelSerializer):
         post = super().create(validated_data)
         return post
     
+    def update(self, instance, validated_data):
+        post = super().update(instance, validated_data)
+        return post
+
+    
 
     def get_job(self, obj):
         try:

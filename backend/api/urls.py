@@ -6,6 +6,7 @@ urlpatterns = [
     path("post/<int:pk>/", views.PostCreate.as_view(), name="create_post"),
     path("post/delete/", views.PostDelete.as_view(), name="delete_post"),
     path("post/", views.PostListCreate.as_view(), name="load_posts"),
+    path("post/update/", views.PostUpdate.as_view(), name="update_post"),
     
     #File Uploading
     path("post/upload-file/", views.FileUploadPost.as_view(), name="upload_file_2_post"),

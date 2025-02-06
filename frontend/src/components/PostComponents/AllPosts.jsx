@@ -30,6 +30,22 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
     adjustTextareaHeight(textareaRef);
   }, [updatePostcontent]);
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setIsUpdate(false);
+      return;
+    }
+  };
+
+  useEffect(() => {
+    if (isUpdate) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isUpdate]);
+
   const handleDeletePost = async (id) => {
     await api.delete("api/post/delete/", { data: { post_id: id } });
     if (OnPostDeleted) {
@@ -38,14 +54,16 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
   };
 
   const handleEditPost = async (id) => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
-        setIsUpdate(false);
-        return;
-      }
-    };
+    const formdata = new FormData();
+    formdata.append("content", updatePostcontent);
+    formdata.append("id", id);
 
-    document.addEventListener("keydown", handleKeyDown);
+    await api
+      .put("api/post/update/", formdata)
+      .then((res) => {
+        if (res.status === 200) setIsUpdate(false);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -68,7 +86,7 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
                 </p>
               </div>
             </div>
-            {currentUser.id == post.author.id && (
+            {currentUser.id == post.author.id && showDetails && (
               <PostDropdown
                 onEdit={() => setIsUpdate(true)}
                 onDelete={() => handleDeletePost(post.id)}
@@ -87,7 +105,7 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
                   className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl"
                 ></textarea>
                 <button
-                  onClick={handleEditPost(post.id)}
+                  onClick={() => handleEditPost(post.id)}
                   className="text-blue-500 hover:bg-green-500 rounded-lg absolute top-1/2 right-0 transform -translate-x-1/2 -translate-y-1/2 "
                 >
                   <ChevronRight size={35} strokeWidth={3} absoluteStrokeWidth />
@@ -101,22 +119,6 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
                 {convertLinksInsideMessages(post.content)}
               </p>
             )
-          ) : isUpdate ? (
-            <div className="relative">
-              <textarea
-                ref={textareaRef}
-                name="updateContent"
-                value={updatePostcontent}
-                onChange={(e) => setUpdatePostContent(e.target.value)}
-                className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl"
-              ></textarea>
-              <button
-                onClick={handleEditPost(post.id)}
-                className="text-blue-500 hover:bg-green-500 rounded-lg absolute top-1/2 right-0 transform -translate-x-1/2 -translate-y-1/2 "
-              >
-                <ChevronRight size={35} strokeWidth={3} absoluteStrokeWidth />
-              </button>
-            </div>
           ) : (
             <Link to={`/post/${post.id}`} className="w-full">
               <p

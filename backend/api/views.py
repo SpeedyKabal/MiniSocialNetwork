@@ -186,6 +186,18 @@ class PostCreate(generics.RetrieveAPIView):
             return post
         except Post.DoesNotExist:
             return Response({"detail" : "Post Doesn't Exist"}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+class PostUpdate(generics.UpdateAPIView):
+    serializer_class = PostSerializers
+    permission_classes = [IsAuthenticated]
+
+
+    def perform_update(self, serializer):
+        id = self.request.data.get('id')
+        content = self.request.data.get('content')
+        user = self.request.user
+        serializer.save(pk=id, author=user, content=content)
     
 
 class PostDelete(generics.DestroyAPIView):
@@ -318,7 +330,6 @@ class UpdateCommentView(generics.UpdateAPIView):
 
     def get_object(self):
         commentid = self.request.data.get('id')
-        content = self.request.data.get('content')
         try:
             return Comment.objects.get(pk=commentid)
         except Comment.DoesNotExist:
