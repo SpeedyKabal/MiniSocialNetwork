@@ -1,4 +1,4 @@
-import os, subprocess
+import os, subprocess, re
 from django.conf import settings
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
@@ -22,6 +22,19 @@ def update_last_seen(sender, instance, **kwargs):
             instance.last_seen = timezone.now()
 
 
+def get_video_duration(input_path):
+    """Get video duration using FFprobe."""
+    command = [
+        "ffprobe", "-i", input_path, "-show_entries", "format=duration",
+        "-v", "quiet", "-of", "csv=p=0"
+    ]
+    result = subprocess.run(command, stdout=subprocess.PIPE, text=True)
+    try:
+        return float(result.stdout.strip())  # Duration in seconds
+    except ValueError:
+        return None
+
+
 @receiver(post_save, sender=File)
 def convert_video_to_hls(sender, instance,created, **kwargs):
     if created:
@@ -35,12 +48,14 @@ def convert_video_to_hls(sender, instance,created, **kwargs):
             base_path = f"media/messageFiles/Videos/{instance.message.id}"
         else:
             return  # If neither, do nothing
-
+        
         os.makedirs(base_path, exist_ok=True)  # Ensure the directory exists
 
         # Input and output paths
         input_path = instance.file.path  # The uploaded video file
         output_path = os.path.join(base_path, "output.m3u8")  # HLS playlist
+        duration = get_video_duration(input_path)
+        print(f"Video Duration: {duration} seconds")  # Debugging
 
         # FFmpeg command for HLS conversion
         command = [
@@ -51,13 +66,35 @@ def convert_video_to_hls(sender, instance,created, **kwargs):
             "-threads", "4",
             "-strict", "-2",
             "-hls_playlist_type", "vod",
+            "-progress", "pipe:1",
+            "-loglevel", "verbose",
             "-hls_segment_filename", os.path.join(base_path, "segment_%03d.ts").replace("\\", "/"),
             output_path.replace("\\", "/")
         ]
 
 
         try:
-            subprocess.run(command, check=True)
+            process = subprocess.Popen(command,stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            # Stream output in real time
+            while True:
+                line = process.stderr.readline()
+                if not line:
+                    break  # Stop when EOF is reached
+                #print(line.strip())  # Print FFmpeg output for debugging
+                match = re.search(r"time=([\d:.]+)", line)
+                if match:
+                    processed_time = match.group(1)
+                    h, m, s = map(float, processed_time.split(":"))
+                    processed_seconds = h * 3600 + m * 60 + s
+
+                    progress = min(100, int((processed_seconds / duration) * 100))
+                    
+                    print(f"Progress: {progress}%")
+                    
+                    
+            process.wait()
+
             File.objects.filter(id=instance.id).update(hsl_path="/output.m3u8")
+            os.remove(input_path)
         except subprocess.CalledProcessError as e:
             print(f"FFmpeg error: {e}")
