@@ -186,4 +186,5 @@ class File(models.Model):
     file = models.FileField(upload_to=generate_filename, null=False, blank=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='postFiles', null=True, blank=True)
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='messageFiles', null=True, blank=True)
+    hsl_path = models.CharField(max_length=12, null=True, blank=True)
     

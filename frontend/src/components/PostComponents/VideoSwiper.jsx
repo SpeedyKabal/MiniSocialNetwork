@@ -1,12 +1,29 @@
-import React, { useState } from "react";
+import { useRef, useEffect } from "react";
+import Hls from "hls.js";
 import "media-chrome";
 
 const VideoSwiper = ({ videoFile, index, filesLength }) => {
+  const videohls = useRef(null);
+
+  useEffect(() => {
+    const video = videohls.current;
+    if (!video) return;
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(videoFile.file);
+      hls.attachMedia(video);
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      // For Safari (native HLS support)
+      video.src = videoFile.file;
+    }
+  }, [videoFile.file]);
+
   return (
     <media-controller breakpointsm>
       <video
         slot="media"
-        src={videoFile.file}
+        ref={videohls}
         preload="auto"
         crossOrigin=""
         className="mx-auto aspect-video"

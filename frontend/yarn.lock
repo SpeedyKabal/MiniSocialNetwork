@@ -1398,7 +1398,7 @@ fraction.js@^4.3.7:
     "@tailwindcss/vite" "^4.0.0"
     axios "^1.7.9"
     classnames "^2.5.1"
-    frontend "file:C:/Users/PC/AppData/Local/Yarn/Cache/v6/npm-frontend-1.0.1-fdf62f19-2ee6-4e92-9367-7a1221739d4a-1738155504257/node_modules/frontend"
+    frontend "file:C:/Users/PC/AppData/Local/Yarn/Cache/v6/npm-frontend-1.0.1-445bb867-dc57-4948-93e3-55444cea3964-1739188668911/node_modules/frontend"
     i18next "^24.2.2"
     i18next-browser-languagedetector "^8.0.2"
     jwt-decode "^4.0.0"
@@ -1555,6 +1555,11 @@ hasown@^2.0.0, hasown@^2.0.2:
   integrity sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==
   dependencies:
     function-bind "^1.1.2"
+
+hls.js@^1.5.20:
+  version "1.5.20"
+  resolved "https://registry.yarnpkg.com/hls.js/-/hls.js-1.5.20.tgz#7eb23bb5e2595311d4e2761038ca6882673de7e2"
+  integrity sha512-uu0VXUK52JhihhnN/MVVo1lvqNNuhoxkonqgO3IpjvQiGpJBdIXMGkofjQb/j9zvV7a1SW8U9g1FslWx/1HOiQ==
 
 html-parse-stringify@^3.0.1:
   version "3.0.1"

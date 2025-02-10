@@ -15,6 +15,7 @@ import FileReaderForMessages from "../FileReaderForMessages";
 type FileExt = {
   file: string,
   type: "Image" | "Video" | "Audio" | "Other",
+  hslURL?: string,
 }
 
 type MediaProps = {

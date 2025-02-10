@@ -121,18 +121,26 @@ export const truncateString = (str) => {
 export const getFilesType = (files) => {
   return files.map((fileObj) => {
     const { file } = fileObj;
+    const { hslURL } = fileObj;
+
     const extension = file.split(".").pop()?.toLowerCase() ?? "";
 
     let type = "Other";
+
+    if (hslURL) {
+      type = "Video";
+    }
 
     if (
       ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp"].includes(extension)
     ) {
       type = "Image";
-    } else if (["mp4", "mov", "avi", "mkv", "webm"].includes(extension)) {
-      type = "Video";
     } else if (["mp3", "wav", "ogg", "m4a", "flac"].includes(extension)) {
       type = "Audio";
+    }
+
+    if (hslURL) {
+      return { file: hslURL, type };
     }
 
     return { file, type };

@@ -137,9 +137,22 @@ class UserSerializersForِCurrentUser(serializers.ModelSerializer):
 
 #File Serializers
 class FileSerializer(serializers.ModelSerializer):
+    hslURL = serializers.SerializerMethodField()
+    
     class Meta:
         model = File
-        fields = ['file']
+        fields = ['id','file','hslURL']
+        
+        
+    def get_hslURL(self, obj):
+        request = self.context.get("request")
+        if obj.post:
+            if obj.hsl_path:
+                return f"http://127.0.0.1:8000/media/PostFiles/Videos/{obj.post.id}/output.m3u8"
+        else:
+            if obj.hsl_path:
+                return f"http://127.0.0.1:8000/media/messageFiles/Videos/{obj.message.id}/output.m3u8"
+        return None
         
             
 #Post Serializers

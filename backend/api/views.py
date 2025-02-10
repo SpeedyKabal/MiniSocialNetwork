@@ -240,6 +240,8 @@ class FileUploadMessage(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         messageid = request.data.get("message_id")  # Get the associated post ID
         file = request.FILES.get("file")   # Get the uploaded file
+        if file.size > 100 * 1024 * 1024 and not file.content_type.startswith('video'):
+            return Response({"error": "File size exceeds 100MB limit"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             message = Message.objects.get(pk=messageid)
             # Save the file and associate it with the post
