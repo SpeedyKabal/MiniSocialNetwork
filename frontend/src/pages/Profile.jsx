@@ -24,11 +24,13 @@ function Profile() {
     email: "",
     username: "",
     adress: "",
-    genre: [],
+    gender: [],
     position: [],
     recruitmentDate: "",
     birthday: "",
     phone: "",
+    profile_pic: null,
+    cover_pic: null,
   });
   const [employeeForm, setEmployeeForm] = useState({
     gender: [
@@ -46,7 +48,7 @@ function Profile() {
         email: employee.user?.email || "",
         username: employee.user?.username || "",
         adress: employee.adress || "",
-        genre: employee.genre || [],
+        gender: employee.gender || [],
         position: employee.position || [],
         recruitmentDate: employee.recruitmentDate || "",
         birthday: employee.birthday || "",
@@ -81,26 +83,35 @@ function Profile() {
   }, []);
 
   const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: files ? files[0] : value,
     });
   };
 
   const handleSave = async () => {
-    // setLoading(true);
-    // try {
-    //   await api.put(`/api/updateuserinfos/${employee.user?.id}/`, {
-    //     ...formData,
-    //     last_name: formData.last_name.toUpperCase(),
-    //   });
-    //   setIsEditing(false);
-    //   location.reload();
-    // } catch (err) {
-    //   alert(err);
-    // } finally {
-    //   setLoading(false);
-    // }
+    setLoading(true);
+    const formdetail = new FormData();
+    formdetail.append("gender", formData.gender);
+    formdetail.append("phone", formData.phone);
+    formdetail.append("adress", formData.adress);
+    formdetail.append("position", formData.birthday);
+    formdetail.append("birthday", formData.birthday);
+    formdetail.append("recruitmentDate", formData.recruitmentDate);
+    if (formData.profile_pic) {
+      formdetail.append("profile_pic", formData.profile_pic);
+    }
+    if (formData.cover_pic) {
+      formdetail.append("cover_pic", formData.cover_pic);
+    }
+    api.put(`/api/myprofile/updateemployee/`, formData, { headers: { "Content-Type": "multipart/form-data" } }
+    ).then((resp) => {
+      if (resp.status == 200) {
+        setIsEditing(false);
+        setLoading(false);
+      }
+    }).catch((err) => console.error(err));
   };
 
   return (
@@ -117,15 +128,14 @@ function Profile() {
           <img
             src={employee.profile_pic}
             alt="Profile"
-            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${
-              getClientResolutionClass() == "phone"
-                ? "size-32"
-                : getClientResolutionClass() == "desktop720"
+            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${getClientResolutionClass() == "phone"
+              ? "size-32"
+              : getClientResolutionClass() == "desktop720"
                 ? "size-48"
                 : getClientResolutionClass() == "desktop786"
-                ? "size-56"
-                : "size-72"
-            }`}
+                  ? "size-56"
+                  : "size-72"
+              }`}
           />
         </div>
       </div>
@@ -293,11 +303,11 @@ function Profile() {
               </label>
               {isEditing ? (
                 <select
-                  name="genre"
+                  name="gender"
                   className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   {employeeForm.gender.map((gen) => (
-                    <option key={gen.value} value={gen.value}>
+                    <option key={gen.value} value={gen.value} defaultValue={formData.gender}>
                       {gen.label}
                     </option>
                   ))}
@@ -412,6 +422,35 @@ function Profile() {
               </p>
             )}
           </div>
+          {/* Profile Picture and Cover */}
+          {isEditing && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Profile Picture
+                </label>
+                <input
+                  type="file"
+                  name="profile_pic"
+                  accept="image/*"
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Cover Picture
+                </label>
+                <input
+                  type="file"
+                  name="cover_pic"
+                  accept="image/*"
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+              </div>
+            </>
+          )}
+
         </div>
       </div>
     </div>

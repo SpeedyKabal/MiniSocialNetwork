@@ -312,7 +312,7 @@ class EmployeeUpdateSerializers(serializers.ModelSerializer):
     
     class Meta:
         model = Employee
-        fields = ["gender","phone", "adress", "position","recruitmentDate", "birthday"]
+        fields = ["gender","phone", "adress", "position","recruitmentDate", "birthday", "profile_pic","cover_pic"]
         
         
 class EmployeeProfilePicture(serializers.ModelSerializer):
