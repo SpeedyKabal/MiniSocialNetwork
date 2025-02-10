@@ -41,6 +41,7 @@ function SinglePost() {
               OnPostDeleted={() => {
                 navigate("/");
               }}
+              UpdatePost={(data) => { setPost(data) }}
             /> // Show the post with details
           )}
         </div>

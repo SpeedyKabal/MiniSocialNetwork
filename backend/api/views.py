@@ -191,13 +191,19 @@ class PostCreate(generics.RetrieveAPIView):
 class PostUpdate(generics.UpdateAPIView):
     serializer_class = PostSerializers
     permission_classes = [IsAuthenticated]
+    
+    def get_object(self):
+        id = self.request.data.get('id')
+        try:
+            return Post.objects.get(pk=id, author=self.request.user)
+        except Post.DoesNotExist:
+            return Response("Post Doesn't Exist", status=status.HTTP_404_NOT_FOUND)
+        
 
 
     def perform_update(self, serializer):
-        id = self.request.data.get('id')
         content = self.request.data.get('content')
-        user = self.request.user
-        serializer.save(pk=id, author=user, content=content)
+        serializer.save(author=self.request.user, content=content)
     
 
 class PostDelete(generics.DestroyAPIView):

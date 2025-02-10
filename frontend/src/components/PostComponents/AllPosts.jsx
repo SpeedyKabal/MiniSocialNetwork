@@ -18,7 +18,8 @@ import {
 } from "../../services/Utilities";
 import Media from "./Media";
 
-function AllPosts({ post, OnPostDeleted, showDetails = false }) {
+
+function AllPosts({ post, OnPostDeleted, UpdatePost, showDetails = false }) {
   const currentUser = useUser();
   const { t, i18n } = useTranslation();
   const isArabic = i18n.language == "ar";
@@ -59,9 +60,12 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
     formdata.append("id", id);
 
     await api
-      .put("api/post/update/", formdata)
+      .put('api/post/update/', formdata)
       .then((res) => {
-        if (res.status === 200) setIsUpdate(false);
+        if (res.status === 200) {
+          setIsUpdate(false);
+          UpdatePost(res.data);
+        }
       })
       .catch((err) => console.log(err));
   };
@@ -96,7 +100,7 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
           <Media urlFile={post.mediaFiles} />
           {showDetails ? (
             isUpdate ? (
-              <div className="relative">
+              <div className="relative my-2">
                 <textarea
                   ref={textareaRef}
                   name="updateContent"
@@ -113,7 +117,7 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
               </div>
             ) : (
               <p
-                className="text-gray-800 mb-4 whitespace-pre-line text-xl leading-relaxed ml-2"
+                className="text-gray-800 my-2 whitespace-pre-line text-xl leading-relaxed ml-2"
                 dir={contentDisplay(post.content) ? "rtl" : "ltr"}
               >
                 {convertLinksInsideMessages(post.content)}
@@ -131,9 +135,8 @@ function AllPosts({ post, OnPostDeleted, showDetails = false }) {
           )}
 
           <hr
-            className={`w-[50%] text-blue-500  ${
-              contentDisplay(post.content) ? "ml-auto" : ""
-            }`}
+            className={`w-[70%] text-blue-500  ${contentDisplay(post.content) ? "ml-auto" : ""
+              }`}
             style={{
               float: contentDisplay(post.content) ? "right" : "none",
               background: "linear-gradient(to right, red, blue, red)",
