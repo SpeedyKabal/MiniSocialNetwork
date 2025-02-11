@@ -148,10 +148,10 @@ class FileSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if obj.post:
             if obj.hsl_path:
-                return f"http://127.0.0.1:8000/media/PostFiles/Videos/{obj.post.id}/{obj.id}/output.m3u8"
+                return request.build_absolute_uri(f"/media/PostFiles/Videos/{obj.post.id}/{obj.id}/output.m3u8")
         else:
             if obj.hsl_path:
-                return f"http://127.0.0.1:8000/media/messageFiles/Videos/{obj.message.id}/{obj.id}/output.m3u8"
+                return request.build_absolute_uri(f"/media/messageFiles/Videos/{obj.message.id}/{obj.id}/output.m3u8")
         return None
         
             
@@ -298,10 +298,23 @@ class EmployeeSerializers(serializers.ModelSerializer):
     position = serializers.ChoiceField(choices=Employee.POSITIONS)
     gender = serializers.ChoiceField(choices=Employee.GENDER)
     
+    post_count = serializers.SerializerMethodField()
+    reaction_count = serializers.SerializerMethodField()
+    comment_count = serializers.SerializerMethodField()
+
+    def get_post_count(self, obj):
+        return Post.objects.filter(author=obj.user).count()
+
+    def get_reaction_count(self, obj):
+        return Reaction.objects.filter(user=obj.user).count()
+
+    def get_comment_count(self, obj):
+        return Comment.objects.filter(user=obj.user).count()
+    
     
     class Meta:
         model = Employee
-        fields = ["id","user","gender","phone", "adress", "position","recruitmentDate", "birthday", "profile_pic","cover_pic", "last_seen", "isOnline"]
+        fields = ["id","user","gender","phone", "adress", "position","recruitmentDate", "birthday", "profile_pic","cover_pic", "last_seen", "isOnline", "post_count", "reaction_count", "comment_count"]
         extra_kwargs = {"user":{"read_only":True}}
         
 

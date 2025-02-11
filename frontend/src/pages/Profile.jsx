@@ -105,13 +105,17 @@ function Profile() {
     if (formData.cover_pic) {
       formdetail.append("cover_pic", formData.cover_pic);
     }
-    api.put(`/api/myprofile/updateemployee/`, formData, { headers: { "Content-Type": "multipart/form-data" } }
-    ).then((resp) => {
-      if (resp.status == 200) {
-        setIsEditing(false);
-        setLoading(false);
-      }
-    }).catch((err) => console.error(err));
+    api
+      .put(`/api/myprofile/updateemployee/`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((resp) => {
+        if (resp.status == 200) {
+          setIsEditing(false);
+          setLoading(false);
+        }
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -128,14 +132,15 @@ function Profile() {
           <img
             src={employee.profile_pic}
             alt="Profile"
-            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${getClientResolutionClass() == "phone"
-              ? "size-32"
-              : getClientResolutionClass() == "desktop720"
+            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${
+              getClientResolutionClass() == "phone"
+                ? "size-32"
+                : getClientResolutionClass() == "desktop720"
                 ? "size-48"
                 : getClientResolutionClass() == "desktop786"
-                  ? "size-56"
-                  : "size-72"
-              }`}
+                ? "size-56"
+                : "size-72"
+            }`}
           />
         </div>
       </div>
@@ -195,15 +200,15 @@ function Profile() {
         )}
         <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
           <p className="text-sm text-gray-500 mb-2">Posts</p>
-          <p className="text-lg font-semibold">4 Mar, 2025</p>
+          <p className="text-lg font-semibold">{employee.post_count}</p>
         </div>
         <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
           <p className="text-sm text-gray-500 mb-2">Reactions</p>
-          <p className="text-lg font-semibold">$118.00</p>
+          <p className="text-lg font-semibold">{employee.reaction_count}</p>
         </div>
         <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
           <p className="text-sm text-gray-500 mb-2">Comments</p>
-          <p className="text-lg font-semibold">$0.00</p>
+          <p className="text-lg font-semibold">{employee.comment_count}</p>
         </div>
       </div>
 
@@ -307,7 +312,11 @@ function Profile() {
                   className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   {employeeForm.gender.map((gen) => (
-                    <option key={gen.value} value={gen.value} defaultValue={formData.gender}>
+                    <option
+                      key={gen.value}
+                      value={gen.value}
+                      defaultValue={formData.gender}
+                    >
                       {gen.label}
                     </option>
                   ))}
@@ -434,8 +443,8 @@ function Profile() {
                   name="profile_pic"
                   accept="image/*"
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
-
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -446,11 +455,11 @@ function Profile() {
                   name="cover_pic"
                   accept="image/*"
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                  className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
               </div>
             </>
           )}
-
         </div>
       </div>
     </div>

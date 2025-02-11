@@ -22,6 +22,8 @@ import Media from "../components/PostComponents/Media";
 import { useFileUpload } from "../CustomHooks/useFileUpload";
 import { FilePreviews } from "../components/FilePreviews";
 
+const chatWebSocketUrl = import.meta.env.VITE_CHAT_WS_URL;
+
 const Messages = () => {
   const currentUser = useUser(); // This hold Current User infos
   const onlineSocket = useWebSocket(); // This hold Websocket Context
@@ -30,17 +32,13 @@ const Messages = () => {
   const [lastRecievedMessage, setLastRecievedMessage] = useState(null); // This hold the last message received or sent from the clicked user
   const [messages, setMessages] = useState([]); // This hold Messages between Current User and The clicked User
   const [showInput, setShowInput] = useState(null); // This hold the Clicked User ID
-  const [indexuser, setIndexUser] = useState(null); // This hold the Index of the Clicked User on User Array
   const [messageInput, setMessageInput] = useState(""); // This hold the text tosend as a Message
   const [roomName, setRoomName] = useState(null); //This hold the ID of Websocket for RealTime chatting
   const { filePreviews, handleUpload, deleteFile, updateFile, resetFiles } =
     useFileUpload(); //This Hold The files that current user want to send
   const [loading, setLoading] = useState(false); //This for showing Loading component
-  const [cancelFileSeletingButton, setCancelSelectingFileButton] =
-    useState(false); //This boolean for cancelling selecting a file
   const [socketMessages, setsocketMessages] = useState([]); // This hold Messages between Current User and The clicked User on Websocket RealTime chatting
   const messagesEndRef = useRef(null); //This the last div in Messages container
-  const [progress, setProgress] = useState(0); //Used for showing the progress of sending a file to the server
   const [contacts, setContacts] = useState(false); //Used in Mobile views Either show User or Show Messages
   const [noMoreMessages, setNoMoreMessages] = useState(false); //This for showing "More Messages" Button
   const newMessageAudio = new Audio("/Sounds/newmessage.wav");
@@ -49,7 +47,7 @@ const Messages = () => {
   // Start a Websocket Channel for Two Users
   useEffect(() => {
     if (roomName) {
-      WebSocketInstance.connect("ws://127.0.0.1:8000/ws/chat/", roomName);
+      WebSocketInstance.connect(chatWebSocketUrl, roomName);
 
       WebSocketInstance.addCallback(
         "chat_message",
@@ -109,14 +107,12 @@ const Messages = () => {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    setCancelSelectingFileButton(true);
     if (user) {
       const messageContent = new FormData();
       messageContent.append("reciever_id", user.id);
       let newMessageid = 0;
       if (messageInput.trim() === "") {
         alert("Message Vide !!");
-        setCancelSelectingFileButton(false);
         return;
       } else {
         messageContent.append("message", messageInput);
@@ -184,7 +180,6 @@ const Messages = () => {
         .finally(() => {
           setMessageInput("");
           resetFiles();
-          setCancelSelectingFileButton(false);
           setLoading(false);
         });
     } else {
@@ -256,7 +251,6 @@ const Messages = () => {
       .catch((err) => alert(err))
       .finally(() => {
         setShowInput(senderID);
-        setIndexUser(index);
         if (currentUser?.id > senderID) {
           setRoomName(currentUser?.id + "" + senderID);
         } else {

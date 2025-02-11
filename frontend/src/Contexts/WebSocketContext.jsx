@@ -19,11 +19,9 @@ export const WebSocketProvider = ({ children }) => {
             return;
           }
 
-          webSocketRef.current = new WebSocket(
-            `ws://127.0.0.1:8000/ws/online/?token=${token}`
-          );
+          const wsUrl = import.meta.env.VITE_WS_URL;
+          webSocketRef.current = new WebSocket(`${wsUrl}?token=${token}`);
           webSocketRef.current.onopen = () => {
-            window.addEventListener("beforeunload", handleBeforeUnload);
             setOnlineStatus(webSocketRef.current);
           };
           webSocketRef.current.onerror = (error) => {

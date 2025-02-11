@@ -123,17 +123,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
         if text_data:
             try:
                 data = json.loads(text_data)
-                if data['command'] == 'Online':
-                    await self.channel_layer.group_send(
-                        self.room_group_name,
-                        {
-                            'type': 'online',
-                            'command': data['command'],
-                            'user': data['user'],
-                            'message': data['message'],
-                        }
-                    )
-                elif data['command'] == 'SendMessage':
+                if data['command'] == 'SendMessage':
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
@@ -162,14 +152,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
             print("Received empty message")
         
         
-    async def online(self, event):
-        print("Online event triggered by User : ", event["user"])
-        await self.switchUserState(event)
-        await self.send(text_data=json.dumps({
-                'user':event['user'],
-                'message':event['message'],
-                'command': event['command']
-            }))
+    
         
     
     async def SendMessage(self, event):
@@ -207,12 +190,3 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
             print(f"Employee does not exist : {err}")
             
             
-    @database_sync_to_async
-    def makeAllUsersOffline(self):
-        lastActiveUser = Employee.objects.filter(isOnline=True)
-        if lastActiveUser:
-            for row in lastActiveUser:
-                print(row)
-                if row.isOnline:
-                    row.isOnline = False
-                    row.save()
