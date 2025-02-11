@@ -10,20 +10,6 @@ export const WebSocketProvider = ({ children }) => {
   const webSocketRef = useRef(null);
 
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (
-        webSocketRef.current &&
-        webSocketRef.current.readyState === WebSocket.OPEN
-      ) {
-        webSocketRef.current.send(
-          JSON.stringify({
-            command: "Online",
-            user: parseInt(currentUser?.id),
-            message: "isOffline",
-          })
-        );
-      }
-    };
     const userConnect = async () => {
       if (currentUser && !webSocketRef.current) {
         try {
@@ -46,7 +32,6 @@ export const WebSocketProvider = ({ children }) => {
             setOnlineStatus({});
           };
           webSocketRef.current.onclose = () => {
-            window.removeEventListener("beforeunload", handleBeforeUnload);
             webSocketRef.current = null;
             setOnlineStatus({});
           };
@@ -64,22 +49,21 @@ export const WebSocketProvider = ({ children }) => {
         webSocketRef.current.close();
         webSocketRef.current = null;
       }
-      window.removeEventListener("beforeunload", handleBeforeUnload);
       setOnlineStatus({});
     };
   }, []);
 
-  useEffect(() => {
-    if (currentUser && webSocketRef.current) {
-      webSocketRef.current.send(
-        JSON.stringify({
-          command: "Online",
-          user: currentUser?.id,
-          message: "isOnline",
-        })
-      );
-    }
-  }, [onlineStatus]);
+  // useEffect(() => {
+  //   if (currentUser && webSocketRef.current) {
+  //     webSocketRef.current.send(
+  //       JSON.stringify({
+  //         command: "Online",
+  //         user: currentUser?.id,
+  //         message: "isOnline",
+  //       })
+  //     );
+  //   }
+  // }, [onlineStatus]);
 
   return (
     <WebSocketContext.Provider value={onlineStatus}>

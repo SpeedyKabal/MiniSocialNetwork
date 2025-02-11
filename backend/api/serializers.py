@@ -148,10 +148,10 @@ class FileSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if obj.post:
             if obj.hsl_path:
-                return f"http://127.0.0.1:8000/media/PostFiles/Videos/{obj.post.id}/output.m3u8"
+                return f"http://127.0.0.1:8000/media/PostFiles/Videos/{obj.post.id}/{obj.id}/output.m3u8"
         else:
             if obj.hsl_path:
-                return f"http://127.0.0.1:8000/media/messageFiles/Videos/{obj.message.id}/output.m3u8"
+                return f"http://127.0.0.1:8000/media/messageFiles/Videos/{obj.message.id}/{obj.id}/output.m3u8"
         return None
         
             

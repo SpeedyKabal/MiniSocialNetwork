@@ -7,22 +7,17 @@ import { use } from "react";
 function UserDropdown({ hideDropdown }) {
   const currentUser = useUser();
   const onlineSocket = useWebSocket();
+
   const handleLogout = () => {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
-    oflline();
+    offline();
     window.location.href = "/login"; // Redirect to login page
   };
 
-  function oflline() {
+  function offline() {
     if (onlineSocket.readyState === WebSocket.OPEN) {
-      onlineSocket.send(
-        JSON.stringify({
-          command: "Online",
-          user: currentUser?.id,
-          message: "isOffline",
-        })
-      );
+      onlineSocket.close();
     }
   }
 

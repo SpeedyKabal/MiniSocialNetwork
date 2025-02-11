@@ -95,10 +95,14 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
             now = datetime.now()
             now_time = now.strftime("%H:%M:%S")
             
-            print(self.user)
+            
             await self.accept()
                 
-            #print("User :", self.user, "Connected on", now_time)
+            print("User :", self.user, "Connected on", now_time)
+            await self.switchUserState({
+                "user": self.user,
+                "message": "isOnline"
+            })
                 
         except Exception as e:
             print(f'Error during online connect: {e}')
@@ -106,10 +110,10 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
 
     async def disconnect(self, close_code):
         try:
-            now = datetime.now()
-            now_time = now.strftime("%H:%M:%S")
-            print("WebSocket disconnect received with close code:", close_code)
-            print("User ", self.scope['user'], "Disconnected on :", now_time)
+            await self.switchUserState({
+                "user": self.user,
+                "message": "isOffline"
+            })
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         except Exception as e:
             print(f"Error during online disconnect: {e}")
@@ -189,7 +193,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
     @database_sync_to_async    
     def switchUserState(self, event):
         try:
-            employeeStatus = Employee.objects.get(user_id = event["user"])
+            employeeStatus = Employee.objects.get(user = event["user"])
             if event["message"] == "isOnline":
                 if not employeeStatus.isOnline:
                     employeeStatus.isOnline = True

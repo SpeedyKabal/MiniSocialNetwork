@@ -45,7 +45,7 @@ const Media: React.FC<MediaProps> = ({ urlFile }) => {
         modules={[Navigation, Pagination]}
         navigation
         pagination={{ clickable: true }}
-        spaceBetween={20}
+        spaceBetween={16}
         slidesPerView={1}
         className="w-full max-w-[375px]  lg:max-w-[600px] max-h-[375px] mx-auto items-center"
       >

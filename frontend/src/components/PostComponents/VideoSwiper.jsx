@@ -34,15 +34,16 @@ const VideoSwiper = ({ videoFile, index, filesLength }) => {
       >
         HSN {index + 1} / {filesLength}
       </div>
-      <media-loading-indicator slot="centered-chrome"></media-loading-indicator>
-      <media-control-bar>
+      <media-loading-indicator slot="centered-chrome">
         <media-play-button></media-play-button>
+      </media-loading-indicator>
+      <media-control-bar slot="top-chrome">
         <media-time-display showduration></media-time-display>
         <media-mute-button></media-mute-button>
         <media-volume-range></media-volume-range>
-        <media-seek-backward-button seekoffset="10"></media-seek-backward-button>
+        <media-seek-backward-button seekoffset="30"></media-seek-backward-button>
         <media-time-range></media-time-range>
-        <media-seek-forward-button seekoffset="10"></media-seek-forward-button>
+        <media-seek-forward-button seekoffset="30"></media-seek-forward-button>
         <media-playback-rate-button rates="0.5 1 2 3"></media-playback-rate-button>
         <media-fullscreen-button></media-fullscreen-button>
       </media-control-bar>
