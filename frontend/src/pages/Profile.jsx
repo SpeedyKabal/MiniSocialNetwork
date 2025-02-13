@@ -9,7 +9,7 @@ import {
   formatTime,
   getClientResolutionClass,
 } from "../services/Utilities";
-import { useUser } from "../contexts/UserContext";
+import { useUser } from "../Contexts/Usercontext";
 
 function Profile() {
   const currentUser = useUser();

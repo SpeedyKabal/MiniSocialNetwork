@@ -1,7 +1,7 @@
 import { User, LogOut } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useUser } from "../../contexts/UserContext";
-import { useWebSocket } from "../../contexts/WebSocketContext";
+import { useUser } from "../../Contexts/Usercontext";
+import { useWebSocket } from "../../Contexts/WebSocketContext";
 import { use } from "react";
 
 function UserDropdown({ hideDropdown }) {
