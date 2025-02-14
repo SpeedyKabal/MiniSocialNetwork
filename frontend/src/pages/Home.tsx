@@ -35,11 +35,24 @@ function Home() {
       .get("/api/post/")
       .then((res) => res.data)
       .then((data) => {
-        setPost(data.reverse());
+        setPost(data);
       })
       .catch((err) => alert(err))
       .finally(() => setLoading(false));
   };
+
+  const getPrevieusPosts = async () => {
+    setLoading(true);
+    const lastPostDate = post.length > 0 ? post[post.length - 1].created_at : null;
+    await api
+      .get("/api/post/previous/", { params: { date: lastPostDate } })
+      .then((res) => res.data)
+      .then((data) => {
+        setPost((prevState) => [...prevState, ...data]);
+      })
+      .catch((err) => alert(err))
+      .finally(() => setLoading(false));
+  }
 
   function handelCreatePost() {
     if (newPost !== "") {
@@ -127,21 +140,21 @@ function Home() {
                   className="relative flex items-center space-x-2 px-1 lg:px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Image className="size-6 lg:size-8" />
-                  <span className="text-md lg:text-xl">Photo</span>
+                  <span className="text-md lg:text-xl">{t("home.photo")}</span>
                 </button>
                 <button
                   onClick={() => handleUpload({ accept: 'video/*' })}
                   className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Video className="size-6 lg:size-8" />
-                  <span className="text-md lg:text-xl">Video</span>
+                  <span className="text-md lg:text-xl">{t("home.video")}</span>
                 </button>
                 <button
                   onClick={() => handleUpload({ accept: 'audio/*' })}
                   className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Music className="size-6 lg:size-8" />
-                  <span className="text-md lg:text-xl">Audio</span>
+                  <span className="text-md lg:text-xl">{t("home.audio")}</span>
                 </button>
               </div>
               <button onClick={handelCreatePost} className="bg-blue-600 text-white px-6 py-2 lg:px-8 lg:py-2 lg:text-xl rounded-full hover:bg-blue-700 transition-colors">
@@ -167,6 +180,13 @@ function Home() {
             {post.map((post) => (
               <AllPosts key={post.id} post={post} OnPostDeleted={getPost} />
             ))}
+
+            <button
+              onClick={getPrevieusPosts}
+              className="bg-blue-600 text-white px-6 py-2 lg:px-8 lg:py-2 lg:text-xl rounded-full hover:bg-blue-700 transition-colors mx-4"
+            >
+              {t("home.loadMore")}
+            </button>
           </div>
         </div>
       </div>
@@ -174,4 +194,4 @@ function Home() {
   );
 }
 
-export default Home; 
+export default Home;

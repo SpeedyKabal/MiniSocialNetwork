@@ -18,7 +18,6 @@ import {
 } from "../../services/Utilities";
 import Media from "./Media";
 
-
 function AllPosts({ post, OnPostDeleted, UpdatePost, showDetails = false }) {
   const currentUser = useUser();
   const { t, i18n } = useTranslation();
@@ -60,7 +59,7 @@ function AllPosts({ post, OnPostDeleted, UpdatePost, showDetails = false }) {
     formdata.append("id", id);
 
     await api
-      .put('api/post/update/', formdata)
+      .put("api/post/update/", formdata)
       .then((res) => {
         if (res.status === 200) {
           setIsUpdate(false);
@@ -82,9 +81,12 @@ function AllPosts({ post, OnPostDeleted, UpdatePost, showDetails = false }) {
                 className="size-10 lg:size-15  rounded-full object-cover"
               />
               <div>
-                <h3 className="font-semibold text-gray-900 text-sm lg:text-lg">
-                  {post.author.last_name} {post.author.first_name}
-                </h3>
+                <Link to={"/profile/" + post.author.username}>
+                  <h3 className="font-semibold text-gray-900 text-sm lg:text-lg">
+                    {post.author.last_name} {post.author.first_name}
+                  </h3>
+                </Link>
+
                 <p className="text-sm text-gray-500 lg:text-md">
                   {post.job} · {formatTime(post.created_at, i18n.language)}
                 </p>
@@ -135,8 +137,9 @@ function AllPosts({ post, OnPostDeleted, UpdatePost, showDetails = false }) {
           )}
 
           <hr
-            className={`w-[70%] text-blue-500  ${contentDisplay(post.content) ? "ml-auto" : ""
-              }`}
+            className={`w-[70%] text-blue-500  ${
+              contentDisplay(post.content) ? "ml-auto" : ""
+            }`}
             style={{
               float: contentDisplay(post.content) ? "right" : "none",
               background: "linear-gradient(to right, red, blue, red)",

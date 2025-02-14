@@ -46,7 +46,7 @@ export const FilePreviews = ({
       );
       break;
     default:
-      containerClass = "relative flex flex-col items-center w-32 h-32 min-w-32 min-h-32";
+      containerClass = "relative flex flex-col items-center w-36 h-36 min-w-36 min-h-36";
       content = (
         <div className="flex flex-col items-center justify-center max-w-full h-full gap-2">
           <FileIcon className="w-12 h-12 text-gray-400" />

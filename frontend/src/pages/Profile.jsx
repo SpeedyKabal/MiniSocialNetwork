@@ -161,14 +161,14 @@ function Profile() {
                   onClick={() => setIsEditing(false)}
                   className="px-6 py-2 text-lg font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200"
                 >
-                  Cancel
+                  {t("profile.cancel")}
                 </button>
                 <button
                   onClick={handleSave}
                   className="px-6 py-2 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 flex items-center gap-2"
                 >
                   <FaRegSave className="text-xl" />
-                  Save Changes
+                  {t("profile.save")}
                 </button>
               </>
             ) : (
@@ -176,7 +176,7 @@ function Profile() {
                 onClick={() => setIsEditing(true)}
                 className="px-6 py-2 text-lg font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
               >
-                Edit Profile
+                {t("profile.edit")}
               </button>
             )}
           </div>
@@ -187,27 +187,29 @@ function Profile() {
       <div className="flex flex-wrap lg:flex-nowrap gap-1 mb-4">
         {employee.isOnline ? (
           <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl border-2 border-green-500 animate-pulse transition-opacity duration-1000 ease-in-out">
-            <p className="text-sm text-gray-500 mb-2">Online</p>
-            <p className="text-lg font-semibold">Now</p>
+            <p className="text-sm text-gray-500 mb-2">{t("profile.status")}</p>
+            <p className="text-lg font-semibold">{t("profile.now")}</p>
           </div>
         ) : (
           <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
-            <p className="text-sm text-gray-500 mb-2">Last seen</p>
+            <p className="text-sm text-gray-500 mb-2">
+              {t("profile.last_seen")}
+            </p>
             <p className="text-lg font-semibold">
               {formatTime(employee.last_seen)}
             </p>
           </div>
         )}
         <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
-          <p className="text-sm text-gray-500 mb-2">Posts</p>
+          <p className="text-sm text-gray-500 mb-2">{t("profile.post")}</p>
           <p className="text-lg font-semibold">{employee.post_count}</p>
         </div>
         <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
-          <p className="text-sm text-gray-500 mb-2">Reactions</p>
+          <p className="text-sm text-gray-500 mb-2">{t("profile.reactions")}</p>
           <p className="text-lg font-semibold">{employee.reaction_count}</p>
         </div>
         <div className="min-w-1/4 p-6 bg-gray-50 rounded-xl">
-          <p className="text-sm text-gray-500 mb-2">Comments</p>
+          <p className="text-sm text-gray-500 mb-2">{t("post.comments")}</p>
           <p className="text-lg font-semibold">{employee.comment_count}</p>
         </div>
       </div>
@@ -258,7 +260,7 @@ function Profile() {
           {/* Email Section */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email address
+              {t("forms.email")}
             </label>
             {isEditing ? (
               <input
@@ -279,7 +281,7 @@ function Profile() {
           <div className="flex flex-wrap justify-between items-center">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Position
+                {t("forms.position")}
               </label>
               {isEditing ? (
                 <select
@@ -304,7 +306,7 @@ function Profile() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Gender
+                {t("profile.genre")}
               </label>
               {isEditing ? (
                 <select
@@ -331,7 +333,7 @@ function Profile() {
           <div className="flex flex-wrap justify-between items-center">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Recrutement Date
+                {t("profile.recdate")}
               </label>
               {isEditing ? (
                 <input
@@ -349,7 +351,7 @@ function Profile() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Birthday Date
+                {t("profile.birthdate")}
               </label>
               {isEditing ? (
                 <input
@@ -410,7 +412,7 @@ function Profile() {
           {/* Username Section */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Username
+              {t("forms.username")}
             </label>
             {isEditing ? (
               <div className="flex">

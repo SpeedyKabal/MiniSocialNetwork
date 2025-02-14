@@ -19,6 +19,7 @@ from django.core.mail import send_mail
 from .serializers import UserSerializers, PostSerializers, ReactionSerializers, CommentSerializers, MessageSerializers, UserSerializersForLastMessage,EmployeeSerializers,EmployeeProfilePicture, UserUpdateSerializer, EmployeeUpdateSerializers, UserSerializersForِCurrentUser
 from .models import Post, Reaction, Comment, Message, Employee, File
 from backend.settings import EMAIL_HOST_USER
+from django.utils.dateparse import parse_datetime
 
 import logging
 
@@ -168,11 +169,30 @@ class PostListCreate(generics.ListCreateAPIView):
     serializer_class = PostSerializers
     permission_classes = [IsAuthenticated]
     
+    def get_queryset(self):
+        return Post.objects.all().order_by('-created_at')[:5]
+    
     
     def perform_create(self, serializer):
         author = self.request.user
         content = self.request.data.get('content')
         serializer.save(author=author, content=content)
+        
+
+class PostListPrevious(generics.ListAPIView):
+    serializer_class = PostSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        date = self.request.query_params.get('date')
+        if date:
+            try:
+                date_obj = parse_datetime(date)
+                if date_obj:
+                    return Post.objects.filter(created_at__lt=date_obj).order_by('-created_at')[:5]
+            except ValueError:
+                return Post.objects.none()
+        return Post.objects.none()
 
 
 class PostCreate(generics.RetrieveAPIView):
