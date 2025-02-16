@@ -148,10 +148,16 @@ class FileSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if obj.post:
             if obj.hsl_path:
-                return request.build_absolute_uri(f"/media/PostFiles/Videos/{obj.post.id}/{obj.id}/output.m3u8")
+                if request:
+                    return request.build_absolute_uri(f"/media/PostFiles/Videos/{obj.post.id}/{obj.id}/output.m3u8")
+                else:
+                    return f"/media/PostFiles/Videos/{obj.post.id}/{obj.id}/output.m3u8"
         else:
             if obj.hsl_path:
-                return request.build_absolute_uri(f"/media/messageFiles/Videos/{obj.message.id}/{obj.id}/output.m3u8")
+                if request:
+                    return request.build_absolute_uri(f"/media/messageFiles/Videos/{obj.message.id}/{obj.id}/output.m3u8")
+                else:
+                    return f"/media/messageFiles/Videos/{obj.message.id}/{obj.id}/output.m3u8"
         return None
         
             

@@ -78,9 +78,14 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
        except Message.DoesNotExist:
            return None
        messageSerialized = MessageSerializers(message).data
+       print("Message Serialized : ", messageSerialized)
        domain = "http://127.0.0.1:8000"
        for file in messageSerialized.get("mediaFiles", []):
-           file["file"] = f"{domain}{file['file']}"
+           if file["hslURL"]:  # If the file is a video
+               file["hslURL"] = f"{domain}{file['hslURL']}"
+           else:
+               file["file"] = f"{domain}{file['file']}"
+
        return messageSerialized
 
 

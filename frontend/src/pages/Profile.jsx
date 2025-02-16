@@ -37,7 +37,212 @@ function Profile() {
       { value: "Male", label: "Male" },
       { value: "Female", label: "Female" },
     ],
-    position: [],
+    position: [
+      {
+        value: "None",
+        label: "None",
+      },
+      {
+        value: "73 Praticien spécialiste principal de sante publique",
+        label: "73 Praticien spécialiste principal de sante publique",
+      },
+      {
+        value: "74 Praticien spécialiste assistant de sante publique",
+        label: "74 Praticien spécialiste assistant de sante publique",
+      },
+      {
+        value: "Administrateur",
+        label: "Administrateur",
+      },
+      {
+        value: "Administrateur analyste",
+        label: "Administrateur analyste",
+      },
+      {
+        value: "Administrateur principal",
+        label: "Administrateur principal",
+      },
+      {
+        value: "Agent d`administration",
+        label: "Agent d`administration",
+      },
+      {
+        value: "Agent de bureau",
+        label: "Agent de bureau",
+      },
+      {
+        value: "Agent de prévention de niveau 1",
+        label: "Agent de prévention de niveau 1",
+      },
+      {
+        value: "Agent de service niveau 1 à Plein Temps",
+        label: "Agent de service niveau 1 à Plein Temps",
+      },
+      {
+        value: "Agent de service niveau 2 à Plein Temps",
+        label: "Agent de service niveau 2 à Plein Temps",
+      },
+      {
+        value: "Agent principal d'administration",
+        label: "Agent principal d'administration",
+      },
+      {
+        value: "Aide-soignant de sante publique",
+        label: "Aide-soignant de sante publique",
+      },
+      {
+        value: "Aide-soignant principal de sante publique",
+        label: "Aide-soignant principal de sante publique",
+      },
+      {
+        value: "Amar de sante publique",
+        label: "Amar de sante publique",
+      },
+      {
+        value: "Assistant ingénieur de niveau 2 en informatique",
+        label: "Assistant ingénieur de niveau 2 en informatique",
+      },
+      {
+        value: "Assistant médical de sante publique",
+        label: "Assistant médical de sante publique",
+      },
+      {
+        value: "Assistant social de sante publique",
+        label: "Assistant social de sante publique",
+      },
+      {
+        value: "Attaché d'administration",
+        label: "Attaché d'administration",
+      },
+      {
+        value: "Attache de laboratoire de sante publique",
+        label: "Attache de laboratoire de sante publique",
+      },
+      {
+        value: "Attaché principal d'administration",
+        label: "Attaché principal d'administration",
+      },
+      {
+        value: "Biologiste Du 1er Degré De Sante Publique",
+        label: "Biologiste Du 1er Degré De Sante Publique",
+      },
+      {
+        value: "Biologiste Du 2ème Degré De Sante Publique",
+        label: "Biologiste Du 2ème Degré De Sante Publique",
+      },
+      {
+        value: "Comptable administratif",
+        label: "Comptable administratif",
+      },
+      {
+        value: "Comptable administratif principal",
+        label: "Comptable administratif principal",
+      },
+      {
+        value: "Conducteur automobile de niveau 1",
+        label: "Conducteur automobile de niveau 1",
+      },
+      {
+        value: "Diététicien de sante publique",
+        label: "Diététicien de sante publique",
+      },
+      {
+        value: "Gardien",
+        label: "Gardien",
+      },
+      {
+        value: "Infirmier de sante publique",
+        label: "Infirmier de sante publique",
+      },
+      {
+        value: "Infirmier major de sante publique",
+        label: "Infirmier major de sante publique",
+      },
+      {
+        value: "Infirmier spécialise de sante publique",
+        label: "Infirmier spécialise de sante publique",
+      },
+      {
+        value: "Ingénieur etat en informatique",
+        label: "Ingénieur etat en informatique",
+      },
+      {
+        value: "Ingénieur etat en statistique",
+        label: "Ingénieur etat en statistique",
+      },
+      {
+        value: "Kinésithérapeute de sante publique",
+        label: "Kinésithérapeute de sante publique",
+      },
+      {
+        value: "Laborantin de sante publique",
+        label: "Laborantin de sante publique",
+      },
+      {
+        value: "Laborantin spécialise de sante publique",
+        label: "Laborantin spécialise de sante publique",
+      },
+      {
+        value: "Manipulateur en imagerie médicale de sante publique",
+        label: "Manipulateur en imagerie médicale de sante publique",
+      },
+      {
+        value: "Manipulateur en imagerie médicale spécialise de sante publique",
+        label: "Manipulateur en imagerie médicale spécialise de sante publique",
+      },
+      {
+        value: "Médecin généraliste de sante publique",
+        label: "Médecin généraliste de sante publique",
+      },
+      {
+        value: "Médecin généraliste en chef de santé publique",
+        label: "Médecin généraliste en chef de santé publique",
+      },
+      {
+        value: "Ouvrier Professionnel de 1ère Catégorie",
+        label: "Ouvrier Professionnel de 1ère Catégorie",
+      },
+      {
+        value: "Ouvrier Professionnel Niveau 1 à Plein Temps",
+        label: "Ouvrier Professionnel Niveau 1 à Plein Temps",
+      },
+      {
+        value: "Ouvrier Professionnel Niveau 2 à Plein Temps",
+        label: "Ouvrier Professionnel Niveau 2 à Plein Temps",
+      },
+      {
+        value: "Ouvrier Professionnel Niveau 4 à Plein Temps",
+        label: "Ouvrier Professionnel Niveau 4 à Plein Temps",
+      },
+      {
+        value: "Pharmacien généraliste de sante publique",
+        label: "Pharmacien généraliste de sante publique",
+      },
+      {
+        value: "Psychologue clinicien de sante publique",
+        label: "Psychologue clinicien de sante publique",
+      },
+      {
+        value: "Sage-femme de sante publique",
+        label: "Sage-femme de sante publique",
+      },
+      {
+        value: "Sage-femme principale",
+        label: "Sage-femme principale",
+      },
+      {
+        value: "Sage-femme spécialisée de sante publique",
+        label: "Sage-femme spécialisée de sante publique",
+      },
+      {
+        value: "Secrétaire",
+        label: "Secrétaire",
+      },
+      {
+        value: "Technicien supérieur en informatique",
+        label: "Technicien supérieur en informatique",
+      },
+    ],
   });
 
   useEffect(() => {
@@ -63,18 +268,6 @@ function Profile() {
         const response = await api.get(`/api/profile/${username}/`);
         const data = response.data;
         setEmployee(data);
-      } catch (err) {
-        alert(err);
-      }
-
-      try {
-        await api
-          .get("api/myprofile/getpositions/")
-          .then((resp) => {
-            setEmployeeForm({ ...employeeForm, position: resp.data });
-          })
-          .catch((err) => alert(err))
-          .finally(() => setLoading(false));
       } catch (err) {
         alert(err);
       }

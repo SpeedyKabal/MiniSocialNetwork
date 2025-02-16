@@ -153,9 +153,6 @@ const Messages = () => {
                   updateFile(file.id, { status: "Error" });
                 });
             }
-            console.log("sender_id :", currentUser?.id);
-            console.log("receiver_id :", res.data.reciever.id);
-            console.log("message_id :", res.data.id);
             const messageContentforWebSocket = {
               sender_id: currentUser?.id,
               receiver_id: res.data.reciever.id,
