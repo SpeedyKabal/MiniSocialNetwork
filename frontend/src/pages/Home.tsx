@@ -4,11 +4,11 @@ import api from "../api";
 import AllPosts from "../components/PostComponents/AllPosts";
 import Loading from "../components/Extensions/Loading";
 import { useTranslation } from "react-i18next";
-import { Music, Video, Image, CircleX } from "lucide-react";
+import { Music, Video, Image } from "lucide-react";
 import { useUser } from '../Contexts/Usercontext'
 import { contentDisplay, adjustTextareaHeight } from "../services/Utilities";
 import { FilePreview, Post } from '../types/types'
-import { useFileUpload } from '../customhooks/useFileUpload'
+import { useFileUpload } from '../CustomHooks/useFileUpload'
 import { FilePreviews } from "../components/FilePreviews";
 
 

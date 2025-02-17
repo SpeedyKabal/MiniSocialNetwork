@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 import "../../styles/mediaChrome.css";
 import { useUser } from "../../Contexts/Usercontext";
 import PostDropdown from "./PostDropdown";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import {
   formatTime,
   contentDisplay,
@@ -20,8 +20,7 @@ import Media from "./Media";
 
 function AllPosts({ post, OnPostDeleted, UpdatePost, showDetails = false }) {
   const currentUser = useUser();
-  const { t, i18n } = useTranslation();
-  const isArabic = i18n.language == "ar";
+  const { i18n } = useTranslation();
   const [updatePostcontent, setUpdatePostContent] = useState(post.content);
   const [isUpdate, setIsUpdate] = useState(false);
   const textareaRef = useRef(null);
@@ -114,7 +113,7 @@ function AllPosts({ post, OnPostDeleted, UpdatePost, showDetails = false }) {
                   onClick={() => handleEditPost(post.id)}
                   className="text-blue-500 hover:bg-green-500 rounded-lg absolute top-1/2 right-0 transform -translate-x-1/2 -translate-y-1/2 "
                 >
-                  <ChevronRight size={35} strokeWidth={3} absoluteStrokeWidth />
+                  <ChevronRight size={32} strokeWidth={2.5} />
                 </button>
               </div>
             ) : (

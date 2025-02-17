@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+import os
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from api.models import Message, Employee
@@ -79,7 +80,7 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
            return None
        messageSerialized = MessageSerializers(message).data
        print("Message Serialized : ", messageSerialized)
-       domain = "http://127.0.0.1:8000"
+       domain = os.getenv("DOMAIN")  # Use the DOMAIN variable from .env
        for file in messageSerialized.get("mediaFiles", []):
            if file["hslURL"]:  # If the file is a video
                file["hslURL"] = f"{domain}{file['hslURL']}"
@@ -193,5 +194,4 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
             
         except Employee.DoesNotExist as err:
             print(f"Employee does not exist : {err}")
-            
-            
+

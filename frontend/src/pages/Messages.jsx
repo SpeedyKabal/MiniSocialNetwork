@@ -4,10 +4,8 @@ import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 import { IoCheckmarkDoneSharp } from "react-icons/io5";
 import { IoCheckmarkSharp } from "react-icons/io5";
-import { FaFile } from "react-icons/fa";
-import { MdCancel, MdAttachFile } from "react-icons/md";
+import { MdAttachFile } from "react-icons/md";
 import WebSocketInstance from "../services/WebSocketService";
-import FileReaderForMessages from "../components/FileReaderForMessages";
 import Loading from "../components/Extensions/Loading";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../Contexts/Usercontext";
@@ -19,7 +17,7 @@ import {
   contentDisplay,
 } from "../services/Utilities";
 import Media from "../components/PostComponents/Media";
-import { useFileUpload } from "../customhooks/useFileUpload";
+import { useFileUpload } from "../CustomHooks/useFileUpload";
 import { FilePreviews } from "../components/FilePreviews";
 
 const chatWebSocketUrl = import.meta.env.VITE_CHAT_WS_URL;

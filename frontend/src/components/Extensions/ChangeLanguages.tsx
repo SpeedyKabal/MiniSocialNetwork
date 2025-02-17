@@ -25,4 +25,4 @@ function ChangeLanguages() {
     )
 }
 
-export default ChangeLanguages
+export default ChangeLanguages;

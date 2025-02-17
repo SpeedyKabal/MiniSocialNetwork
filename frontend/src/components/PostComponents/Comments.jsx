@@ -1,8 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useUser } from "../../Contexts/Usercontext";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronLeft, Settings } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { IoSettingsOutline } from "react-icons/io5";
 import api from "../../api";
 import {
   formatTime,
@@ -196,7 +195,7 @@ function Comments({ post_id }) {
                         }}
                         className={`text-sky-900 cursor-pointer text-xl lg:text-2xl duration-300 px-2 mx-2 transition ease-in-out delay-150 hover:text-blue-500 hover:rotate-90`}
                       >
-                        <IoSettingsOutline />
+                        <Settings />
                       </button>
 
                       {commentSettingMenu === ele.id && (
