@@ -73,7 +73,36 @@ def convert_video_to_hls(sender, instance, created, **kwargs):
         ]
 
         try:
-            subprocess.run(command, check=True)
+            #subprocess.run(command, check=True)
+            # with open("output.txt", "w") as f:
+            #     subprocess.run(command, stdout=f, stderr=f, check=True, text=True, start_new_session=True)
+
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
+
+            while True:
+                output = process.stderr.readline()
+                if output == "" and process.poll() is not None:
+                    break
+                
+                endProcess = re.search(r'Terminating thread with return code 0', output)
+                if(endProcess):
+                    print(endProcess)
+                    break
+                
+                with open("output.txt", "w") as f:
+                    f.write(output)
+
+                # Extract "time=" (progress time) and "progress=" (status)
+                time_match = re.search(r'time=([\d:]+)', output)
+                progress_match = re.search(r'progress=(\w+)', output)
+
+                if time_match:
+                    print(f"Processing Time: {time_match.group(1)}")  # Extracted time value
+
+                if progress_match:
+                    print(f"Progress Status: {progress_match.group(1)}")  # Extracted progress value
+
+            process.wait()
             File.objects.filter(id=instance.id).update(hsl_path=f"{instance.post.id if instance.post else instance.message.id}/{instance.id}/output.m3u8")
             os.remove(input_path)
         except subprocess.CalledProcessError as e:
