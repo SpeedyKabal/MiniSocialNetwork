@@ -74,6 +74,7 @@ function Login() {
               ref={usernameInput}
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder={t("forms.userOrEmail")}
+              autoComplete="On"
             />
           </div>
           <div>
@@ -86,6 +87,7 @@ function Login() {
                 name="password"
                 className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder={t("forms.password")}
+                autoComplete="On"
               />
               <button
                 type="button"

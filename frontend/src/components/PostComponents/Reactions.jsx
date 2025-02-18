@@ -22,7 +22,6 @@ function Reactions({ post_id }) {
     try {
       const response = await api.get(`/api/post/reaction/?post_id=${post_id}`);
       const data = response.data;
-      console.log(data);
       setAllReactions(data);
       // Calculate likes and dislikes from fetched reactions
       const LikesCounter = data.filter((ele) => ele.reaction == "Like").length;
@@ -67,8 +66,8 @@ function Reactions({ post_id }) {
             reaction: reactionType,
           })
           .catch((err) => alert(err));
-        if (userReactions == "like") {
-          updateReaction.likes--;
+        if (userReactions == "Like") {
+          updateReaction.Likes--;
           updateReaction.Dislikes++;
         } else {
           updateReaction.Dislikes--;
@@ -101,7 +100,7 @@ function Reactions({ post_id }) {
   };
 
   return (
-    <div className="post-actions flex justify-between">
+    <div className="post-actions flex justify-between clear-right">
       <div className="flex flex-col items-center gap-2 m-4">
         <button
           onClick={() => handleReaction("Like")}

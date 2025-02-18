@@ -83,6 +83,7 @@ const Messages = () => {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set the height to the scrollHeight
     }
   }, [messageInput]);
+
   const handleReceivedSocketMessages = (data) => {
     setsocketMessages((prevMessages) => {
       const newMessages = [...prevMessages, data];
@@ -312,10 +313,6 @@ const Messages = () => {
     }
   };
 
-  // const cancelSelectingFile = () => {
-  //   setInputFile([]);
-  // };
-
   return (
     <div className="flex flex-col mb-4">
       {loading === true && <Loading />}
@@ -325,9 +322,8 @@ const Messages = () => {
           <div className="flex border-1 border-blue-200 rounded drop-shadow-lg h-full">
             {/* <!-- Left --> */}
             <div
-              className={`lg:w-1/3 ${
-                !contacts ? "w-full" : "w-0"
-              }  border-1 border-blue-200 flex flex-col overflow-scroll`}
+              className={`lg:w-1/3 ${!contacts ? "w-full" : "w-0"
+                }  border-1 border-blue-200 flex flex-col overflow-scroll`}
             >
               <User
                 UserClicked={fetchMessages}
@@ -338,9 +334,8 @@ const Messages = () => {
 
             {/* <!-- Right --> */}
             <div
-              className={`lg:w-3/4 ${
-                contacts ? "w-full" : "w-0"
-              } flex flex-col border-1  border-blue-200`}
+              className={`lg:w-3/4 ${contacts ? "w-full" : "w-0"
+                } flex flex-col border-1 border-blue-200`}
             >
               {/* <!-- Header --> */}
               <div className="py-1 px-3 bg-grey-lighter flex flex-row justify-stretch items-center">
@@ -365,9 +360,8 @@ const Messages = () => {
                   <div className="flex items-center">
                     <div>
                       <img
-                        className={`w-10 h-10 rounded-full ${
-                          contacts ? "ml-2" : ""
-                        }`}
+                        className={`w-10 h-10 rounded-full ${contacts ? "ml-2" : ""
+                          }`}
                         src={user?.profile_pic}
                       />
                     </div>

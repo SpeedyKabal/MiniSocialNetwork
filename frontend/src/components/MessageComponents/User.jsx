@@ -38,6 +38,7 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
     }
   }, [lastReceivedMessage]);
 
+
   useEffect(() => {
     if (onlineSocket.readyState === 1 && currentUser) {
       const handleWebSocketMessage = (e) => {
@@ -163,7 +164,7 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
 
         {users?.map((user, index) => (
           <div
-            className="bg-white px-3 flex items-center  hover:bg-green-100 cursor-pointer"
+            className={`px-3 flex items-center hover:bg-green-100 cursor-pointer ${user.last_message ? user.last_message.sender != currentUser.id && !user.last_message.is_read ? "bg-red-500/20 animate-pulse" : "bg-white" : "bg-white"}`}
             key={user.id}
             onClick={() => {
               fetchMessages(user, index);
@@ -174,6 +175,7 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
                 className="h-8 w-8 lg:h-10 lg:w-10 rounded-full"
                 src={user?.profile_pic}
                 alt="ProfilePhoto"
+                loading="lazy"
               />
             </div>
             <div className="ml-4 flex-1 border-b-3 border-blue-200 py-1">
@@ -211,9 +213,8 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
               </div>
             </div>
             <div
-              className={`${
-                user.isOnline ? "bg-green-500 animate-pulse" : "bg-slate-500"
-              }  w-3 h-3 rounded-full mx-2`}
+              className={`${user.isOnline ? "bg-green-500 animate-pulse" : "bg-slate-500"
+                }  w-3 h-3 rounded-full mx-2`}
             ></div>
           </div>
         ))}

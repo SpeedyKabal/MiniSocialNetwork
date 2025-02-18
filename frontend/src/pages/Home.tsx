@@ -19,7 +19,10 @@ function Home() {
   const { filePreviews, handleUpload, deleteFile, updateFile, resetFiles } = useFileUpload();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [noMorePosts, setNoMorePosts] = useState(false);
   const { t } = useTranslation();
+
+  //TODO Add Hashtag System to filter Posts by Hashtag
 
   useEffect(() => {
     adjustTextareaHeight(textareaRef);
@@ -48,7 +51,11 @@ function Home() {
       .get("/api/post/previous/", { params: { date: lastPostDate } })
       .then((res) => res.data)
       .then((data) => {
-        setPost((prevState) => [...prevState, ...data]);
+        if (data.length > 0) {
+          setPost((prevState) => [...prevState, ...data]);
+        } else {
+          setNoMorePosts(true);
+        }
       })
       .catch((err) => alert(err))
       .finally(() => setLoading(false));
@@ -181,12 +188,18 @@ function Home() {
               <AllPosts key={post.id} post={post} OnPostDeleted={getPost} />
             ))}
 
-            <button
-              onClick={getPrevieusPosts}
-              className="bg-blue-600 text-white px-6 py-2 lg:px-8 lg:py-2 lg:text-xl rounded-full hover:bg-blue-700 transition-colors mx-4"
-            >
-              {t("home.loadMore")}
-            </button>
+            {noMorePosts ? (
+              <span className="text-sm font-semibold bg-sky-50/60 italic text-red-500 rounded-lg py-1 px-6 my-2">{t("home.NoMore")}</span>
+            ) : (
+              <button
+                onClick={getPrevieusPosts}
+                className="bg-blue-600 text-white px-6 py-2 lg:px-8 lg:py-2 lg:text-xl rounded-full hover:bg-blue-700 transition-colors mx-4 my-2"
+              >
+                {t("home.loadMore")}
+              </button>
+            )}
+
+
           </div>
         </div>
       </div>

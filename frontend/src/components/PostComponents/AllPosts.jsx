@@ -136,13 +136,11 @@ function AllPosts({ post, OnPostDeleted, UpdatePost, showDetails = false }) {
           )}
 
           <hr
-            className={`w-[70%] text-blue-500  ${
-              contentDisplay(post.content) ? "ml-auto" : ""
-            }`}
+            className="w-[70%] text-blue-500"
             style={{
               float: contentDisplay(post.content) ? "right" : "none",
               background: "linear-gradient(to right, red, blue, red)",
-              height: "2px",
+              height: "3px",
               border: "none",
             }}
           />
