@@ -30,5 +30,6 @@ export interface FilePreview {
   name: string;
   file: File;
   progress: number;
+  progressProcessing: number,
   status: string;
 }

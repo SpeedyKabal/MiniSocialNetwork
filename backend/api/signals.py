@@ -82,7 +82,7 @@ def convert_video_to_hls(sender, instance, created, **kwargs):
             with subprocess.Popen(command, stderr=subprocess.PIPE, text=True) as process:
                 start_time = time.time()
                 if duration:
-                    timeout = duration / 2 if duration > 60 else duration   # 5 minutes timeout
+                    timeout = duration / 2 if duration > 60 else duration
                 else:
                     timeout = 600 #5 Minutes
 

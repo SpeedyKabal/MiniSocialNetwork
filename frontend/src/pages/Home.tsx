@@ -21,22 +21,20 @@ function Home() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [noMorePosts, setNoMorePosts] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [processingProgress, setProcessingProgress] = useState(0);
   const onlineSocket = useWebSocket(); // This hold Websocket Context
   const { t } = useTranslation();
 
   //TODO Add Hashtag System to filter Posts by Hashtag
 
   useEffect(() => {
-    if (onlineSocket.readyState == WebSocket.OPEN && currentUser) {
-      onlineSocket.onmessage = (e) => {
+    if (onlineSocket.readyState == WebSocket.OPEN) {
+      onlineSocket.onmessage = (e: { data: string; }) => {
         const WebSocketObject = JSON.parse(e.data);
         if (
           WebSocketObject["command"] == "ffmpegProgress"
         ) {
-          setProgress(parseInt(WebSocketObject["progress"]));
-          console.log(WebSocketObject["progress"]);
-          console.log(typeof (WebSocketObject["progress"]));
+          setProcessingProgress(Math.floor(WebSocketObject["progress"]));
         }
       };
     }
@@ -102,12 +100,14 @@ function Home() {
                   const uploadingProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                   updateFile(file.id, {
                     progress: uploadingProgress,
-                    status: uploadingProgress > 99 ? `Processing ${progress}` : "Uploading"
+                    status: uploadingProgress > 99 ? "Processing" : "Uploading",
+                    progressProcessing: processingProgress
                   });
                 }
               }
             }).then((res) => {
               if (res.status == 201) {
+                setProcessingProgress(0);
                 updateFile(file.id, { status: "Success" });
               }
 
@@ -188,7 +188,7 @@ function Home() {
             </div>
             <div className="flex items-center gap-4 overflow-x-auto max-w-[90vw]">
 
-              {filePreviews.map((file: FilePreview, index: React.Key | null | undefined) => (
+              {filePreviews.map((file: FilePreview, index: React.Key) => (
                 <FilePreviews
                   key={index}
                   file={file}

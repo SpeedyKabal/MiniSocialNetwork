@@ -22,6 +22,7 @@ export const useFileUpload = () => {
         name: file.name,
         file: file,
         progress: 0,
+        progressProcessing: 0,
         status: 'Idle',
       }));
       setFilePreviews(prev => [...prev, ...newFiles]);
