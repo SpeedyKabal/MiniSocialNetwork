@@ -28,12 +28,6 @@ const VideoSwiper = ({ videoFile, index, filesLength }) => {
         crossOrigin=""
         className="mx-auto aspect-video"
       ></video>
-      <div
-        className="text-2xl bg-black/25 text-center w-full text-white"
-        slot="top-chrome"
-      >
-        HSN {index + 1} / {filesLength}
-      </div>
       <media-loading-indicator slot="centered-chrome">
         <media-play-button></media-play-button>
       </media-loading-indicator>

@@ -6,6 +6,7 @@ import Loading from "../components/Extensions/Loading";
 import { useTranslation } from "react-i18next";
 import { Music, Video, Image } from "lucide-react";
 import { useUser } from '../Contexts/Usercontext'
+import { useWebSocket } from "../Contexts/WebSocketContext";
 import { contentDisplay, adjustTextareaHeight } from "../services/Utilities";
 import { FilePreview, Post } from '../types/types'
 import { useFileUpload } from '../CustomHooks/useFileUpload'
@@ -20,9 +21,26 @@ function Home() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [noMorePosts, setNoMorePosts] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const onlineSocket = useWebSocket(); // This hold Websocket Context
   const { t } = useTranslation();
 
   //TODO Add Hashtag System to filter Posts by Hashtag
+
+  useEffect(() => {
+    if (onlineSocket.readyState == WebSocket.OPEN && currentUser) {
+      onlineSocket.onmessage = (e) => {
+        const WebSocketObject = JSON.parse(e.data);
+        if (
+          WebSocketObject["command"] == "ffmpegProgress"
+        ) {
+          setProgress(parseInt(WebSocketObject["progress"]));
+          console.log(WebSocketObject["progress"]);
+          console.log(typeof (WebSocketObject["progress"]));
+        }
+      };
+    }
+  }, [onlineSocket]);
 
   useEffect(() => {
     adjustTextareaHeight(textareaRef);
@@ -84,7 +102,7 @@ function Home() {
                   const uploadingProgress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                   updateFile(file.id, {
                     progress: uploadingProgress,
-                    status: uploadingProgress > 99 ? "Processing" : "Uploading"
+                    status: uploadingProgress > 99 ? `Processing ${progress}` : "Uploading"
                   });
                 }
               }

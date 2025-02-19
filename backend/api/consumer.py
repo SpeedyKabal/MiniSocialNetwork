@@ -177,6 +177,12 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
                 'command': event['command'],
                 'user':event['user'],
             }))
+        
+    async def send_ffmpeg_progress(self, event):
+        await self.send(text_data=json.dumps({
+            'command': 'ffmpegProgress',
+            'progress': event['progress']
+        }))
     
         
     @database_sync_to_async    
