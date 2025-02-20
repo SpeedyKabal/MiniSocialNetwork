@@ -12,6 +12,7 @@ urlpatterns = [
     #File Uploading
     path("post/upload-file/", views.FileUploadPost.as_view(), name="upload_file_2_post"),
     path("message/upload-file/", views.FileUploadMessage.as_view(), name="upload_file_2_message"),
+    path("post/process-video/<int:file_id>/<str:fileLoopid>/", views.ProcessVideoView.as_view(), name="process-video"),
 
     #Get Current User Information API LINK
     path("token/", views.CustomTokenObtainPairView.as_view(), name="get_token"),

@@ -157,10 +157,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
         else:
             print("Received empty message")
         
-        
-    
-        
-    
+
     async def SendMessage(self, event):
         print("SendMessage event triggered by Sender : ",event['sender'], " and by Reciever : ",event['reciever'] )
         await self.send(text_data=json.dumps({
@@ -178,11 +175,13 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
                 'user':event['user'],
             }))
         
+    
     async def send_ffmpeg_progress(self, event):
         await self.send(text_data=json.dumps({
-            'command': 'ffmpegProgress',
-            'progress': event['progress']
-        }))
+                'command': "ffmpegProgress",
+                'progress': event['progress'],
+                'fileid' : event['fileLoopID'],
+            }))
     
         
     @database_sync_to_async    

@@ -59,11 +59,11 @@ export const FilePreviews = ({
     <div className={containerClass}>
       {content}
       <div
-        className="absolute bottom-[50%] left-0 h-5 bg-blue-500"
+        className="absolute bottom-[35%] left-0 h-5 bg-blue-500"
         style={{ width: `${file.progress}%` }}
       />
       <div
-        className="absolute bottom-[75%] left-0 h-5 bg-red-500"
+        className="absolute bottom-[65%] left-0 h-5 bg-red-500"
         style={{ width: `${file.progressProcessing}%` }}
       />
       <span className="text-lg text-red-700">{file.status}</span>

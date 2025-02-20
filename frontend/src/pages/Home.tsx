@@ -13,6 +13,7 @@ import { useFileUpload } from '../CustomHooks/useFileUpload'
 import { FilePreviews } from "../components/FilePreviews";
 
 
+
 function Home() {
   const currentUser = useUser();
   const [post, setPost] = useState<Post[]>([]);
@@ -21,11 +22,9 @@ function Home() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [noMorePosts, setNoMorePosts] = useState(false);
-  const [processingProgress, setProcessingProgress] = useState(0);
   const onlineSocket = useWebSocket(); // This hold Websocket Context
   const { t } = useTranslation();
 
-  //TODO Add Hashtag System to filter Posts by Hashtag
 
   useEffect(() => {
     if (onlineSocket.readyState == WebSocket.OPEN) {
@@ -34,7 +33,7 @@ function Home() {
         if (
           WebSocketObject["command"] == "ffmpegProgress"
         ) {
-          setProcessingProgress(Math.floor(WebSocketObject["progress"]));
+          updateFile(WebSocketObject["fileid"], { progressProcessing: Math.floor(WebSocketObject["progress"]) });
         }
       };
     }
@@ -101,20 +100,23 @@ function Home() {
                   updateFile(file.id, {
                     progress: uploadingProgress,
                     status: uploadingProgress > 99 ? "Processing" : "Uploading",
-                    progressProcessing: processingProgress
                   });
                 }
               }
-            }).then((res) => {
+            }).then(async (res) => {
               if (res.status == 201) {
-                setProcessingProgress(0);
-                updateFile(file.id, { status: "Success" });
+                const fileId = res.data.id;
+                if (file.type == "video") {
+                  await api.post(`api/post/process-video/${fileId}/${file.id}/`);
+                } else {
+                  updateFile(file.id, { status: "Success" });
+                }
               }
-
             }).catch((err) => {
               console.error("File upload failed", file.name, err);
               updateFile(file.id, { status: "Error" });
             })
+
           }
         }
       }).catch((err) => {
@@ -130,6 +132,7 @@ function Home() {
       });
     }
   }
+
 
   function handlePostInput(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const textAreaString = e.target.value;

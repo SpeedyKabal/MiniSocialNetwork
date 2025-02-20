@@ -38,7 +38,7 @@ def get_video_duration(input_path):
     except ValueError:
         return None
     
-
+'''
 @receiver(post_save, sender=File)
 def convert_video_to_hls(sender, instance, created, **kwargs):
     if created:
@@ -112,7 +112,7 @@ def convert_video_to_hls(sender, instance, created, **kwargs):
                         # consumer.send_ffmpeg_progress(progress)
                         print(f"Processing Time: {time_match.group(1)}, Progress: {progress}%")
                         async_to_sync(channel_layer.group_send)(
-                                'chat_online',  
+                                'chat_online',
                                 {
                                     'type': 'send_ffmpeg_progress',
                                     'progress': progress,
@@ -138,3 +138,4 @@ def convert_video_to_hls(sender, instance, created, **kwargs):
             print(f"FFmpeg error: {e}")
         except TimeoutError as e:
             print(e)
+'''
