@@ -24,8 +24,8 @@ function Profile() {
     email: "",
     username: "",
     adress: "",
-    gender: [],
-    position: [],
+    gender: "",
+    position: "",
     recruitmentDate: "",
     birthday: "",
     phone: "",
@@ -289,7 +289,7 @@ function Profile() {
     formdetail.append("gender", formData.gender);
     formdetail.append("phone", formData.phone);
     formdetail.append("adress", formData.adress);
-    formdetail.append("position", formData.birthday);
+    formdetail.append("position", formData.position);
     formdetail.append("birthday", formData.birthday);
     formdetail.append("recruitmentDate", formData.recruitmentDate);
     if (formData.profile_pic) {
@@ -299,7 +299,7 @@ function Profile() {
       formdetail.append("cover_pic", formData.cover_pic);
     }
     api
-      .put(`/api/myprofile/updateemployee/`, formData, {
+      .put(`/api/myprofile/updateemployee/`, formdetail, {
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((resp) => {
@@ -336,14 +336,15 @@ function Profile() {
           <img
             src={employee.profile_pic}
             alt="Profile"
-            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${getClientResolutionClass() == "phone"
-              ? "size-32"
-              : getClientResolutionClass() == "desktop720"
+            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${
+              getClientResolutionClass() == "phone"
+                ? "size-32"
+                : getClientResolutionClass() == "desktop720"
                 ? "size-48"
                 : getClientResolutionClass() == "desktop786"
-                  ? "size-56"
-                  : "size-72"
-              }`}
+                ? "size-56"
+                : "size-72"
+            }`}
           />
         </div>
       </div>
@@ -490,13 +491,11 @@ function Profile() {
                 <select
                   className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   name="position"
+                  onChange={handleInputChange}
+                  value={formData.position}
                 >
                   {employeeForm.position.map((pos) => (
-                    <option
-                      key={pos.value}
-                      value={pos.value}
-                      defaultValue={formData.position}
-                    >
+                    <option key={pos.value} value={pos.value}>
                       {pos.label}
                     </option>
                   ))}
@@ -515,13 +514,11 @@ function Profile() {
                 <select
                   name="gender"
                   className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  onChange={handleInputChange}
+                  value={formData.gender}
                 >
                   {employeeForm.gender.map((gen) => (
-                    <option
-                      key={gen.value}
-                      value={gen.value}
-                      defaultValue={formData.gender}
-                    >
+                    <option key={gen.value} value={gen.value}>
                       {gen.label}
                     </option>
                   ))}

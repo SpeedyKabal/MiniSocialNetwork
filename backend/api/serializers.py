@@ -332,7 +332,15 @@ class EmployeeUpdateSerializers(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = ["gender","phone", "adress", "position","recruitmentDate", "birthday", "profile_pic","cover_pic"]
-        
+    
+    
+    def update(self, instance, validated_data):
+        instance.gender = validated_data.get("gender", instance.gender)
+        instance.position = validated_data.get("position", instance.position)
+        instance.birthday = validated_data.get("birthday", instance.birthday)
+        instance.recruitmentDate = validated_data.get("recruitmentDate", instance.recruitmentDate)
+        instance.save()
+        return instance   
         
 class EmployeeProfilePicture(serializers.ModelSerializer):
     class Meta:
