@@ -40,7 +40,7 @@ export const WebSocketProvider = ({ children }) => {
     };
     setTimeout(() => {
       userConnect();
-    }, 1500);
+    }, 500);
 
     return () => {
       if (webSocketRef.current) {

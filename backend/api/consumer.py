@@ -147,6 +147,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
                             'type': 'ReadMessages',
                             'command': data['command'],
                             'user': data['user'],
+                            'sender': data['sender'],
                         }
                     )
                 
@@ -173,6 +174,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
         await self.send(text_data=json.dumps({
                 'command': event['command'],
                 'user':event['user'],
+                'sender':event['sender'],
             }))
         
     

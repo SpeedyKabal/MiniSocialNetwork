@@ -72,7 +72,14 @@ const Messages = () => {
             console.error("Audio playback failed:", error);
           });
         }
-      };
+        if (WebSocketObject["command"] == "ReadMessages" && WebSocketObject["sender"] == currentUser?.id) {
+          // Use functional update to ensure we're working with latest state
+          setsocketMessages(prevMessages => prevMessages.map(msg => ({
+            ...msg,
+            is_read: true
+          })));
+        };
+      }
     }
   }, [onlineSocket]);
 
@@ -103,7 +110,6 @@ const Messages = () => {
     });
     scrollToBottom();
   };
-
   const sendMessage = async (e) => {
     e.preventDefault();
     if (user) {
@@ -242,6 +248,13 @@ const Messages = () => {
             );
             localStorage.setItem(storageKey, JSON.stringify(messagesToStore));
           }
+          onlineSocket.send(
+            JSON.stringify({
+              command: "ReadMessages",
+              user: currentUser?.id,
+              sender: senderID,
+            })
+          );
         }
       })
       .catch((err) => alert(err))
@@ -480,7 +493,7 @@ const Messages = () => {
                     <div key={actualindex}>
                       {ele.sender_id === currentUser?.id && user !== null ? (
                         <div className="flex mb-2">
-                          <div className="rounded py-2 px-3 bg-[#F2F2F2]">
+                          <div className={`rounded py-2 px-3 bg-[#F2F2F2] ${ele.is_read === false && "border-2 border-red-500 border-solid"}`}>
                             <p className="text-teal text-md font-semibold">
                               {t("home.you")}
                             </p>
@@ -523,7 +536,7 @@ const Messages = () => {
                               <IoCheckmarkSharp />
                             </p>
                           )}
-                          <div className="rounded py-2 px-3 bg-[#E2F7CB]">
+                          <div className={`rounded py-2 px-3 bg-[#E2F7CB] ${ele.is_read === false && "border-2 border-red-500 border-solid"}`}>
                             <p className="text-teal text-md font-semibold">
                               {user.first_name} {user.last_name}
                             </p>
@@ -584,7 +597,7 @@ const Messages = () => {
                           <MdAttachFile />
                         </span>
                       </label>
-                      <div className="absolute -top-32 left-0 flex rounded-lg gap-2 px-2 max-w-2/3 bg-slate-500/80 overflow-auto z-20">
+                      <div className="absolute top-0 left-0 -translate-y-[100%] flex rounded-lg gap-2 px-2 max-w-2/3 bg-slate-500/80 overflow-auto z-20">
                         {filePreviews.map((file, index) => (
                           <FilePreviews
                             key={index}

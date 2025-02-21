@@ -19,7 +19,7 @@ export const FilePreviews = ({
         <img
           src={file.url}
           alt={`Preview ${file.name}`}
-          className="w-full h-full object-cover rounded-md"
+          className="h-30 max-h-30 object-cover rounded-md"
         />
       );
       break;
