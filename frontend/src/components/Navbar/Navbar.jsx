@@ -107,8 +107,11 @@ const Navbar = () => {
             </Link>
 
             <Bell className="h-5 w-5 lg:h-8 lg:w-[2rem] text-gray-600 hover:text-blue-600 cursor-pointer" />
-            <Link to="/messages">
-              <MessageSquare className="h-5 w-5 lg:h-8 lg:w-[2rem] text-gray-600 hover:text-blue-600" />
+            <Link to="/messages" className="relative">
+              <MessageSquare className={`h-5 w-5 lg:h-8 lg:w-[2rem] text-gray-600 hover:text-blue-600 ${unreadMessages > 0 && "animate-pulse"}`} />
+              <span className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[60%] text-xl text-red-500 font-bold">
+                {unreadMessages > 0 && unreadMessages}
+              </span>
             </Link>
 
             {/* <Users className="h-6 w-6 lg:h-12 lg:w-[3rem] text-gray-600 hover:text-blue-600 cursor-pointer" /> */}

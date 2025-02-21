@@ -14,7 +14,7 @@ export const FilePreviews = ({
 
   switch (file.type) {
     case 'image':
-      containerClass = "relative flex flex-col items-center w-32 h-32 min-w-32 min-h-32";
+      containerClass = "relative flex flex-col items-center w-38 h-38 min-w-38 min-h-38";
       content = (
         <img
           src={file.url}
@@ -24,7 +24,7 @@ export const FilePreviews = ({
       );
       break;
     case 'video':
-      containerClass = "relative w-32 h-32 min-w-32 min-h-32 flex flex-col items-center";
+      containerClass = "relative w-38 h-38 min-w-38 min-h-38 flex flex-col items-center";
       content = (
         <video
           src={file.url}
@@ -46,7 +46,7 @@ export const FilePreviews = ({
       );
       break;
     default:
-      containerClass = "relative flex flex-col items-center w-36 h-36 min-w-36 min-h-36";
+      containerClass = "relative flex flex-col items-center w-38 h-38 min-w-38 min-h-38";
       content = (
         <div className="flex flex-col items-center justify-center max-w-full h-full gap-2">
           <FileIcon className="w-12 h-12 text-gray-400" />
@@ -66,7 +66,11 @@ export const FilePreviews = ({
         className="absolute bottom-[65%] left-0 h-5 bg-red-500"
         style={{ width: `${file.progressProcessing}%` }}
       />
-      <span className="text-lg text-red-700">{file.status}</span>
+      <p className="text-lg text-red-700">{file.status}
+        <span className={`${file.status == "Uploading" && "text-blue-500"} ${file.status == "Processing" && "text-red-500"}`}>
+          {file.status == "Uploading" && `${file.progress} %`} {file.status == "Processing" && `${file.progressProcessing} %`}
+        </span>
+      </p>
       <CircleX
         className="absolute top-0 right-0 cursor-pointer text-red-200 hover:text-red-500"
         onClick={onDelete}

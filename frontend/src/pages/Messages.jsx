@@ -39,7 +39,7 @@ const Messages = () => {
   const messagesEndRef = useRef(null); //This the last div in Messages container
   const [contacts, setContacts] = useState(false); //Used in Mobile views Either show User or Show Messages
   const [noMoreMessages, setNoMoreMessages] = useState(false); //This for showing "More Messages" Button
-  const newMessageAudio = new Audio("/Sounds/newmessage.wav");
+  const newMessageAudio = new Audio("/Sounds/newmessage.mp3");
   const textareaRef = useRef(null);
 
   // Start a Websocket Channel for Two Users
