@@ -5,6 +5,7 @@ from .models import Employee, File
 from django.utils import timezone
 import os
 from .models import Message
+import shutil
 
 
 
@@ -26,8 +27,25 @@ def update_last_seen(sender, instance, **kwargs):
 def delete_file_from_storage(sender, instance, **kwargs):
     if instance.file:
         if os.path.isfile(instance.file.path):
+            print(instance.file.path)
             os.remove(instance.file.path)
+        
+        # If this is a video file with HLS streaming files
+        if instance.hsl_path:
+            if instance.post:
+                parent_dir = os.path.join('PostFiles', 'Videos', str(instance.post.id))
+            elif instance.message:
+                parent_dir = os.path.join('messageFiles', 'Videos', str(instance.message.id))
+            else:
+                return
             
+            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(instance.file.path)))
+            abs_parent_dir = os.path.join(base_dir, parent_dir)
+            if os.path.exists(abs_parent_dir):
+                shutil.rmtree(abs_parent_dir)
+                
+                
+                
 @receiver(post_save, sender=User)
 def send_welcome_message(sender, instance, created, **kwargs):
     if created:
