@@ -101,10 +101,9 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
             now = datetime.now()
             now_time = now.strftime("%H:%M:%S")
             
-            
             await self.accept()
                 
-            print("User :", self.user, "Connected on", now_time)
+            print("User :", self.user, "Connected at", now_time)
             await self.switchUserState({
                 "user": self.user,
                 "message": "isOnline"
@@ -116,10 +115,13 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
 
     async def disconnect(self, close_code):
         try:
+            now = datetime.now()
+            now_time = now.strftime("%H:%M:%S")
             await self.switchUserState({
                 "user": self.user,
                 "message": "isOffline"
             })
+            print("User :", self.user, "Disconnected at", now_time)
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         except Exception as e:
             print(f"Error during online disconnect: {e}")
@@ -140,7 +142,8 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
                             'message':data['message'],
                         }
                     )
-                elif data['command'] == 'ReadMessages':
+                    
+                if data['command'] == 'ReadMessages':
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
@@ -160,7 +163,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
         
 
     async def SendMessage(self, event):
-        print("SendMessage event triggered by Sender : ",event['sender'], " and by Reciever : ",event['reciever'] )
+        print("SendMessage event triggered")
         await self.send(text_data=json.dumps({
                 'command': event['command'],
                 'sender':event['sender'],
