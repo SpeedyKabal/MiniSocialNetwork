@@ -298,23 +298,41 @@ function Profile() {
     if (formData.cover_pic) {
       formdetail.append("cover_pic", formData.cover_pic);
     }
+
+    const formuser = new FormData();
+    formuser.append("first_name", formData.first_name);
+    formuser.append("last_name", formData.last_name);
+    formuser.append("email", formData.email);
+    formuser.append("username", formData.username);
     api
       .put(`/api/myprofile/updateemployee/`, formdetail, {
         headers: { "Content-Type": "multipart/form-data" },
       })
-      .then((resp) => {
-        if (resp.status == 200) {
-          setEmployee({
-            ...employee,
-            adress: resp.data.adress,
-            gender: resp.data.gender,
-            position: resp.data.position,
-            recruitmentDate: resp.data.recruitmentDate,
-            birthday: resp.data.birthday,
-            phone: resp.data.phone,
-            profile_pic: resp.data.profile_pic,
-            cover_pic: resp.data.cover_pic,
-          });
+      .then(async (res) => {
+        if (res.status == 200) {
+          api
+            .put(`api/updateuserinfos/${currentUser.id}/`, formuser)
+            .then((resp) => {
+              if (resp.status == 200) {
+                setEmployee({
+                  user: {
+                    first_name: resp.data.first_name,
+                    last_name: resp.data.last_name,
+                    email: resp.data.email,
+                    username: resp.data.username,
+                  },
+                  adress: res.data.adress,
+                  gender: res.data.gender,
+                  position: res.data.position,
+                  recruitmentDate: res.data.recruitmentDate,
+                  birthday: res.data.birthday,
+                  phone: res.data.phone,
+                  profile_pic: res.data.profile_pic,
+                  cover_pic: res.data.cover_pic,
+                });
+              }
+            });
+
           setIsEditing(false);
           setLoading(false);
         }
