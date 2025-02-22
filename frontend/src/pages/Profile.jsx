@@ -315,7 +315,9 @@ function Profile() {
             .then((resp) => {
               if (resp.status == 200) {
                 setEmployee({
+                  ...employee,
                   user: {
+                    ...user,
                     first_name: resp.data.first_name,
                     last_name: resp.data.last_name,
                     email: resp.data.email,
@@ -354,15 +356,14 @@ function Profile() {
           <img
             src={employee.profile_pic}
             alt="Profile"
-            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${
-              getClientResolutionClass() == "phone"
-                ? "size-32"
-                : getClientResolutionClass() == "desktop720"
+            className={`rounded-full object-cover absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-4" ${getClientResolutionClass() == "phone"
+              ? "size-32"
+              : getClientResolutionClass() == "desktop720"
                 ? "size-48"
                 : getClientResolutionClass() == "desktop786"
-                ? "size-56"
-                : "size-72"
-            }`}
+                  ? "size-56"
+                  : "size-72"
+              }`}
           />
         </div>
       </div>

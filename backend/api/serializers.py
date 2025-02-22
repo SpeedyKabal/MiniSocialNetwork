@@ -340,7 +340,7 @@ class EmployeeUpdateSerializers(serializers.ModelSerializer):
         instance.birthday = validated_data.get("birthday", instance.birthday)
         instance.recruitmentDate = validated_data.get("recruitmentDate", instance.recruitmentDate)
         instance.profile_pic = validated_data.get("profile_pic", instance.profile_pic)
-        instance.cover_pic = validated_data.get("profile_pic", instance.profile_pic)
+        instance.cover_pic = validated_data.get("cover_pic", instance.cover_pic)
         instance.phone = validated_data.get("phone", instance.phone)
         instance.adress = validated_data.get("adress", instance.adress)
         instance.save()
