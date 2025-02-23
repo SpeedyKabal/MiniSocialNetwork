@@ -5,13 +5,15 @@ import { useUser } from "../../Contexts/Usercontext";
 import { useWebSocket } from "../../Contexts/WebSocketContext";
 import "i18next";
 import { useTranslation } from "react-i18next";
-import { Home, Bell, MessageSquare, Search } from "lucide-react";
+import { Home, MessageSquare, Bell, Search } from "lucide-react";
 import UserDropdown from "./UserDropdown";
+import NotificationDropDown from "./NotificationDropDown";
 
 const Navbar = () => {
   const currentUser = useUser();
   const onlineSocket = useWebSocket(); // This hold Websocket Context
   const [userDropdown, setUserDropdown] = useState(false);
+  const [notificationDropdown, setNotificationDropdown] = useState(false);
   const { t, i18n } = useTranslation();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [unreadMessages, setUnreadMessages] = useState(0);
@@ -106,7 +108,15 @@ const Navbar = () => {
               <Home className="h-5 w-5 lg:h-8 lg:w-[2rem] text-gray-600 hover:text-blue-600" />
             </Link>
 
-            <Bell className="h-5 w-5 lg:h-8 lg:w-[2rem] text-gray-600 hover:text-blue-600 cursor-pointer" />
+            <div className="relative" onClick={() => setNotificationDropdown(!notificationDropdown)}>
+              <Bell className="h-5 w-5 lg:h-8 lg:w-[2rem] text-gray-600 hover:text-blue-600 cursor-pointer" />
+              {notificationDropdown && (
+                <NotificationDropDown />
+              )}
+
+            </div>
+
+
             <Link to="/messages" className="relative">
               <MessageSquare className={`h-5 w-5 lg:h-8 lg:w-[2rem] text-gray-600 hover:text-blue-600 ${unreadMessages > 0 && "animate-pulse"}`} />
               <span className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[60%] text-xl text-red-500 font-bold">
