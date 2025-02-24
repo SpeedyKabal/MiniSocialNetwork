@@ -78,7 +78,12 @@ const Messages = () => {
             ...msg,
             is_read: true
           })));
-        };
+        }
+        if (
+          WebSocketObject["command"] == "ffmpegProgress"
+        ) {
+          updateFile(WebSocketObject["fileid"], { progressProcessing: Math.floor(WebSocketObject["progress"]) });
+        }
       }
     }
   }, [onlineSocket]);
@@ -109,7 +114,8 @@ const Messages = () => {
       lastMessage: lastMessage,
     });
     scrollToBottom();
-  };
+  }
+
   const sendMessage = async (e) => {
     e.preventDefault();
     if (user) {
@@ -148,9 +154,14 @@ const Messages = () => {
                     }
                   },
                 })
-                .then((res) => {
+                .then(async (res) => {
                   if (res.status == 201) {
-                    updateFile(file.id, { status: "Success" });
+                    const fileId = res.data.id;
+                    if (file.type == "video") {
+                      await api.post(`api/post/process-video/${fileId}/${file.id}/`);
+                    } else {
+                      updateFile(file.id, { status: "Success" });
+                    }
                   }
                 })
                 .catch((err) => {

@@ -285,16 +285,16 @@ class MessageSerializers(serializers.ModelSerializer):
         read_only_fields = ['id', 'sender', 'reciever', 'date_created']
         
         
-    def get_mediaFiles(self, obj):
-        try:
-            files = File.objects.filter(message=obj)
-            request = self.context.get('request')
-            if request is not None:
-                return files
+    # def get_mediaFiles(self, obj):
+    #     try:
+    #         files = File.objects.filter(message=obj)
+    #         request = self.context.get('request')
+    #         if request is not None:
+    #             return files
             
-            return files
-        except File.DoesNotExist:
-            return ("File Does not Existe")
+    #         return files
+    #     except File.DoesNotExist:
+    #         return ("File Does not Existe")
         
         
         

@@ -270,8 +270,8 @@ class FileUploadMessage(generics.CreateAPIView):
         try:
             message = Message.objects.get(pk=messageid)
             # Save the file and associate it with the post
-            File.objects.create(file=file, message=message)
-            return Response({"message": "File uploaded successfully"}, status=status.HTTP_201_CREATED)
+            fileCreated = File.objects.create(file=file, message=message)
+            return Response({"id": fileCreated.id }, status=status.HTTP_201_CREATED)
         except Post.DoesNotExist:
             return Response({"error": "Message not found"}, status=status.HTTP_404_NOT_FOUND)
         
