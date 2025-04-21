@@ -54,17 +54,17 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (currentUser && webSocketRef.current) {
-      webSocketRef.current.send(
-        JSON.stringify({
-          command: "Online",
-          user: currentUser ? currentUser.id : null,
-          message: "isOnline",
-        })
-      );
-    }
-  }, [onlineStatus]);
+  // useEffect(() => {
+  //   if (currentUser && webSocketRef.current) {
+  //     webSocketRef.current.send(
+  //       JSON.stringify({
+  //         command: "Online",
+  //         user: currentUser ? currentUser.id : null,
+  //         message: "isOnline",
+  //       })
+  //     );
+  //   }
+  // }, [onlineStatus]);
 
 
   return (

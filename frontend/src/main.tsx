@@ -12,8 +12,7 @@ import {
 } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar/Navbar";
-import { WebSocketProvider, useWebSocket } from "./Contexts/WebSocketContext";
-import { useUser } from "./Contexts/Usercontext";
+import { WebSocketProvider } from "./Contexts/WebSocketContext";
 import Home from "./pages/Home.tsx";
 import SinglePost from "./components/PostComponents/SinglePost";
 import Login from "./pages/Login";
@@ -23,23 +22,8 @@ import Messages from "./pages/Messages";
 import Profile from "./pages/Profile";
 import Footer from "./components/Footer";
 import ChangePassword from "./pages/ChangePassword";
-import { Utilisateur } from "./types/types.ts";
 
 function Logout() {
-  const socket = useWebSocket();
-  const currentUser = useUser() as Utilisateur | null;
-
-  if (socket && socket.readyState == 1 && currentUser) {
-    // Send logout notification via WebSocket
-    socket.send(
-      JSON.stringify({
-        command: "Online",
-        user: currentUser ? currentUser.id : null,
-        message: "notOnline",
-      })
-    );
-  }
-
 
   localStorage.removeItem('access');
   localStorage.removeItem('refresh');

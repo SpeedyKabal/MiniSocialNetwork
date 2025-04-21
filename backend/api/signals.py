@@ -6,6 +6,8 @@ from django.utils import timezone
 import os
 from .models import Message
 import shutil
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 
@@ -68,3 +70,26 @@ def addNotification(sender, instance, created, **kwargs):
         
 
         
+@receiver(pre_save, sender=Employee)
+def update_last_seen(sender, instance, **kwargs):
+    if instance.pk:
+        previous = Employee.objects.get(pk=instance.pk)
+        
+        # Handle status changes
+        if previous.isOnline != instance.isOnline:
+            channel_layer = get_channel_layer()
+            
+            # Update last_seen when going offline
+            if not instance.isOnline:
+                instance.last_seen = timezone.now()
+            
+            # Send WebSocket message about status change
+            async_to_sync(channel_layer.group_send)(
+                'chat_online',
+                {
+                    'type': 'UserConnected',
+                    'command': 'Online',
+                    'user': instance.user.id,
+                    'message': 'isOnline' if instance.isOnline else 'isOffline'
+                }
+            )
