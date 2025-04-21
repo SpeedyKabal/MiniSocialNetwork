@@ -10,20 +10,37 @@ import {
   Outlet,
   Navigate,
 } from "react-router-dom";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
-import Navbar from "./components/Navbar/Navbar.jsx";
-import { WebSocketProvider } from "./Contexts/WebSocketContext.jsx";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Navbar from "./components/Navbar/Navbar";
+import { WebSocketProvider, useWebSocket } from "./Contexts/WebSocketContext";
+import { useUser } from "./Contexts/Usercontext";
 import Home from "./pages/Home.tsx";
-import SinglePost from "./components/PostComponents/SinglePost.jsx";
-import Login from "./pages/Login.tsx";
-import Register from "./pages/Register.jsx";
-import NotFound from "./pages/NotFound.jsx";
-import Messages from "./pages/Messages.jsx";
-import Profile from "./pages/Profile.jsx";
-import Footer from "./components/Footer.jsx";
-import ChangePassword from "./pages/ChangePassword.jsx";
+import SinglePost from "./components/PostComponents/SinglePost";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import NotFound from "./pages/NotFound";
+import Messages from "./pages/Messages";
+import Profile from "./pages/Profile";
+import Footer from "./components/Footer";
+import ChangePassword from "./pages/ChangePassword";
+import { Utilisateur } from "./types/types.ts";
 
 function Logout() {
+  const socket = useWebSocket();
+  const currentUser = useUser() as Utilisateur | null;
+
+  if (socket && socket.readyState == 1 && currentUser) {
+    // Send logout notification via WebSocket
+    socket.send(
+      JSON.stringify({
+        command: "Online",
+        user: currentUser ? currentUser.id : null,
+        message: "notOnline",
+      })
+    );
+  }
+
+
   localStorage.removeItem('access');
   localStorage.removeItem('refresh');
   return <Navigate to="/login" />;

@@ -1,13 +1,16 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useUser } from "./Usercontext";
 import { ACCESS_TOKEN } from "../constants";
+import { Utilisateur } from '../types/types'
 
-const WebSocketContext = createContext(null);
 
-export const WebSocketProvider = ({ children }) => {
-  const currentUser = useUser();
-  const [onlineStatus, setOnlineStatus] = useState({});
-  const webSocketRef = useRef(null);
+const WebSocketContext = createContext<WebSocket | null>(null);
+
+export function WebSocketProvider({ children }: { children: React.ReactNode }) {
+
+  const currentUser = useUser() as Utilisateur | null;
+  const [onlineStatus, setOnlineStatus] = useState<WebSocket | null>(null);
+  const webSocketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     const userConnect = async () => {
@@ -19,19 +22,19 @@ export const WebSocketProvider = ({ children }) => {
             return;
           }
 
-          const wsUrl = import.meta.env.VITE_WS_URL;
+          const wsUrl = (import.meta as any).env.VITE_WS_URL;
           webSocketRef.current = new WebSocket(`${wsUrl}?token=${token}`);
           webSocketRef.current.onopen = () => {
-            setOnlineStatus(webSocketRef.current);
+            setOnlineStatus(webSocketRef.current as WebSocket);
           };
           webSocketRef.current.onerror = (error) => {
             console.error("WebSocket error:", error);
             webSocketRef.current = null;
-            setOnlineStatus({});
+            setOnlineStatus(null);
           };
           webSocketRef.current.onclose = () => {
             webSocketRef.current = null;
-            setOnlineStatus({});
+            setOnlineStatus(null);
           };
         } catch (error) {
           console.error("Failed to connect to WebSocket:", error);
@@ -40,28 +43,29 @@ export const WebSocketProvider = ({ children }) => {
     };
     setTimeout(() => {
       userConnect();
-    }, 500);
+    }, 300);
 
     return () => {
       if (webSocketRef.current) {
         webSocketRef.current.close();
         webSocketRef.current = null;
       }
-      setOnlineStatus({});
+      setOnlineStatus(null);
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (currentUser && webSocketRef.current) {
-  //     webSocketRef.current.send(
-  //       JSON.stringify({
-  //         command: "Online",
-  //         user: currentUser?.id,
-  //         message: "isOnline",
-  //       })
-  //     );
-  //   }
-  // }, [onlineStatus]);
+  useEffect(() => {
+    if (currentUser && webSocketRef.current) {
+      webSocketRef.current.send(
+        JSON.stringify({
+          command: "Online",
+          user: currentUser ? currentUser.id : null,
+          message: "isOnline",
+        })
+      );
+    }
+  }, [onlineStatus]);
+
 
   return (
     <WebSocketContext.Provider value={onlineStatus}>
@@ -70,9 +74,9 @@ export const WebSocketProvider = ({ children }) => {
   );
 };
 
-export const useWebSocket = () => {
+export function useWebSocket() {
   const socket = useContext(WebSocketContext);
-  if (!socket) {
+  if (socket === undefined) {
     throw new Error("useWebSocket must be used within a WebSocketProvider");
   }
   return socket;

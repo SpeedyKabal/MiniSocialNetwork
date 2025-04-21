@@ -40,12 +40,12 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
 
 
   useEffect(() => {
-    if (onlineSocket.readyState === 1 && currentUser) {
+    if (onlineSocket && onlineSocket.readyState == 1 && currentUser) {
       const handleWebSocketMessage = (e) => {
         const WebSocketObject = JSON.parse(e.data);
         if (
           WebSocketObject["command"] == "Online" &&
-          WebSocketObject["user"] !== currentUser.id
+          WebSocketObject["user"] != currentUser.id
         ) {
           // Use functional update to ensure we have latest state
           setUsers((prevUsers) => {
@@ -70,7 +70,7 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
         onlineSocket.removeEventListener("message", handleWebSocketMessage);
       };
     }
-  }, [onlineSocket, currentUser]); // Remove users from dependency array
+  }, [onlineSocket]); // Remove users from dependency array
 
   useEffect(() => {
     getAllUsers();

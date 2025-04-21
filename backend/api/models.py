@@ -188,3 +188,14 @@ class File(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='messageFiles', null=True, blank=True)
     hsl_path = models.CharField(max_length=32, null=True, blank=True)
     
+    
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="userNotification")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="postNotification")
+    message = models.CharField(max_length=256, null=False, blank=False)
+    timeCreated = models.DateTimeField(auto_now=True)
+    is_read = models.ManyToManyField(User, related_name="readNotification")
+
+    def __str__(self):
+        return f"Notification id :{self.pk} on Post id : {self.post_id}"
+    

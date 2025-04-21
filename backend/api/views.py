@@ -17,8 +17,8 @@ from django.core.mail import send_mail
 from django.utils.dateparse import parse_datetime
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from .serializers import UserSerializers, PostSerializers, ReactionSerializers, CommentSerializers, MessageSerializers, UserSerializersForLastMessage,EmployeeSerializers,EmployeeProfilePicture, UserUpdateSerializer, EmployeeUpdateSerializers, UserSerializersForِCurrentUser
-from .models import Post, Reaction, Comment, Message, Employee, File
+from .serializers import UserSerializers, PostSerializers, ReactionSerializers, CommentSerializers, MessageSerializers, UserSerializersForLastMessage,EmployeeSerializers,EmployeeProfilePicture, UserUpdateSerializer, EmployeeUpdateSerializers, UserSerializersForِCurrentUser, NoificationSerializers
+from .models import Post, Reaction, Comment, Message, Employee, File, Notification
 
 import logging
 
@@ -648,3 +648,12 @@ def get_genders(request):
         {'value': gender[0], 'label': gender[1]} for gender in Employee.GENDER
     ]
     return JsonResponse(genders, safe=False)
+
+
+class ListNotificationsView(generics.ListAPIView):
+    serializer_class = NoificationSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Notification.objects.exclude(user=user)

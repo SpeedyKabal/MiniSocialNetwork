@@ -93,6 +93,7 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
 
 
 class AsyncOnlineConsumer(AsyncChatConsumer):
+    onlineUsersIds = {}
     async def connect(self):
         try:
             self.room_group_name = 'chat_online'
@@ -104,10 +105,17 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
             await self.accept()
                 
             print("User :", self.user, "Connected at", now_time)
-            await self.switchUserState({
-                "user": self.user,
-                "message": "isOnline"
-            })
+            if self.user.id in self.onlineUsersIds:
+                self.onlineUsersIds[self.user.id] += 1
+            else:
+                self.onlineUsersIds[self.user.id] = 1
+                # Only set user online on first connection
+                await self.switchUserState({
+                    "user": self.user,
+                    "message": "isOnline"
+                })
+            
+            
                 
         except Exception as e:
             print(f'Error during online connect: {e}')
@@ -117,11 +125,21 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
         try:
             now = datetime.now()
             now_time = now.strftime("%H:%M:%S")
-            await self.switchUserState({
-                "user": self.user,
-                "message": "isOffline"
-            })
-            print("User :", self.user, "Disconnected at", now_time)
+            if self.user.id in self.onlineUsersIds:
+                # Decrement connection count
+                self.onlineUsersIds[self.user.id] -= 1
+                
+                # If this was the last connection for this user, mark them offline
+                if self.onlineUsersIds[self.user.id] <= 0:
+                    del self.onlineUsersIds[self.user.id]
+                    await self.switchUserState({
+                        "user": self.user,
+                        "message": "isOffline"
+                    })
+                    print(f"User {self.user} is now completely offline")
+                else:
+                    print(f"User {self.user} still has {self.onlineUsersIds[self.user.id]} active connections")
+                
             await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         except Exception as e:
             print(f"Error during online disconnect: {e}")
@@ -153,6 +171,17 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
                             'sender': data['sender'],
                         }
                     )
+                    
+                if data['command'] == 'Online':
+                    await self.channel_layer.group_send(
+                        self.room_group_name,
+                        {
+                            'type': 'UserConnected',
+                            'command': data['command'],
+                            'user': data['user'],
+                            'message':data['message'],
+                        } 
+                    )
                 
             except json.JSONDecodeError as e:
                 print(f"Json decode error : {e}")
@@ -180,6 +209,15 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
                 'sender':event['sender'],
             }))
         
+        
+    async def UserConnected(self, event):
+        print("UserConnected event triggered")
+        await self.send(text_data=json.dumps({
+                'command': event['command'],
+                'user':event['user'],
+                'message':event['message'],
+            }))
+        
     
     async def send_ffmpeg_progress(self, event):
         await self.send(text_data=json.dumps({
@@ -200,8 +238,6 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
             else:
                 employeeStatus.isOnline = False
                 employeeStatus.save()
-                
             
         except Employee.DoesNotExist as err:
             print(f"Employee does not exist : {err}")
-

@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import Employee, File
+from .models import Employee, File, Post, Notification
 from django.utils import timezone
 import os
 from .models import Message
@@ -55,3 +55,16 @@ def send_welcome_message(sender, instance, created, **kwargs):
             reciever=instance,
             message="مرحبًا بكم في تطبيقنا الخاص بالتواصل الاجتماعي داخل المستشفى!\r\n\r\nنحن هنا لنقدم لكم تجربة تواصل آمنة وفعّالة، تتيح لكم تبادل المعلومات والملفات بسهولة وسرية تامة، بعيدًا عن نطاق الإنترنت. سواء كنت طبيبًا، ممرضًا، أو موظفًا إداريًا، يوفر لك هذا التطبيق بيئة آمنة لتبادل المعرفة والتعاون في تحسين الرعاية الصحية.\r\n\r\nنحن نهدف إلى تسهيل التواصل بين جميع أفراد الطاقم الطبي والإداري داخل المستشفى بطريقة مريحة، حيث يمكنك إرسال واستقبال الرسائل والملفات الحساسة بشكل مشفر وآمن، مما يضمن سرية المعلومات وحمايتها.\r\n\r\nنتمنى لكم تجربة مثمرة وموفقة، ونتطلع إلى أن يسهم هذا التطبيق في تعزيز العمل الجماعي وتحقيق أفضل النتائج لمرضاكم.\r\n\r\nإذا كانت لديك أي أسئلة أو احتياجات، لا تتردد في التواصل معنا."
         )
+        
+
+@receiver(post_save, sender=Post)
+def addNotification(sender, instance, created, **kwargs):
+    if created:
+        Notification.objects.create(
+            user=instance.author,
+            post=instance,
+            message=f"En {instance.author.last_name} {instance.author.first_name}",
+        )
+        
+
+        

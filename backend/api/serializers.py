@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Post, Reaction, Comment, Message, Employee, File
+from .models import Post, Reaction, Comment, Message, Employee, File, Notification
 
 
 #ORM Object Relational Mapping
@@ -134,6 +134,13 @@ class UserSerializersForِCurrentUser(serializers.ModelSerializer):
         except Employee.DoesNotExist:
             return ("Employee Does not Existe")  # Handle case where Employee doesn't exist for the user
     
+
+class SimpleUserSerializers(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ["id","username", "first_name", "last_name"]
+        
 
 #File Serializers
 class FileSerializer(serializers.ModelSerializer):
@@ -346,7 +353,19 @@ class EmployeeUpdateSerializers(serializers.ModelSerializer):
         instance.save()
         return instance
         
+
 class EmployeeProfilePicture(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = ["profile_pic"]
+        
+
+class NoificationSerializers(serializers.ModelSerializer):
+    user = UserSerializersForِCurrentUser(read_only=True)
+    post = PostSerializers(read_only=True)
+    is_read =SimpleUserSerializers(many=True, read_only=True)
+    
+    class Meta:
+        model = Notification
+        fields = ["id","user","post" ,"message","timeCreated","is_read"]
+        read_only_fields = ['id', 'user', 'post', 'timeCreated', "is_read"]

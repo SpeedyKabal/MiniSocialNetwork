@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import api from "../api";
 import Loading from "../components/Extensions/Loading";
 
-const UserContext = createContext();
+const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);

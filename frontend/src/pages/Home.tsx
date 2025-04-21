@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import { useEffect, useState } from "react";
 import api from "../api";
 import AllPosts from "../components/PostComponents/AllPosts";
@@ -27,11 +27,11 @@ function Home() {
 
 
   useEffect(() => {
-    if (onlineSocket.readyState == WebSocket.OPEN) {
+    if (onlineSocket && onlineSocket.readyState === WebSocket.OPEN) {
       onlineSocket.onmessage = (e: { data: string; }) => {
         const WebSocketObject = JSON.parse(e.data);
         if (
-          WebSocketObject["command"] == "ffmpegProgress"
+          WebSocketObject["command"] === "ffmpegProgress"
         ) {
           updateFile(WebSocketObject["fileid"], { progressProcessing: Math.floor(WebSocketObject["progress"]) });
         }

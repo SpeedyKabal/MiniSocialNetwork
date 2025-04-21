@@ -51,5 +51,8 @@ urlpatterns = [
     path("message/fetsh/", views.ListMessageView.as_view(), name="Fetsh_Messages"),
     path("message/unreadcounter/", views.UnreadMessageCountView.as_view(), name="Unread_Messages"),
     path("message/previous/", views.PreviousMessagesView.as_view(), name="Previous_Messages"),
+    
+    #Notification API LINKS
+    path("notifications/", views.ListNotificationsView.as_view(), name="List_Notifications"),
 
 ]

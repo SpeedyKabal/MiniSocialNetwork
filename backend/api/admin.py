@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Message, File, Employee, Reaction, Comment
+from .models import Post, Message, File, Employee, Reaction, Comment, Notification
 
 # Register your models here.
 class PostAdmin(admin.ModelAdmin):
@@ -87,6 +87,15 @@ class CommentAdmin(admin.ModelAdmin):
     
 
     getUserFullName.short_description = "Commenter"
+    
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_filter = ["user", "post", "timeCreated"]
+    list_display = ["message","timeCreated","post_id","user_id"]
+
+
+
+
 
 
 
@@ -96,4 +105,5 @@ admin.site.register(File, FileAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(Reaction, ReactionAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(Notification, NotificationAdmin)
 

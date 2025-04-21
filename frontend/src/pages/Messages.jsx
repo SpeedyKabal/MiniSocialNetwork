@@ -61,7 +61,7 @@ const Messages = () => {
   }, [roomName]);
 
   useEffect(() => {
-    if (onlineSocket.readyState == WebSocket.OPEN && currentUser) {
+    if (onlineSocket && onlineSocket.readyState == WebSocket.OPEN && currentUser) {
       onlineSocket.onmessage = (e) => {
         const WebSocketObject = JSON.parse(e.data);
         if (

@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useUser } from "../../Contexts/Usercontext";
 import { useWebSocket } from "../../Contexts/WebSocketContext";
 import { useTranslation } from "react-i18next";
+//import { Utilisateur } from '../../types/types';
+
 
 function UserDropdown({ hideDropdown }) {
   const currentUser = useUser();
@@ -10,14 +12,21 @@ function UserDropdown({ hideDropdown }) {
   const { t } = useTranslation();
 
   const handleLogout = () => {
+    offline();
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
-    offline();
     window.location.href = "/login"; // Redirect to login page
   };
 
   function offline() {
-    if (onlineSocket.readyState === WebSocket.OPEN) {
+    if (onlineSocket.readyState == WebSocket.OPEN) {
+      onlineSocket.send(
+        JSON.stringify({
+          command: "Online",
+          user: currentUser ? currentUser.id : null,
+          message: "notOnline",
+        })
+      );
       onlineSocket.close();
     }
   }

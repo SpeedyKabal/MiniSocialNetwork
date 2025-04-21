@@ -1,22 +1,16 @@
 export interface Utilisateur {
     id: number;
     username: string;
-    email: string | null;
     first_name: string;
     last_name: string;
+    profile_pic: string;
   };
-
 
 export interface Post {
     id: number,
     content: string,
     created_at: string,
-    author: {
-      id: 1,
-      first_name: string,
-      last_name: string,
-      profile_pic: string
-    },
+    author: Utilisateur
     job: string,
     reactions: number,
     comments: number,
