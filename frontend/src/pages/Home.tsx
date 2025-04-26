@@ -8,14 +8,15 @@ import { Music, Video, Image } from "lucide-react";
 import { useUser } from '../Contexts/Usercontext'
 import { useWebSocket } from "../Contexts/WebSocketContext";
 import { contentDisplay, adjustTextareaHeight } from "../services/Utilities";
-import { FilePreview, Post } from '../types/types'
+import { FilePreview, Post, Utilisateur } from '../types/types'
 import { useFileUpload } from '../CustomHooks/useFileUpload'
 import { FilePreviews } from "../components/FilePreviews";
+import Weather from "../components/HomeComponents/Weather";
 
 
 
 function Home() {
-  const currentUser = useUser();
+  const currentUser = useUser() as Utilisateur | null;
   const [post, setPost] = useState<Post[]>([]);
   const [newPost, setNewPost] = useState<string>("");
   const { filePreviews, handleUpload, deleteFile, updateFile, resetFiles } = useFileUpload();
@@ -147,14 +148,15 @@ function Home() {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full relative">
       {loading && <Loading />}
+      <Weather />
       <div className="flex justify-center">
         <div className="mx-2 sm:w-full">
           <div className="bg-white rounded-lg drop-shadow-lg p-1 lg:p-2 mt-6 mx-auto lg:w-2/3">
             <div className="flex items-center lg:space-x-4 ">
               <div className="size-10 lg:size-15 rounded-full bg-gray-200 flex items-center justify-center">
-                <img src={currentUser.profile_pic} alt="CurrentUserProfilePic" className="size-10 lg:size-15 rounded-full object-cover" />
+                <img src={currentUser?.profile_pic} alt="CurrentUserProfilePic" className="size-10 lg:size-15 rounded-full object-cover" />
               </div>
               <div className="flex-1">
                 <textarea name="" id="" rows={1} placeholder={t("createPostModel.placeholder")} onChange={handlePostInput} ref={textareaRef} value={newPost}
@@ -191,7 +193,7 @@ function Home() {
             </div>
             <div className="flex items-center gap-4 overflow-x-auto max-w-[90vw]">
 
-              {filePreviews.map((file: FilePreview, index: React.Key) => (
+              {filePreviews.map((file: FilePreview, index: number) => (
                 <FilePreviews
                   key={index}
                   file={file}
@@ -224,6 +226,7 @@ function Home() {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

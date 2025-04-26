@@ -18,7 +18,7 @@ import {
 } from "../../services/Utilities";
 import Media from "./Media";
 
-function AllPosts({ post, OnPostDeleted, UpdatePost, showDetails = false }) {
+function AllPosts({ post, OnPostDeleted, UpdatePost = () => { }, showDetails = false }) {
   const currentUser = useUser();
   const { i18n } = useTranslation();
   const [updatePostcontent, setUpdatePostContent] = useState(post.content);

@@ -10,4 +10,4 @@ backend/.env
 #FrontEnd Skipped Files and Folders
 
 frontend/node_modules/
-
+frontend/.env
