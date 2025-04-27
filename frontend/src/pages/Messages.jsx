@@ -433,10 +433,16 @@ const Messages = () => {
                     <div key={index} className="w-full flex flex-col">
                       {message.sender.id === currentUser?.id ? (
                         <div className="flex mb-2 mr-[25%]">
-                          <div className="rounded py-1 px-1 bg-[#F2F2F2] max-w-3/4">
-                            <p className="text-teal text-md font-semibold">
-                              {t("home.you")}
-                            </p>
+                          <div className="rounded py-1 px-1 bg-[#f2f3f5] max-w-3/4">
+                            <div className=" flex justify-between bg-[#4f47e6] rounded-sm p-1 min-w-[15rem]">
+                              <p className="text-white text-md font-semibold">
+                                {t("home.you")}
+                              </p>
+                              <p className="text-right text-sm text-white mt-1">
+                                {formatTime(message.date_created, i18n.language)}
+                              </p>
+                            </div>
+
                             <p
                               className="text-md mt-1 ml-2 whitespace-pre-line"
                               dir={
@@ -449,9 +455,7 @@ const Messages = () => {
                               <Media urlFile={message.mediaFiles} />
                             )}
 
-                            <p className="text-right text-sm text-grey-dark mt-1">
-                              {formatTime(message.date_created, i18n.language)}
-                            </p>
+
                           </div>
                           {message.is_read === true ? (
                             <p className="mt-auto text-md text-blue-500">
@@ -474,11 +478,17 @@ const Messages = () => {
                               <IoCheckmarkSharp />
                             </p>
                           )}
-                          <div className="rounded py-2 px-3 bg-[#E2F7CB]">
-                            <p className="text-teal text-md font-semibold">
-                              {message.sender.first_name}{" "}
-                              {message.sender.last_name}
-                            </p>
+                          <div className="rounded p-1 bg-[#E2F7CB]">
+                            <div className=" flex justify-between bg-teal-400 rounded-sm p-1 min-w-[15rem]">
+                              <p className="text-white text-md font-semibold">
+                                {message.sender.first_name}{" "}
+                                {message.sender.last_name}
+                              </p>
+                              <p className="text-right text-sm text-white mt-1">
+                                {formatTime(message.date_created, i18n.language)}
+                              </p>
+                            </div>
+
                             <p
                               className="text-md mt-1 ml-2 whitespace-pre-line"
                               dir={
@@ -491,9 +501,7 @@ const Messages = () => {
                               <Media urlFile={message.mediaFiles} />
                             )}
 
-                            <p className="text-right text-sm text-grey-dark mt-1">
-                              {formatTime(message.date_created, i18n.language)}
-                            </p>
+
                           </div>
                         </div>
                       )}
@@ -505,9 +513,15 @@ const Messages = () => {
                       {ele.sender_id === currentUser?.id && user !== null ? (
                         <div className="flex mb-2">
                           <div className={`rounded py-2 px-3 bg-[#F2F2F2] ${ele.is_read === false && "border-2 border-red-500 border-solid"}`}>
-                            <p className="text-teal text-md font-semibold">
-                              {t("home.you")}
-                            </p>
+                            <div className=" flex justify-between bg-[#4f47e6] rounded-sm p-1 min-w-[15rem]">
+                              <p className="text-white text-md font-semibold">
+                                {t("home.you")}
+                              </p>
+                              <p className="text-right text-sm text-white mt-1">
+                                {formatTime(ele.dateMessage, i18n.language)}
+                              </p>
+                            </div>
+
                             <p
                               className="text-md mt-1 ml-2 whitespace-pre-line"
                               dir={
@@ -522,9 +536,7 @@ const Messages = () => {
                             {ele.mediaFiles && (
                               <Media urlFile={ele.mediaFiles} />
                             )}
-                            <p className="text-right text-sm text-grey-dark mt-1">
-                              {formatTime(ele.dateMessage, i18n.language)}
-                            </p>
+
                           </div>
                           {ele.is_read === true ? (
                             <p className="mt-auto text-md text-blue-500">
@@ -548,9 +560,15 @@ const Messages = () => {
                             </p>
                           )}
                           <div className={`rounded py-2 px-3 bg-[#E2F7CB] ${ele.is_read === false && "border-2 border-red-500 border-solid"}`}>
-                            <p className="text-teal text-md font-semibold">
-                              {user.first_name} {user.last_name}
-                            </p>
+                            <div className=" flex justify-between bg-teal-400 rounded-sm p-1 min-w-[15rem]">
+                              <p className="text-white text-md font-semibold">
+                                {user.first_name} {user.last_name}
+                              </p>
+                              <p className="text-right text-sm text-white mt-1">
+                                {formatTime(ele.dateMessage, i18n.language)}
+                              </p>
+                            </div>
+
                             <p
                               className="text-md mt-1 ml-2 whitespace-pre-line"
                               dir={contentDisplay(ele.message) ? "rtl" : "ltr"}
@@ -561,9 +579,7 @@ const Messages = () => {
                             {ele.mediaFiles && (
                               <Media urlFile={ele.mediaFiles} />
                             )}
-                            <p className="text-right text-sm text-grey-dark mt-1">
-                              {formatTime(ele.dateMessage, i18n.language)}
-                            </p>
+
                           </div>
                         </div>
                       )}
