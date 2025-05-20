@@ -21,15 +21,51 @@ const initialWeatherData = {
   "rain": null
 }
 
+interface StoredWeatherData {
+  data: typeof initialWeatherData;
+  timestamp: number;
+}
+
 function Weather() {
   const [weatherData, setWeatherData] = useState(initialWeatherData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { t, i18n } = useTranslation();
 
+  const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
+  const STORAGE_KEY = 'weatherData';
+
+  const isDataValid = (storedData: StoredWeatherData | null): boolean => {
+    if (!storedData) return false;
+    const now = new Date().getTime();
+    return now - storedData.timestamp < CACHE_DURATION;
+  };
+
+  const getStoredWeatherData = (): StoredWeatherData | null => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  };
+
+  const storeWeatherData = (data: typeof initialWeatherData) => {
+    const storedData: StoredWeatherData = {
+      data,
+      timestamp: new Date().getTime(),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(storedData));
+  };
+
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
+        // Check local storage first
+        const storedData = getStoredWeatherData();
+        
+        if (isDataValid(storedData)) {
+          setWeatherData(storedData.data);
+          setLoading(false);
+          return;
+        }
+
         const apiKey = (import.meta as any).env.VITE_WEATHER_API_KEY as string;
         const lon = 5.51259;
         const lat = 32.61336;
@@ -44,6 +80,7 @@ function Weather() {
 
         const data = await response.json();
         setWeatherData(data);
+        storeWeatherData(data);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching weather data:', err);

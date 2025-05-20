@@ -17,7 +17,7 @@ import {
   contentDisplay,
 } from "../services/Utilities";
 import Media from "../components/PostComponents/Media";
-import { useFileUpload } from "../CustomHooks/useFileUpload";
+import { useFileUpload } from "../customhooks/useFileUpload";
 import { FilePreviews } from "../components/FilePreviews";
 
 const chatWebSocketUrl = import.meta.env.VITE_CHAT_WS_URL;
