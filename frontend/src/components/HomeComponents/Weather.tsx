@@ -67,8 +67,8 @@ function Weather() {
         }
 
         const apiKey = (import.meta as any).env.VITE_WEATHER_API_KEY as string;
-        const lon = 5.51259;
-        const lat = 32.61336;
+        const lon = 4.983333 ; //5.51259; 
+        const lat = 34.383333; // 32.61336;
 
         const response = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`
@@ -133,7 +133,7 @@ function Weather() {
       <div className="flex flex-col bg-violet-400/80 rounded-lg p-2 shadow-md">
         {/* City and Date */}
         <div className="flex gap-2 text-yellow-50">
-          <p className="text-[1.5rem]">EL Hadjira</p>
+          <p className="text-[1.5rem]">Sidi Khaled {/* El Hadjira */ }</p>
           <p className="text-[0.9rem] mt-[0.8rem]">{formattedDate}</p>
         </div>
         {/* ==City and Date== */}

@@ -2,8 +2,6 @@ import api from "../api";
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
-import { IoCheckmarkDoneSharp } from "react-icons/io5";
-import { IoCheckmarkSharp } from "react-icons/io5";
 import { MdAttachFile } from "react-icons/md";
 import WebSocketInstance from "../services/WebSocketService";
 import Loading from "../components/Extensions/Loading";
@@ -11,12 +9,10 @@ import { useTranslation } from "react-i18next";
 import { useUser } from "../Contexts/Usercontext";
 import { useWebSocket } from "../Contexts/WebSocketContext";
 import User from "../components/MessageComponents/User";
-import {
-  formatTime,
-  convertLinksInsideMessages,
-  contentDisplay,
-} from "../services/Utilities";
-import Media from "../components/PostComponents/Media";
+import ServerMessageBubble from "../components/MessageComponents/ServerMessageBubble";
+import WebSocketMessageBubble from "../components/MessageComponents/WebSocketMessageBubble";
+//import { formatTime, contentDisplay } from "../services/Utilities";
+//import Media from "../components/PostComponents/Media";
 import { useFileUpload } from "../customhooks/useFileUpload";
 import { FilePreviews } from "../components/FilePreviews";
 
@@ -431,158 +427,17 @@ const Messages = () => {
                 <div className="py-2 px-3">
                   {messages?.map((message, index) => (
                     <div key={index} className="w-full flex flex-col">
-                      {message.sender.id === currentUser?.id ? (
-                        <div className="flex mb-2 mr-[25%]">
-                          <div className="rounded py-1 px-1 bg-[#f2f3f5] max-w-3/4">
-                            <div className=" flex justify-between bg-[#4f47e6] rounded-sm p-1 min-w-[15rem]">
-                              <p className="text-white text-md font-semibold">
-                                {t("home.you")}
-                              </p>
-                              <p className="text-right text-sm text-white mt-1">
-                                {formatTime(message.date_created, i18n.language)}
-                              </p>
-                            </div>
-
-                            <p
-                              className="text-md mt-1 ml-2 whitespace-pre-line"
-                              dir={
-                                contentDisplay(message.message) ? "rtl" : "ltr"
-                              }
-                            >
-                              {convertLinksInsideMessages(message.message)}
-                            </p>
-                            {message.mediaFiles && (
-                              <Media urlFile={message.mediaFiles} />
-                            )}
-
-
-                          </div>
-                          {message.is_read === true ? (
-                            <p className="mt-auto text-md text-blue-500">
-                              <IoCheckmarkDoneSharp />
-                            </p>
-                          ) : (
-                            <p className="mt-auto text-md text-gray-500">
-                              <IoCheckmarkSharp />
-                            </p>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="flex justify-end mb-2 ml-[25%]">
-                          {message.is_read === true ? (
-                            <p className="mt-auto text-md text-blue-500">
-                              <IoCheckmarkDoneSharp />
-                            </p>
-                          ) : (
-                            <p className="mt-auto text-md text-gray-500">
-                              <IoCheckmarkSharp />
-                            </p>
-                          )}
-                          <div className="rounded p-1 bg-[#E2F7CB]">
-                            <div className=" flex justify-between bg-teal-400 rounded-sm p-1 min-w-[15rem]">
-                              <p className="text-white text-md font-semibold">
-                                {message.sender.first_name}{" "}
-                                {message.sender.last_name}
-                              </p>
-                              <p className="text-right text-sm text-white mt-1">
-                                {formatTime(message.date_created, i18n.language)}
-                              </p>
-                            </div>
-
-                            <p
-                              className="text-md mt-1 ml-2 whitespace-pre-line"
-                              dir={
-                                contentDisplay(message.message) ? "rtl" : "ltr"
-                              }
-                            >
-                              {convertLinksInsideMessages(message.message)}
-                            </p>
-                            {message.mediaFiles && (
-                              <Media urlFile={message.mediaFiles} />
-                            )}
-
-
-                          </div>
-                        </div>
-                      )}
+                      <ServerMessageBubble message={message} currentUserID={currentUser.id} />
                     </div>
                   ))}
 
-                  {socketMessages.map((ele, actualindex) => (
-                    <div key={actualindex}>
-                      {ele.sender_id === currentUser?.id && user !== null ? (
-                        <div className="flex mb-2">
-                          <div className={`rounded py-2 px-3 bg-[#F2F2F2] ${ele.is_read === false && "border-2 border-red-500 border-solid"}`}>
-                            <div className=" flex justify-between bg-[#4f47e6] rounded-sm p-1 min-w-[15rem]">
-                              <p className="text-white text-md font-semibold">
-                                {t("home.you")}
-                              </p>
-                              <p className="text-right text-sm text-white mt-1">
-                                {formatTime(ele.dateMessage, i18n.language)}
-                              </p>
-                            </div>
-
-                            <p
-                              className="text-md mt-1 ml-2 whitespace-pre-line"
-                              dir={
-                                ele.message && contentDisplay(ele.message)
-                                  ? "rtl"
-                                  : "ltr"
-                              }
-                            >
-                              {ele.message &&
-                                convertLinksInsideMessages(ele.message)}
-                            </p>
-                            {ele.mediaFiles && (
-                              <Media urlFile={ele.mediaFiles} />
-                            )}
-
-                          </div>
-                          {ele.is_read === true ? (
-                            <p className="mt-auto text-md text-blue-500">
-                              <IoCheckmarkDoneSharp />
-                            </p>
-                          ) : (
-                            <p className="mt-auto text-md text-gray-500">
-                              <IoCheckmarkSharp />
-                            </p>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="flex justify-end mb-2">
-                          {ele.is_read === true ? (
-                            <p className="mt-auto text-md text-blue-500">
-                              <IoCheckmarkDoneSharp />
-                            </p>
-                          ) : (
-                            <p className="mt-auto text-md text-gray-500">
-                              <IoCheckmarkSharp />
-                            </p>
-                          )}
-                          <div className={`rounded py-2 px-3 bg-[#E2F7CB] ${ele.is_read === false && "border-2 border-red-500 border-solid"}`}>
-                            <div className=" flex justify-between bg-teal-400 rounded-sm p-1 min-w-[15rem]">
-                              <p className="text-white text-md font-semibold">
-                                {user.first_name} {user.last_name}
-                              </p>
-                              <p className="text-right text-sm text-white mt-1">
-                                {formatTime(ele.dateMessage, i18n.language)}
-                              </p>
-                            </div>
-
-                            <p
-                              className="text-md mt-1 ml-2 whitespace-pre-line"
-                              dir={contentDisplay(ele.message) ? "rtl" : "ltr"}
-                            >
-                              {ele.message &&
-                                convertLinksInsideMessages(ele.message)}
-                            </p>
-                            {ele.mediaFiles && (
-                              <Media urlFile={ele.mediaFiles} />
-                            )}
-
-                          </div>
-                        </div>
-                      )}
+                  {socketMessages.map((message, index) => (
+                    <div key={index}>
+                      <WebSocketMessageBubble 
+                        message={message} 
+                        currentUserID={currentUser.id} 
+                        user={user}
+                      />
                     </div>
                   ))}
 
@@ -613,7 +468,6 @@ const Messages = () => {
                         className="resize-none w-full border-2 border-blue-200 rounded px-2 py-1 text-md"
                       ></textarea>
                       <label
-                        htmlFor="inputFile"
                         onClick={handleUpload}
                         className="cursor-pointer hover:bg-green-500  bg-blue-500 size-[2rem] mx-1 flex justify-center items-center"
                       >
