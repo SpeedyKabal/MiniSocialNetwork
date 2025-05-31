@@ -14,7 +14,6 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 import pymysql
-
 import os
 
 load_dotenv()
@@ -189,4 +188,21 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS') == 'True'
 EMAIL_USE_SSL = False  # Ensure this is set to False if using TLS
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+# Weather API configuration
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+
+# Cache configuration
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",  # Using database 1 for cache (0 is used by channels)
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}
+
+# Cache timeout settings
+WEATHER_CACHE_TIMEOUT = 3600  # 1 hour in seconds
 

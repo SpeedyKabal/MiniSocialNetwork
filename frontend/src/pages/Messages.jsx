@@ -11,8 +11,6 @@ import { useWebSocket } from "../Contexts/WebSocketContext";
 import User from "../components/MessageComponents/User";
 import ServerMessageBubble from "../components/MessageComponents/ServerMessageBubble";
 import WebSocketMessageBubble from "../components/MessageComponents/WebSocketMessageBubble";
-//import { formatTime, contentDisplay } from "../services/Utilities";
-//import Media from "../components/PostComponents/Media";
 import { useFileUpload } from "../customhooks/useFileUpload";
 import { FilePreviews } from "../components/FilePreviews";
 

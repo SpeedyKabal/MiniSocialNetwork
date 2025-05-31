@@ -1,7 +1,11 @@
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.urls import path
 from . import views
+
 urlpatterns = [
+    # Weather API endpoint
+    path("weather/", views.WeatherView.as_view(), name="weather"),
+    
     #Post API LINK
     path("post/<int:pk>/", views.PostCreate.as_view(), name="create_post"),
     path("post/delete/", views.PostDelete.as_view(), name="delete_post"),

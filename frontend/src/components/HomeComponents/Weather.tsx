@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import api from '../../api';
 import { useTranslation } from "react-i18next";
 
 // This will be replaced with API data
@@ -11,82 +12,35 @@ const initialWeatherData = {
   ],
   "main": {
     "temp": 0,
-    "feels_like": 0,
+    "feels_like":0,
     "humidity": 0,
     "pressure": 0
   },
+  "name" : "Loading",
   "wind": {
     "speed": 0
   },
   "rain": null
 }
 
-interface StoredWeatherData {
-  data: typeof initialWeatherData;
-  timestamp: number;
-}
-
 function Weather() {
   const [weatherData, setWeatherData] = useState(initialWeatherData);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
   const { t, i18n } = useTranslation();
 
-  const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
-  const STORAGE_KEY = 'weatherData';
-
-  const isDataValid = (storedData: StoredWeatherData | null): boolean => {
-    if (!storedData) return false;
-    const now = new Date().getTime();
-    return now - storedData.timestamp < CACHE_DURATION;
-  };
-
-  const getStoredWeatherData = (): StoredWeatherData | null => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : null;
-  };
-
-  const storeWeatherData = (data: typeof initialWeatherData) => {
-    const storedData: StoredWeatherData = {
-      data,
-      timestamp: new Date().getTime(),
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(storedData));
-  };
+  // Removed local storage handling as it's now managed by Redis in the backend
 
   useEffect(() => {
     const fetchWeatherData = async () => {
-      try {
-        // Check local storage first
-        const storedData = getStoredWeatherData();
-        
-        if (isDataValid(storedData)) {
-          setWeatherData(storedData.data);
-          setLoading(false);
-          return;
-        }
-
-        const apiKey = (import.meta as any).env.VITE_WEATHER_API_KEY as string;
-        const lon = 4.983333 ; //5.51259; 
-        const lat = 34.383333; // 32.61336;
-
-        const response = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch weather data');
-        }
-
-        const data = await response.json();
-        setWeatherData(data);
-        storeWeatherData(data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching weather data:', err);
-        setError('Failed to load weather data');
-        setLoading(false);
-      }
+        await api.get('/api/weather').then((response) => {
+          console.log(response);
+            setWeatherData(response.data);
+            setLoading(false);
+        }).catch((error) => {
+          console.error('Error fetching weather data:', error);
+          setError(error.message || 'Failed to fetch weather data');
+        });
     };
 
     fetchWeatherData();
@@ -103,7 +57,6 @@ function Weather() {
 
   // Format current date
   const currentDate = new Date();
-  const options = { weekday: 'long' };
   const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' as const }).format(currentDate);
   const formattedDate = `${dayName} ${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
 
@@ -133,7 +86,7 @@ function Weather() {
       <div className="flex flex-col bg-violet-400/80 rounded-lg p-2 shadow-md">
         {/* City and Date */}
         <div className="flex gap-2 text-yellow-50">
-          <p className="text-[1.5rem]">Sidi Khaled {/* El Hadjira */ }</p>
+          <p className="text-[1.5rem]">{weatherData.name} {/* El Hadjira */ }</p>
           <p className="text-[0.9rem] mt-[0.8rem]">{formattedDate}</p>
         </div>
         {/* ==City and Date== */}
@@ -147,7 +100,7 @@ function Weather() {
         {/* Temp */}
         <div className='text-yellow-50'>
           <p className="text-[3rem]">{tempCelsius}°C</p>
-          <p className="text-sm" dir={i18n.language === "ar" ? "rtl" : "ltr"}>{t("weather.feelsLike")}: {feelsLike}°C</p>
+          <p className="text-sm" dir={i18n.language === "ar" ? "rtl" : "ltr"}>{t("weather.feelsLike")}: <span dir="ltr">{feelsLike}°C</span></p>
         </div>
         {/* ==Temp== */}
 
