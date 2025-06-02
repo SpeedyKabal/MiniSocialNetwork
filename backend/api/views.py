@@ -18,7 +18,7 @@ from django.core.mail import send_mail
 from django.utils.dateparse import parse_datetime
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from .serializers import UserSerializers, PostSerializers, ReactionSerializers, CommentSerializers, MessageSerializers, UserSerializersForLastMessage,EmployeeSerializers,EmployeeProfilePicture, UserUpdateSerializer, EmployeeUpdateSerializers, UserSerializersForِCurrentUser, NoificationSerializers
+from .serializers import UserSerializers, PostSerializers, ReactionSerializers, CommentSerializers, MessageSerializers, UserSerializersForLastMessage,EmployeeSerializers,EmployeeProfilePicture, UserUpdateSerializer, EmployeeUpdateSerializers, UserSerializersForCurrentUser, NoificationSerializers
 from .models import Post, Reaction, Comment, Message, Employee, File, Notification
 
 
@@ -138,7 +138,7 @@ class UpdateUserView(generics.UpdateAPIView):
     
 
 class GetUserView(generics.RetrieveAPIView):
-    serializer_class = UserSerializersForِCurrentUser
+    serializer_class = UserSerializersForCurrentUser
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
@@ -668,6 +668,7 @@ class WeatherView(APIView):
         try:
             # If no cached data, fetch from OpenWeather API
             api_key = settings.WEATHER_API_KEY
+            # Example coordinates for Sidi Khaled
             lon = 4.983333
             lat = 34.383333
             
@@ -685,7 +686,7 @@ class WeatherView(APIView):
             
             # Cache the data
             cache.set(self.CACHE_KEY, data, settings.WEATHER_CACHE_TIMEOUT)
-            
+            print("Weather from the api directly")
             return Response(data)
         except Exception as e:
             return Response(

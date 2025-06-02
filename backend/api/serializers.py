@@ -112,7 +112,7 @@ class UserSerializersForMessages(serializers.ModelSerializer):
         fields = ["id", "first_name", "last_name", "username"]
         
         
-class UserSerializersForِCurrentUser(serializers.ModelSerializer):
+class UserSerializersForCurrentUser(serializers.ModelSerializer):
     profile_pic = serializers.SerializerMethodField()
     
     class Meta:
@@ -170,7 +170,7 @@ class FileSerializer(serializers.ModelSerializer):
             
 #Post Serializers
 class PostSerializers(serializers.ModelSerializer):
-    author = UserSerializersForِCurrentUser(read_only=True)
+    author = UserSerializersForCurrentUser(read_only=True)
     job = serializers.SerializerMethodField()
     reactions = serializers.SerializerMethodField()
     comments = serializers.SerializerMethodField()
@@ -240,7 +240,17 @@ class PostSerializers(serializers.ModelSerializer):
             return files
         except File.DoesNotExist:
             return ("File Does not Existe")
-        
+
+
+class SimplePostSerializers(serializers.ModelSerializer):
+    author = SimpleUserSerializers(read_only=True)
+    
+    class Meta:
+        model = Post
+        fields = ["id","content","created_at","author"]
+        extra_kwargs = {"author":{"read_only":True}}
+    
+    
 
 #Reactions Serializers
 class ReactionSerializers(serializers.ModelSerializer):
@@ -361,8 +371,8 @@ class EmployeeProfilePicture(serializers.ModelSerializer):
         
 
 class NoificationSerializers(serializers.ModelSerializer):
-    user = UserSerializersForِCurrentUser(read_only=True)
-    post = PostSerializers(read_only=True)
+    user = SimpleUserSerializers(read_only=True)
+    post = SimplePostSerializers(read_only=True)
     is_read =SimpleUserSerializers(many=True, read_only=True)
     
     class Meta:

@@ -34,7 +34,6 @@ function Weather() {
   useEffect(() => {
     const fetchWeatherData = async () => {
         await api.get('/api/weather').then((response) => {
-          console.log(response);
             setWeatherData(response.data);
             setLoading(false);
         }).catch((error) => {

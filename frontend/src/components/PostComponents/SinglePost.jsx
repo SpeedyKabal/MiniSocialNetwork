@@ -13,7 +13,7 @@ function SinglePost() {
 
   useEffect(() => {
     getPost();
-  }, []);
+  }, [id]);
 
   const getPost = async () => {
     setLoading(true);

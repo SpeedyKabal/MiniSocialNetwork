@@ -273,7 +273,7 @@ function Profile() {
       }
     };
     fetchProfile();
-  }, []);
+  }, [username]);
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;

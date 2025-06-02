@@ -10,10 +10,7 @@ const ServerMessageBubble = ({ message, currentUserID }) => {
     return (
       <div className="flex mb-2 mr-[25%]">
         <div className="rounded py-1 px-1 bg-[#f2f3f5] max-w-3/4">
-          <div className="flex justify-between bg-[#4f47e6] rounded-sm p-1 min-w-[15rem]">
-            <p className="text-white text-md font-semibold">
-              {t("home.you")}
-            </p>
+          <div className="flex bg-[#4f47e6] justify-center rounded-lg p-1 min-w-[15rem]">
             <p className="text-right text-sm text-white mt-1" dir={i18n.language == "ar" ? "rtl" : "ltr"}>
               {formatTime(message.date_created, i18n.language)}
             </p>

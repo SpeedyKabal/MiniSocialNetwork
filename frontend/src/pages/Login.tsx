@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, FormEvent } from "react";
-import api from "../api";
+import api, { startTokenRefresh } from "../api";
 import { useNavigate, Link } from "react-router-dom";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
 import Loading from "../components/Extensions/Loading";
@@ -34,6 +34,7 @@ function Login() {
       const res = await api.post("api/token/", { username, password });
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+      startTokenRefresh(); // Start token refresh interval after login
       navigate("/");
     } catch (error) {
       const errorMessage = error.response?.data?.error || "An error occurred";

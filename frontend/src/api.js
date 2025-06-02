@@ -53,7 +53,7 @@ api.interceptors.request.use(
     }
 )
 
-startTokenRefresh();
+// startTokenRefresh(); // Removed global call to startTokenRefresh()
 
-
+export { startTokenRefresh };
 export default api
