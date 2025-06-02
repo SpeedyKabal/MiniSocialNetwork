@@ -59,9 +59,15 @@ function Weather() {
   const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' as const }).format(currentDate);
   const formattedDate = `${dayName} ${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
 
+  // Responsive container classes
+  // On mobile: static, full width, top; on desktop: fixed sidebar
+  const containerClass =
+    "z-10 p-2 m-1" +
+    "w-full static top-0 left-0 sm:w-[15%] sm:fixed sm:top-12 sm:left-0";
+
   if (loading) {
     return (
-      <div className="fixed top-12 left-0 p-2 m-2 w-[15%]">
+      <div className={containerClass}>
         <div className="flex flex-col bg-red-100 rounded-lg p-4 shadow-md">
           <p>Loading weather data...</p>
         </div>
@@ -71,7 +77,7 @@ function Weather() {
 
   if (error) {
     return (
-      <div className="fixed top-12 left-0 p-2 m-2 w-[15%]">
+      <div className={containerClass}>
         <div className="flex flex-col bg-red-100 rounded-lg p-4 shadow-md">
           <p className="text-red-500">{error}</p>
         </div>
@@ -80,18 +86,18 @@ function Weather() {
   }
 
   return (
-    <div className="fixed top-12 left-0 p-2 m-2 w-[15%]">
+    <div className={containerClass}>
       {/* Card Container */}
       <div className="flex flex-col bg-violet-400/80 rounded-lg p-2 shadow-md">
         {/* City and Date */}
-        <div className="flex gap-2 text-yellow-50">
+        <div className="flex gap-2 justify-between text-yellow-50">
           <p className="text-[1.5rem]">{weatherData.name} {/* El Hadjira */ }</p>
           <p className="text-[0.9rem] mt-[0.8rem]">{formattedDate}</p>
         </div>
         {/* ==City and Date== */}
 
         {/* Weather Icon and Description */}
-        <div className="flex items-center text-yellow-50">
+        <div className="flex items-center justify-center text-yellow-50">
           <img src={iconUrl} alt={weatherDescription} className="w-16 h-16" />
           <p className="text-lg capitalize">{t(`weather.${weatherDescription}`)}</p>
         </div>
@@ -117,7 +123,7 @@ function Weather() {
             <p className="font-semibold">{t("weather.pressure")}</p>
             <p>{weatherData.main.pressure} hPa</p>
           </div>
-          {weatherData.rain && (
+          {weatherData.rain && weatherData.rain["1h"] !== undefined && (
             <div className='text-yellow-50'>
               <p className="font-semibold">Rain (1h)</p>
               <p>{weatherData.rain["1h"]} mm</p>

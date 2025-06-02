@@ -337,11 +337,11 @@ const Messages = () => {
 
       <div className="flex justify-center">
         <div className="py-2 w-[90vw] h-[90vh]">
-          <div className="flex border-1 border-blue-200 rounded drop-shadow-lg h-full">
+          <div className="flex border-1 border-blue-200 rounded-2xl drop-shadow-lg h-full gap-6 bg-white/80">
             {/* <!-- Left --> */}
             <div
               className={`lg:w-1/3 ${!contacts ? "w-full" : "w-0"
-                }  border-1 border-blue-200 flex flex-col overflow-scroll`}
+                } border-1 border-blue-200 flex flex-col rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
             >
               <User
                 UserClicked={fetchMessages}
@@ -353,7 +353,7 @@ const Messages = () => {
             {/* <!-- Right --> */}
             <div
               className={`lg:w-3/4 ${contacts ? "w-full" : "w-0"
-                } flex flex-col border-1 border-blue-200`}
+                } flex flex-col border-1 border-blue-200 rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
             >
               {/* <!-- Header --> */}
               <div className="py-1 px-3 bg-grey-lighter flex flex-row justify-stretch items-center">
@@ -400,7 +400,7 @@ const Messages = () => {
               </div>
 
               {/* <!-- Messages --> */}
-              <div className="flex-1 bg-[#DAD3CC] overflow-y-scroll">
+              <div className="flex-1 bg-[#DAD3CC] overflow-y-auto">
                 <div className="flex justify-center py-2">
                   {user &&
                     (noMoreMessages ? (

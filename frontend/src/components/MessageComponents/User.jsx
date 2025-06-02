@@ -8,6 +8,7 @@ import { formatTime } from "../../services/Utilities";
 
 function User({ UserClicked, userInfos, lastReceivedMessage }) {
   const [users, setUsers] = useState([]);
+  const [filtredUsers, setFiltredUsers] = useState([]);
   const [searchUser, setSearchUser] = useState("");
   const [loading, setLoading] = useState(false);
   const onlineSocket = useWebSocket();
@@ -101,6 +102,7 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
       .then((data) => {
         if (data.length > 0) {
           setUsers(sortUsers(data));
+          setFiltredUsers(sortUsers(data));
         }
       })
       .catch((err) => alert(err))
@@ -116,7 +118,7 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
     const searchUserValue = e.target.value;
     setSearchUser(searchUserValue);
     if (searchUserValue.trim() === "") {
-      getAllUsers();
+      setUsers(filtredUsers);
     } else {
       const newUsersList = [...users];
       const filtredUsers = newUsersList.filter(
@@ -136,13 +138,13 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
           type="text"
           value={searchUser}
           onChange={searchUserInput}
-          className="w-full px-2 py-2 text-sm outline-2 outline-slate-400 outline-double"
+          className="w-full px-2 py-2 text-sm outline-2 outline-slate-400 outline-double rounded-lg bg-white text-grey-darkest focus:outline-blue-500"
           placeholder={t("message.serachSelectPlacholder")}
         />
       </div>
 
       {/* <!-- Contacts --> */}
-      <div className="bg-grey-lighter flex-1 overflow-auto">
+      <div className="bg-grey-lighter flex-1 overflow-y-auto min-h-0 rounded-xl shadow-sm">
         {loading && (
           <div className="flex flex-col gap-5">
             {Array.from({ length: 8 }).map((_, index) => (
