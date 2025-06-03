@@ -313,7 +313,7 @@ class ProcessVideoView(APIView):
                 "-c:v", "libx264", "-b:v", "1000k",
                 "-c:a", "aac", "-b:a", "128k",
                 "-hls_time", "10",
-                "-threads", "4",
+                "-threads", "2",
                 "-strict", "-2",
                 "-hls_playlist_type", "vod",
                 "-progress", "pipe:1",

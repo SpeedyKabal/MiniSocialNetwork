@@ -33,7 +33,6 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         data = json.loads(text_data)
         # Handle received data here
-        print("Chat Class : " , data)
         try:
             await self.channel_layer.group_send(
                 self.room_group_name,
@@ -79,7 +78,6 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
        except Message.DoesNotExist:
            return None
        messageSerialized = MessageSerializers(message).data
-       print("Message Serialized : ", messageSerialized)
        domain = os.getenv("DOMAIN")  # Use the DOMAIN variable from .env
        for file in messageSerialized.get("mediaFiles", []):
            if file["hslURL"]:  # If the file is a video
