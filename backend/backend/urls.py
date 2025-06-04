@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from api.views import CreateUserView
+from api.model_views.UserViews import CreateUserView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
