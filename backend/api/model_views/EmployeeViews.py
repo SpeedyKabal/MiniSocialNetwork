@@ -1,6 +1,5 @@
 # Employee-related views
 
-import logging
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
@@ -8,8 +7,6 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from api.serializers import EmployeeSerializers, EmployeeProfilePicture, EmployeeUpdateSerializers
 from api.models import Employee
-
-logger = logging.getLogger(__name__)
 
 class UpdateEmployeeView(generics.UpdateAPIView):
     serializer_class = EmployeeUpdateSerializers

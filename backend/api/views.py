@@ -1,25 +1,12 @@
-import os, random, string, time, subprocess, re, requests
+import requests
 from django.core.cache import cache
 from django.conf import settings
-from backend.settings import EMAIL_HOST_USER
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser
 from rest_framework.views import APIView
 from rest_framework import generics, status
-from itertools import chain
-from django.contrib.auth import get_user_model
-from django.http import JsonResponse
-from django.contrib.auth.models import User
-from django.db.models import Q
-from django.core.mail import send_mail
-from django.utils.dateparse import parse_datetime
-from asgiref.sync import async_to_sync
-from channels.layers import get_channel_layer
-from .serializers import UserSerializers, PostSerializers, ReactionSerializers, CommentSerializers, MessageSerializers, UserSerializersForLastMessage,EmployeeSerializers,EmployeeProfilePicture, UserUpdateSerializer, EmployeeUpdateSerializers, UserSerializersForCurrentUser, NoificationSerializers
-from .models import Post, Reaction, Comment, Message, Employee, File, Notification
+from .serializers import NoificationSerializers
+from .models import Notification
 
 
 class ListNotificationsView(generics.ListAPIView):
@@ -62,7 +49,6 @@ class WeatherView(APIView):
             
             # Cache the data
             cache.set(self.CACHE_KEY, data, settings.WEATHER_CACHE_TIMEOUT)
-            print("Weather from the api directly")
             return Response(data)
         except Exception as e:
             return Response(
