@@ -1,7 +1,4 @@
-import os
-import re
-import subprocess
-import time
+import os, re, subprocess, time
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -12,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.models import File, Message, Post
-from api.serializers import File
+from api.model_serializers.FileSerializers import File
 
 
 # File-related views

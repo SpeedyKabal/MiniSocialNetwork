@@ -62,11 +62,12 @@ def send_welcome_message(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Post)
 def addNotification(sender, instance, created, **kwargs):
     if created:
-        Notification.objects.create(
+        notification = Notification.objects.create(
             user=instance.author,
             post=instance,
-            message=f"{instance.author.last_name} {instance.author.first_name} Posted a New Post: {instance.content[:30]}...",
+            message=f"{instance.author.last_name} {instance.author.first_name} Posted a New Post: {instance.content[:30]}..."
         )
+        notification.is_read.add(instance.author)
         
 
         

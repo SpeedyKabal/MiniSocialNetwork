@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics, status
 from rest_framework.response import Response
-from api.serializers import EmployeeSerializers, EmployeeProfilePicture, EmployeeUpdateSerializers
+from api.model_serializers.EmployeeSerializers import EmployeeSerializers, EmployeeProfilePicture, EmployeeUpdateSerializers
 from api.models import Employee
 
 class UpdateEmployeeView(generics.UpdateAPIView):

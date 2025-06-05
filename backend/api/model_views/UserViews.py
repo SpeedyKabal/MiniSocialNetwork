@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import generics, status
 from backend.settings import EMAIL_HOST_USER
-from api.serializers import UserSerializers, UserSerializersForLastMessage, UserUpdateSerializer, UserSerializersForCurrentUser
+from api.model_serializers.UserSerializers import UserSerializers, UserSerializersForLastMessage, UserUpdateSerializer, UserSerializersForCurrentUser
 
 # User-related views
 

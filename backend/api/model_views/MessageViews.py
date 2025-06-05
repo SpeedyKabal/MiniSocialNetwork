@@ -1,12 +1,12 @@
 # Message-related views
-
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics, status
 from rest_framework.response import Response
-from api.serializers import MessageSerializers
+from api.model_serializers.MessageSerializers import MessageSerializers
 from api.models import Message
 from itertools import chain
 from django.db.models import Q
+
 
 class SendMessageView(generics.CreateAPIView):
     serializer_class = MessageSerializers

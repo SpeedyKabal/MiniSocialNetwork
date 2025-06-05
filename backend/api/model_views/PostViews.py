@@ -3,7 +3,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics, status
 from rest_framework.response import Response
-from api.serializers import PostSerializers
+from api.model_serializers.PostSerializers import PostSerializers
 from api.models import Post
 from django.utils.dateparse import parse_datetime
 
@@ -79,5 +79,7 @@ class PostDelete(generics.DestroyAPIView):
             if postInstance.author == self.request.user:
                 postInstance.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response("You are not the author of this post", status=status.HTTP_403_FORBIDDEN)
         except Post.DoesNotExist:
             return Response("Post Doesn't Existe", status=status.HTTP_404_NOT_FOUND)
