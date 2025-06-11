@@ -21,6 +21,8 @@ function Comments({ post_id }) {
   const textareaRef = useRef(null);
   const textareaRefUpdate = useRef(null);
 
+  const isArabic = i18n.language == "ar" ? true : false;
+
   useEffect(() => {
     fetchComments();
   }, []);
@@ -99,27 +101,26 @@ function Comments({ post_id }) {
       </div>
       <form
         onSubmit={handleComment}
-        className={`"flex w-full" + ${
-          i18n.language == "ar" ? "flex-row-reverse" : ""
-        }`}
+        className={`flex relative w-full ${isArabic ? "flex-row-reverse" : ""
+          }`}
       >
         <input
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder={`${
-            i18n.language == "ar"
-              ? "اكتب تعليقك هنا..."
-              : i18n.language == "ar"
+          placeholder={`${isArabic
+            ? "اكتب تعليقك هنا..."
+            : i18n.language == "en"
               ? "Write your comment here..."
               : "Ecrivez votre commentaire ici..."
-          }`}
-          className="w-full h-[2rem] px-3 py-1 mx-2 text-lg rounded-lg outline-1 outline-blue-400 outline"
+            }`}
+          className={`w-full h-[2rem] px-2 py-1 mx-1 text-lg rounded-lg outline-1 outline-blue-400 outline ${isArabic ? "text-right" : "text-left"}`}
+          dir={isArabic ? "rtl" : "ltr"}
         />
-        <button type="submit" className="text-blue-500 hover:bg-blue-200 ">
-          {i18n.language == "ar" ? (
-            <ChevronLeft size={35} strokeWidth={3} absoluteStrokeWidth />
+        <button type="submit" className={`absolute top-0 text-blue-500 hover:bg-blue-200 ${isArabic ? "left-0" : "right-0"}`}>
+          {isArabic ? (
+            <ChevronLeft size={32} strokeWidth={3} absoluteStrokeWidth />
           ) : (
-            <ChevronRight size={35} strokeWidth={3} absoluteStrokeWidth />
+            <ChevronRight size={32} strokeWidth={3} absoluteStrokeWidth />
           )}
         </button>
       </form>

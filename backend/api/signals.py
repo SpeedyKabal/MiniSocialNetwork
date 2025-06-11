@@ -65,7 +65,7 @@ def addNotification(sender, instance, created, **kwargs):
         notification = Notification.objects.create(
             user=instance.author,
             post=instance,
-            message=f"{instance.author.last_name} {instance.author.first_name} Posted a New Post: {instance.content[:30]}..."
+            message=f"{instance.author.last_name} {instance.author.first_name} Posted: {instance.content[:20]}..."
         )
         notification.is_read.add(instance.author)
         
