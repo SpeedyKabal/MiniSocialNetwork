@@ -12,11 +12,11 @@ const initialWeatherData = {
   ],
   "main": {
     "temp": 0,
-    "feels_like":0,
+    "feels_like": 0,
     "humidity": 0,
     "pressure": 0
   },
-  "name" : "Loading",
+  "name": "Loading",
   "wind": {
     "speed": 0
   },
@@ -33,13 +33,13 @@ function Weather() {
 
   useEffect(() => {
     const fetchWeatherData = async () => {
-        await api.get('/api/weather').then((response) => {
-            setWeatherData(response.data);
-            setLoading(false);
-        }).catch((error) => {
-          console.error('Error fetching weather data:', error);
-          setError(error.message || 'Failed to fetch weather data');
-        });
+      await api.get('/api/weather').then((response) => {
+        setWeatherData(response.data);
+        setLoading(false);
+      }).catch((error) => {
+        console.error('Error fetching weather data:', error);
+        setError(error.message || 'Failed to fetch weather data');
+      });
     };
 
     fetchWeatherData();
@@ -90,10 +90,11 @@ function Weather() {
       {/* Card Container */}
       <div className="flex flex-col bg-violet-400/80 rounded-lg p-2 shadow-md">
         {/* City and Date */}
-        <div className="flex gap-2 justify-between text-yellow-50">
-          <p className="text-[1.5rem]">{weatherData.name} {/* El Hadjira */ }</p>
-          <p className="text-[0.9rem] mt-[0.8rem]">{formattedDate}</p>
+        <div className="flex text-yellow-50">
+          <p className="text-[1.5rem]">{weatherData.name} {/* El Hadjira */}</p>
         </div>
+        <p className="text-[0.9rem] text-end text-yellow-50">{formattedDate}</p>
+
         {/* ==City and Date== */}
 
         {/* Weather Icon and Description */}

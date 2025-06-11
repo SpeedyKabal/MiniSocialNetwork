@@ -21,8 +21,12 @@ class WeatherView(APIView):
             # If no cached data, fetch from OpenWeather API
             api_key = settings.WEATHER_API_KEY
             # Example coordinates for Sidi Khaled
-            lon = 4.983333
-            lat = 34.383333
+            #lon = 4.983333
+            #lat = 34.383333
+            
+            # Example coordinates for El Hadjira
+            lon = 5.5503721
+            lat = 32.615112
             
             response = requests.get(
                 f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}'

@@ -20,7 +20,6 @@ function Comments({ post_id }) {
   const [updateContentid, setUpdateContentid] = useState(null); // this hold the id comment that user want to update
   const textareaRef = useRef(null);
   const textareaRefUpdate = useRef(null);
-  const isArabic = i18n.language == "ar";
 
   useEffect(() => {
     fetchComments();
@@ -98,40 +97,32 @@ function Comments({ post_id }) {
       <div className="flex justify-center mb-1">
         <span className={`text-sky-900 text-lg`}>{t("post.comments")}</span>
       </div>
-
-      {isArabic ? (
-        <form onSubmit={handleComment} className="flex flex-row-reverse w-full">
-          <input
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="أكتب تعليقك هنا"
-            className="w-full text-right h-[2rem] px-3 py-1 mx-2 text-lg rounded-lg outline-1 outline-blue-400 outline"
-          />
-          <button type="submit" className="text-blue-500 hover:bg-blue-200 ">
+      <form
+        onSubmit={handleComment}
+        className={`"flex w-full" + ${
+          i18n.language == "ar" ? "flex-row-reverse" : ""
+        }`}
+      >
+        <input
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder={`${
+            i18n.language == "ar"
+              ? "اكتب تعليقك هنا..."
+              : i18n.language == "ar"
+              ? "Write your comment here..."
+              : "Ecrivez votre commentaire ici..."
+          }`}
+          className="w-full h-[2rem] px-3 py-1 mx-2 text-lg rounded-lg outline-1 outline-blue-400 outline"
+        />
+        <button type="submit" className="text-blue-500 hover:bg-blue-200 ">
+          {i18n.language == "ar" ? (
             <ChevronLeft size={35} strokeWidth={3} absoluteStrokeWidth />
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={handleComment} className="flex w-full">
-          <textarea
-            name=""
-            id=""
-            rows={1}
-            placeholder={t("post.commentplaceholder")}
-            onChange={(e) => setComment(e.target.value)}
-            ref={textareaRef}
-            value={comment}
-            className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl"
-          ></textarea>
-
-          <button
-            type="submit"
-            className="text-blue-500 hover:bg-blue-200 rounded-lg"
-          >
+          ) : (
             <ChevronRight size={35} strokeWidth={3} absoluteStrokeWidth />
-          </button>
-        </form>
-      )}
+          )}
+        </button>
+      </form>
 
       {comments.length > 0 ? (
         comments.map((ele) => (
@@ -143,13 +134,13 @@ function Comments({ post_id }) {
               />
             </div>
             <div className="flex flex-col justify-center gap-2 w-[90%]">
-              <span className={`text-sky-900 text-md lg:text-lg font-bold`}>
+              <span className="text-sky-900 text-md lg:text-lg font-bold">
                 {ele.user.last_name} {ele.user.first_name}
               </span>
-              <div className="flex justify-between bg-blue-300/50 ring-2 ring-sky-300 rounded-xl py-1 px-2 mr-3">
+              <div className="flex justify-between items-center bg-blue-300/50 ring-2 ring-sky-300 rounded-xl py-1 px-2">
                 {updateContentid !== ele.id ? (
                   <div
-                    className="text-sky-900 whitespace-pre-line text-lg flex items-center font-semibold px-2 mx-2 w-full"
+                    className="text-sky-900 whitespace-pre-line text-sm lg:text-lg flex items-center font-semibold px-2 max-w-full overflow-hidden"
                     dir={contentDisplay(ele.content) ? "rtl" : "ltr"}
                   >
                     {ele.content}
@@ -163,7 +154,7 @@ function Comments({ post_id }) {
                       onChange={(e) => setUpdateContent(e.target.value)}
                       ref={textareaRefUpdate}
                       value={updateContent}
-                      className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl"
+                      className="resize-none w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-lg"
                     ></textarea>
                     <button
                       type="button"
@@ -174,26 +165,21 @@ function Comments({ post_id }) {
                     >
                       <ChevronRight
                         size={40}
-                        strokeWidth={3}
+                        strokeWidth={2}
                         absoluteStrokeWidth
                       />
                     </button>
                   </div>
                 )}
 
-                <div className="flex items-center">
-                  <span
-                    className={`text-sky-900 p-2 mr-2 whitespace-nowrap text-sm lg:text-md`}
-                  >
-                    {formatTime(ele.timeCreated, i18n.language)}
-                  </span>
+                <div className="relative">
                   {currentUser?.id === ele.user.id && (
-                    <div className="relative">
+                    <>
                       <button
                         onClick={() => {
                           toggleDropDownList(ele.id);
                         }}
-                        className={`text-sky-900 cursor-pointer text-xl lg:text-2xl duration-300 px-2 mx-2 transition ease-in-out delay-150 hover:text-blue-500 hover:rotate-90`}
+                        className="text-sky-900 cursor-pointer duration-300 transition ease-in-out delay-150 hover:text-blue-500 hover:rotate-90"
                       >
                         <Settings />
                       </button>
@@ -211,17 +197,20 @@ function Comments({ post_id }) {
                             {t("post.update")}
                           </li>
                           <li
-                            className="px-2 py-2 hover:bg-red-300 cursor-pointer rounded-lg"
+                            className="px-2 py-2 hover:bg-red-300 cursor-pointer"
                             onClick={() => openCloseDeleteModel(ele.id)}
                           >
                             {t("post.delete")}
                           </li>
                         </ul>
                       )}
-                    </div>
+                    </>
                   )}
                 </div>
               </div>
+              <p className="text-sky-900 text-end mr-2 whitespace-nowrap text-sm lg:text-md">
+                {formatTime(ele.timeCreated, i18n.language)}
+              </p>
             </div>
             {deleteModel === ele.id && (
               <li className="absolute inset-0 bg-black/75 bg-opacity-50 flex justify-center items-center z-20 rounded-lg">
@@ -264,7 +253,7 @@ function Comments({ post_id }) {
           </div>
         ))
       ) : (
-        <div className="text-sky-900 text-3xl text-center my-4">
+        <div className="text-sky-900 text-xl sm:text-md text-center my-4">
           {t("post.firstcomment")}
         </div>
       )}
