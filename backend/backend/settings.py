@@ -16,18 +16,22 @@ from dotenv import load_dotenv
 import pymysql
 import os
 
-load_dotenv()
+
 
 pymysql.install_as_MySQLdb()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+ENV_FILE_PATH = BASE_DIR.parent / ".env"
+load_dotenv(dotenv_path=ENV_FILE_PATH)
+
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0zmn9%&@ex&r9cgh2+&v40ia*0r&kvwabpbu-ez-hyu30@7*^b'
+SECRET_KEY = os.getenv('DJANGO_SECRET_CODE')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

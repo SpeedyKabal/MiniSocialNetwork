@@ -10,5 +10,7 @@ psycopg2-binary
 python-dotenv
 daphne
 channels
+django-redis
+mysqlclient
 pillow
 gunicorn

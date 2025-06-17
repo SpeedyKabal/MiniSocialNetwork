@@ -9,9 +9,10 @@ backend/api/model_views/__init__.py
 backend/api/model_views/__pycache__/
 backend/api/model_serializers/__pycache__/
 backend/api/migrations/
-backend/.env
 /hsnenv/
 #FrontEnd Skipped Files and Folders
 
 frontend/node_modules/
-frontend/.env
+
+
+.env
