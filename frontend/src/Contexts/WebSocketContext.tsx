@@ -23,19 +23,26 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
           }
 
           const wsUrl = (import.meta as any).env.VITE_WS_URL;
-          webSocketRef.current = new WebSocket(`${wsUrl}?token=${token}`);
-          webSocketRef.current.onopen = () => {
-            setOnlineStatus(webSocketRef.current as WebSocket);
-          };
-          webSocketRef.current.onerror = (error) => {
-            console.error("WebSocket error:", error);
-            webSocketRef.current = null;
-            setOnlineStatus(null);
-          };
-          webSocketRef.current.onclose = () => {
-            webSocketRef.current = null;
-            setOnlineStatus(null);
-          };
+          if (wsUrl) {
+            webSocketRef.current = new WebSocket(`${wsUrl}?token=${token}`);
+            webSocketRef.current.onopen = () => {
+              setOnlineStatus(webSocketRef.current as WebSocket);
+            };
+            webSocketRef.current.onerror = (error) => {
+              console.error("WebSocket error:", error);
+              webSocketRef.current = null;
+              setOnlineStatus(null);
+            };
+            webSocketRef.current.onclose = () => {
+              webSocketRef.current = null;
+              setOnlineStatus(null);
+            };
+          } else {
+            console.error("WebSocket URL is not defined in environment variables.");
+            console.log("wUrl : ", wsUrl);
+            return;
+          }
+
         } catch (error) {
           console.error("Failed to connect to WebSocket:", error);
         }
