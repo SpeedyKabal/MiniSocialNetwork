@@ -28,18 +28,21 @@ const VideoSwiper = ({ videoFile, index, filesLength }) => {
         crossOrigin=""
         className="mx-auto aspect-video"
       ></video>
-      <media-loading-indicator slot="centered-chrome">
-        <media-play-button></media-play-button>
-      </media-loading-indicator>
+      {/* Centered play button */}
+      <media-play-button slot="centered-chrome"></media-play-button>
+      {/* Top control bar */}
       <media-control-bar slot="top-chrome">
         <media-time-display showduration></media-time-display>
         <media-mute-button></media-mute-button>
         <media-volume-range></media-volume-range>
+        <media-playback-rate-button rates="0.5 1 2 3"></media-playback-rate-button>
+        <media-fullscreen-button></media-fullscreen-button>
+      </media-control-bar>
+      {/* Bottom control bar */}
+      <media-control-bar slot="bottom-chrome">
         <media-seek-backward-button seekoffset="30"></media-seek-backward-button>
         <media-time-range></media-time-range>
         <media-seek-forward-button seekoffset="30"></media-seek-forward-button>
-        <media-playback-rate-button rates="0.5 1 2 3"></media-playback-rate-button>
-        <media-fullscreen-button></media-fullscreen-button>
       </media-control-bar>
     </media-controller>
   );

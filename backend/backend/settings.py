@@ -36,8 +36,8 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_CODE')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"]
-CSRF_TRUSTED_ORIGINS = ["http://localhost:5173/"]
+ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost", "192.168.10.156"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:5173/", "http://192.168.10.156/"]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -119,7 +119,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': 'db',
+        'HOST': os.getenv('DB_HOST'),
         'PORT': os.getenv('DB_PORT'),
         'OPTIONS' : {
             'charset' : 'utf8mb4',
