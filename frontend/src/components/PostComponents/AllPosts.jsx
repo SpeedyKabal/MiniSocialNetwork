@@ -98,7 +98,8 @@ function AllPosts({ post, OnPostDeleted, UpdatePost = () => { }, showDetails = f
               />
             )}
           </div>
-          <Media urlFile={post.mediaFiles} />
+          <div className="postContainer"><Media urlFile={post.mediaFiles} /></div>
+          
           {showDetails ? (
             isUpdate ? (
               <div className="relative my-2">

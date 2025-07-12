@@ -131,7 +131,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('redis', 6379)],
+            'hosts': [('127.0.0.1', 6379)],
         },
     },
 }
@@ -201,7 +201,7 @@ WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/1",  # Using database 1 for cache (0 is used by channels)
+        "LOCATION": "redis://127.0.0.1:6379/1",  # Using database 1 for cache (0 is used by channels)
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
