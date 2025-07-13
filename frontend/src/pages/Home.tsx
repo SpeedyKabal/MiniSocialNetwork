@@ -202,7 +202,7 @@ function Home() {
                   <span className="text-md lg:text-xl">{t("home.video")}</span>
                 </button>
                 <button
-                  onClick={() => handleUpload({ accept: "audio/*" })}
+                  onClick={() => handleUpload({ accept: "audio/*", capture: "microphone" })}
                   className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Music className="size-6 lg:size-8" />

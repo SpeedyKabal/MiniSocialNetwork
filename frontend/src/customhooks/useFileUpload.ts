@@ -7,12 +7,14 @@ export const useFileUpload = () => {
 
   const generateFileId = () => `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-  const handleUpload = (options: { accept?: string; multiple?: boolean }) => {
+  const handleUpload = (options: { accept?: string; multiple?: boolean; capture?: string }) => {
     const input = document.createElement('input');
     input.type = 'file';
     input.multiple = options.multiple ?? true;
     input.accept = options.accept ?? '*/*';
-    
+
+    input.capture = options.capture ?? 'environment';
+
     input.onchange = (e) => {
       const files = Array.from((e.target as HTMLInputElement).files || []);
       const newFiles = files.map(file => ({

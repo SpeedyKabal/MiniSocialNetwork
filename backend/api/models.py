@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 import os
 from datetime import datetime
 #from channels.db import database_sync_to_async
@@ -106,6 +107,14 @@ class Employee(models.Model):
         ('Female','Female'),
     )
 
+    DEPARTMENTS = (
+        ('DSS', 'DSS'),
+        ('DFM', 'DFM'),
+        ('DRH', 'DRH'),
+        ('DSI', 'DSI'),
+        ('DMM', 'DMM'),
+    )
+    
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE, related_name="employee")
     gender = models.CharField(max_length=6, null=True, choices=GENDER)
     phone = models.CharField(max_length=10, null=True, blank=True)
@@ -117,6 +126,8 @@ class Employee(models.Model):
     cover_pic = models.ImageField(null=True,blank=True, default='cover_pic.jpg')
     isOnline = models.BooleanField(default=False)
     last_seen = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
+    department = models.CharField(max_length=3, choices=DEPARTMENTS, null=True, blank=True, help_text="Actual department/sub-directorate of the user")
+    is_subdirector = models.BooleanField(default=False)
 
 
     def full_name(self):
@@ -198,4 +209,22 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification id :{self.pk} on Post id : {self.post_id}"
+    
+
+class Task(models.Model):
+    title = models.CharField(max_length=128)
+    description = models.TextField(max_length=1024)
+    assigned_by = models.ForeignKey(Employee, related_name='tasks_assigned', on_delete=models.CASCADE, limit_choices_to={'is_subdirector': True})
+    assigned_to = models.ForeignKey(Employee, related_name='tasks_received', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    due_date = models.DateTimeField(null=True, blank=True)
+    is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Task: {self.title} from {self.assigned_by.full_name()} to {self.assigned_to.full_name()}"
+
+    def clean(self):
+        # Ensure assigned_to is in the same department as assigned_by
+        if self.assigned_by.department != self.assigned_to.department:
+            raise ValidationError("Task can only be assigned to users in the same department.")
     
