@@ -3,6 +3,7 @@ Django
 django-cors-headers
 djangorestframework
 djangorestframework-simplejwt
+requests
 PyJWT
 pytz
 sqlparse
@@ -11,6 +12,5 @@ python-dotenv
 daphne
 channels
 django-redis
-mysqlclient
 pillow
 gunicorn

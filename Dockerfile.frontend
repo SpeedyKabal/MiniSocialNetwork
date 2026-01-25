@@ -1,0 +1,8 @@
+FROM oven/bun:1.1
+
+WORKDIR /app
+
+COPY ./frontend /app
+
+RUN bun install
+RUN bun run build
