@@ -80,7 +80,11 @@ class ProcessVideoView(APIView):
             # Input and output paths
             input_path = instance.file.path  # The uploaded video file
             output_path = os.path.join(base_path, "output.m3u8")  # HLS playlist
-            
+
+            # Get the number of threads
+            num_threads = os.cpu_count() or 1
+            ffmpeg_threads = max(1, num_threads // 2)  # Use half of the available threads
+
             duration = self.get_video_duration(input_path)
 
             # FFmpeg command for HLS conversion
@@ -89,7 +93,7 @@ class ProcessVideoView(APIView):
                 "-c:v", "libx264", "-b:v", "1000k",
                 "-c:a", "aac", "-b:a", "128k",
                 "-hls_time", "10",
-                "-threads", "2",
+                "-threads", str(ffmpeg_threads),
                 "-strict", "-2",
                 "-hls_playlist_type", "vod",
                 "-progress", "pipe:1",

@@ -24,6 +24,10 @@
         padding-right: 12px;
         padding-left: 12px;
     }
+    media-play-button{
+        --media-button-icon-width: 3rem;
+        --media-button-icon-height: 3rem;
+    }
 
     media-play-button,
     media-time-display,
@@ -105,6 +109,11 @@
     media-time-display {
         padding-right: 12px;
         padding-left: 12px;
+    }
+
+    media-play-button{
+        --media-button-icon-width: 3rem;
+        --media-button-icon-height: 3rem;
     }
 
     media-play-button,

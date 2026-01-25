@@ -35,7 +35,7 @@ const WebSocketMessageBubble = ({ message, currentUserID, user }) => {
           >
             {message.message && convertLinksInsideMessages(message.message)}
           </p>
-          {message.mediaFiles && <Media urlFile={message.mediaFiles} />}
+          {message.mediaFiles && <div className="messageContainer"><Media urlFile={message.mediaFiles} /></div>}
         </div>
         {message.is_read === true ? (
           <p className="mt-auto text-md text-blue-500">
@@ -84,7 +84,7 @@ const WebSocketMessageBubble = ({ message, currentUserID, user }) => {
         >
           {message.message && convertLinksInsideMessages(message.message)}
         </p>
-        {message.mediaFiles && <Media urlFile={message.mediaFiles} />}
+        {message.mediaFiles && <div className="messageContainer"><Media urlFile={message.mediaFiles} /></div>}
       </div>
     </div>
   );
