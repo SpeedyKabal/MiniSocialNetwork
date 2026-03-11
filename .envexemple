@@ -1,7 +1,4 @@
-DJANGO_SECRET_CODE= run this Command : 
-python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())" 
-then give the result to that constante
-
+DJANGO_SECRET_CODE=
 
 DB_NAME=databaseName
 DB_USER=userForDatabase
