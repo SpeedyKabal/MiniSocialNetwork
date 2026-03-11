@@ -40,7 +40,7 @@ const Media: React.FC<MediaProps> = ({ urlFile }) => {
   const videoFiles = fileExtension.filter((file) => file.type == "Video")
 
   return (
-    <div>
+    <>
       <Swiper
         modules={[Navigation, Pagination]}
         navigation
@@ -99,7 +99,7 @@ const Media: React.FC<MediaProps> = ({ urlFile }) => {
           }}
         />
       )}
-    </div>
+    </>
   );
 };
 

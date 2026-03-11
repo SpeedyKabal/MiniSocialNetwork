@@ -73,10 +73,10 @@ const Messages = () => {
             is_read: true
           })));
         }
-        if (
-          WebSocketObject["command"] == "ffmpegProgress"
-        ) {
-          updateFile(WebSocketObject["fileid"], { progressProcessing: Math.floor(WebSocketObject["progress"]) });
+        // When the Celery task finishes processing a video, the server sends
+        // a video_ready event. We then broadcast the message via the chat WebSocket.
+        if (WebSocketObject["command"] == "video_ready") {
+          sendVideoReadyMessage(WebSocketObject["message_id"]);
         }
       }
     }
@@ -110,6 +110,30 @@ const Messages = () => {
     scrollToBottom();
   }
 
+  /**
+   * Called when the server notifies us (via the online WebSocket) that a video
+   * attached to a message has finished processing.  We fetch the full message
+   * from the REST API and then broadcast it through the chat WebSocket so that
+   * both participants see the message (with the ready video) at the same time.
+   */
+  const sendVideoReadyMessage = async (messageId) => {
+    try {
+      const res = await api.get(`api/message/${messageId}/`);
+      if (res.status === 200) {
+        const messageData = res.data;
+        const messageContentforWebSocket = {
+          sender_id: messageData.sender.id,
+          receiver_id: messageData.reciever.id,
+          message_id: messageData.id,
+        };
+        WebSocketInstance.sendaMessage(messageContentforWebSocket);
+        resetFiles();
+      }
+    } catch (err) {
+      console.error("Failed to fetch video-ready message:", err);
+    }
+  };
+
   const sendMessage = async (e) => {
     e.preventDefault();
     if (user) {
@@ -127,7 +151,14 @@ const Messages = () => {
         .then(async (res) => {
           if (res.status === 201) {
             newMessageid = res.data.id;
+            // Track whether any of the files being sent is a video.
+            // If so we must NOT broadcast the chat WebSocket message immediately
+            // because the video is still being processed by Celery.
+            let hasVideo = false;
+
             for (const file of filePreviews) {
+              if (file.type === "video") hasVideo = true;
+
               const fileFormData = new FormData();
               fileFormData.append("file", file.file);
               fileFormData.append("message_id", newMessageid);
@@ -152,7 +183,19 @@ const Messages = () => {
                   if (res.status == 201) {
                     const fileId = res.data.id;
                     if (file.type == "video") {
-                      await api.post(`api/post/process-video/${fileId}/${file.id}/`);
+                      // Dispatch a Celery background task on the server.
+                      // The API returns 202 immediately – no more WebSocket progress.
+                      // When processing finishes the server sends a video_ready
+                      // event via the online WebSocket and we call sendVideoReadyMessage.
+                      try {
+                        await api.post(`api/post/process-video/${fileId}/${file.id}/`);
+                        updateFile(file.id, {
+                          status: "Queued",
+                          progress: 100,
+                        });
+                      } catch {
+                        updateFile(file.id, { status: "Error" });
+                      }
                     } else {
                       updateFile(file.id, { status: "Success" });
                     }
@@ -163,12 +206,18 @@ const Messages = () => {
                   updateFile(file.id, { status: "Error" });
                 });
             }
-            const messageContentforWebSocket = {
-              sender_id: currentUser?.id,
-              receiver_id: res.data.reciever.id,
-              message_id: res.data.id,
-            };
-            WebSocketInstance.sendaMessage(messageContentforWebSocket);
+
+            // Only send through the chat WebSocket immediately when there is
+            // no video file.  Video-containing messages will be sent once the
+            // server fires the video_ready event (see sendVideoReadyMessage).
+            if (!hasVideo) {
+              const messageContentforWebSocket = {
+                sender_id: currentUser?.id,
+                receiver_id: res.data.reciever.id,
+                message_id: res.data.id,
+              };
+              WebSocketInstance.sendaMessage(messageContentforWebSocket);
+            }
           }
           if (onlineSocket.readyState === WebSocket.OPEN) {
             onlineSocket.send(
@@ -186,7 +235,7 @@ const Messages = () => {
         })
         .finally(() => {
           setMessageInput("");
-          resetFiles();
+          if (!hasVideo) resetFiles();
           setLoading(false);
         });
     } else {
@@ -431,9 +480,9 @@ const Messages = () => {
 
                   {socketMessages.map((message, index) => (
                     <div key={index}>
-                      <WebSocketMessageBubble 
-                        message={message} 
-                        currentUserID={currentUser.id} 
+                      <WebSocketMessageBubble
+                        message={message}
+                        currentUserID={currentUser.id}
                         user={user}
                       />
                     </div>

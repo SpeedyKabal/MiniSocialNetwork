@@ -58,18 +58,31 @@ export const FilePreviews = ({
   return (
     <div className={containerClass}>
       {content}
+      {/* Upload progress bar */}
       <div
         className="absolute bottom-[35%] left-0 h-5 bg-blue-500"
         style={{ width: `${file.progress}%` }}
       />
-      <div
-        className="absolute bottom-[65%] left-0 h-5 bg-red-500"
-        style={{ width: `${file.progressProcessing}%` }}
-      />
-      <p className="text-lg text-red-700">{file.status}
-        <span className={`${file.status == "Uploading" && "text-blue-500"} ${file.status == "Processing" && "text-red-500"}`}>
-          {file.status == "Uploading" && `${file.progress} %`} {file.status == "Processing" && `${file.progressProcessing} %`}
-        </span>
+      <p className="text-sm font-semibold mt-1">
+        {file.status === "Uploading" && (
+          <span className="text-blue-500">
+            Uploading {file.progress}%
+          </span>
+        )}
+        {file.status === "Processing" && (
+          <span className="text-orange-500">Processing…</span>
+        )}
+        {file.status === "Queued" && (
+          <span className="bg-amber-400 text-white text-xs px-2 py-0.5 rounded-full">
+            ⏳ Queued — you'll be notified when ready
+          </span>
+        )}
+        {file.status === "Success" && (
+          <span className="text-green-500">✓ Done</span>
+        )}
+        {file.status === "Error" && (
+          <span className="text-red-500">✗ Error</span>
+        )}
       </p>
       <CircleX
         className="absolute top-0 right-0 cursor-pointer text-red-200 hover:text-red-500"

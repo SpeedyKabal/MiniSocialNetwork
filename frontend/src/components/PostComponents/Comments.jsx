@@ -8,6 +8,7 @@ import {
   contentDisplay,
   adjustTextareaHeight,
 } from "../../services/Utilities";
+import DeleteModal from "../Extensions/DeleteModal";
 
 function Comments({ post_id }) {
   const currentUser = useUser();
@@ -214,42 +215,23 @@ function Comments({ post_id }) {
               </p>
             </div>
             {deleteModel === ele.id && (
-              <li className="absolute inset-0 bg-black/75 bg-opacity-50 flex justify-center items-center z-20 rounded-lg">
-                <div className="bg-white">
-                  {/* <!-- Modal Header --> */}
-                  <div className="bg-indigo-500 text-white px-4 py-2 flex justify-between">
-                    <h2 className="text-md lg:text-lg font-semibold">
-                      {t("post.deletecomment")}
-                    </h2>
-                  </div>
-                  {/* <!-- Modal Body --> */}
-                  <div className="p-6 text-md lg:text-lg">
-                    <p>{t("post.deleteconf")}</p>
-                  </div>
-                  {/* <!-- Modal Footer --> */}
-                  <div className="border-t px-4 py-2 flex justify-end space-x-4">
-                    <button
-                      onClick={() => {
-                        toggleDropDownList(0);
-                        openCloseDeleteModel(ele.id);
-                      }}
-                      className="px-3 py-2 bg-slate-500 hover:bg-slate-400 text-white text-md lg:text-lg  rounded-md w-full sm:w-auto"
-                    >
-                      {t("post.cancel")}
-                    </button>
-                    <button
-                      onClick={() => {
-                        toggleDropDownList(0);
-                        handleDeleteCommment(ele.id);
-                        openCloseDeleteModel(ele.id);
-                      }}
-                      className="px-3 py-2 bg-indigo-500 hover:bg-indigo-300 text-white text-md lg:text-lg  rounded-md w-full sm:w-auto"
-                    >
-                      {t("post.delete")}
-                    </button>
-                  </div>
-                </div>
-              </li>
+              <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-20">
+                <DeleteModal
+                  title={t("post.deletecomment")}
+                  body={t("post.deleteconf")}
+                  cancelText={t("post.cancel")}
+                  confirmText={t("post.delete")}
+                  onCancel={() => {
+                    toggleDropDownList(0);
+                    openCloseDeleteModel(ele.id);
+                  }}
+                  onConfirm={() => {
+                    toggleDropDownList(0);
+                    handleDeleteCommment(ele.id);
+                    openCloseDeleteModel(ele.id);
+                  }}
+                />
+              </div>
             )}
           </div>
         ))

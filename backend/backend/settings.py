@@ -36,6 +36,7 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_CODE')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1", "localhost"]
 CSRF_TRUSTED_ORIGINS = ["http://localhost:5173/"]
 
@@ -174,6 +175,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
@@ -209,4 +211,14 @@ CACHES = {
 
 # Cache timeout settings
 WEATHER_CACHE_TIMEOUT = 3600  # 1 hour in seconds
+
+# ── Celery ────────────────────────────────────────────────────────────────────
+# Use the same Redis instance already running for Channels / django-redis.
+# Database 2 is reserved for Celery to avoid collisions.
+CELERY_BROKER_URL = "redis://redis:6379/2"
+CELERY_RESULT_BACKEND = "redis://redis:6379/2"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
 

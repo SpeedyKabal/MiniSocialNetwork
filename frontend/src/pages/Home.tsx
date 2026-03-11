@@ -81,6 +81,7 @@ function Home() {
       const formData = new FormData();
       let newPostID = "0";
       formData.append("content", newPost);
+      let containVideo = false;
 
       api
         .post("api/post/", formData, {
@@ -114,6 +115,7 @@ function Home() {
                   if (res.status == 201) {
                     const fileId = res.data.id;
                     if (file.type == "video") {
+                      containVideo = true;
                       await api.post(
                         `api/post/process-video/${fileId}/${file.id}/`
                       );
@@ -133,14 +135,19 @@ function Home() {
           console.error("Error", err);
         })
         .finally(() => {
-          api
-            .get(`/api/post/${newPostID}/`) // Fetch the specific post by ID
-            .then((res) => setPost((prevState) => [res.data, ...prevState]))
-            .catch((err) => alert(err))
-            .finally(() => {
-              resetFiles();
-              setNewPost("");
-            });
+          if (!containVideo) {
+            api
+              .get(`/api/post/${newPostID}/`) // Fetch the specific post by ID
+              .then((res) => setPost((prevState) => [res.data, ...prevState]))
+              .catch((err) => alert(err))
+              .finally(() => {
+                resetFiles();
+                setNewPost("");
+              });
+          } else {
+            resetFiles();
+            setNewPost("");
+          }
         });
     }
   }
@@ -202,7 +209,7 @@ function Home() {
                   <span className="text-md lg:text-xl">{t("home.video")}</span>
                 </button>
                 <button
-                  onClick={() => handleUpload({ accept: "audio/*" })}
+                  onClick={() => handleUpload({ accept: "audio/*", capture: "microphone" })}
                   className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
                 >
                   <Music className="size-6 lg:size-8" />

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import DeleteModal from "../Extensions/DeleteModal";
 
 function PostDropdown({ onEdit, onDelete }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -45,36 +46,19 @@ function PostDropdown({ onEdit, onDelete }) {
         </div>
       )}
       {deleteModel && (
-        <li className="fixed inset-0 bg-black/70 flex justify-center items-center z-20">
-          <div className="bg-white rounded-lg">
-            {/* <!-- Modal Header --> */}
-            <div className="bg-indigo-500 text-white px-2 py-2 flex justify-between rounded-t-lg">
-              <h2 className=" text-xl font-semibold">{t("post.deletepost")}</h2>
-            </div>
-            {/* <!-- Modal Body --> */}
-            <div className="p-4 text-xl">
-              <p>{t("post.deleteconfpost")}</p>
-            </div>
-            {/* <!-- Modal Footer --> */}
-            <div className="border-t px-4 py-2 flex justify-end space-x-2">
-              <button
-                onClick={() => openCloseDeleteModel()}
-                className="px-2 py-2 bg-slate-500 hover:bg-slate-400 text-white text-lg  rounded-md w-full sm:w-auto"
-              >
-                {t("post.cancel")}
-              </button>
-              <button
-                onClick={() => {
-                  onDelete();
-                  openCloseDeleteModel();
-                }}
-                className="px-2 py-2 bg-indigo-500 hover:bg-red-700 text-white text-lg  rounded-md w-full sm:w-auto"
-              >
-                {t("post.delete")}
-              </button>
-            </div>
-          </div>
-        </li>
+        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-20">
+          <DeleteModal
+            title={t("post.deletepost")}
+            body={t("post.deleteconfpost")}
+            cancelText={t("post.cancel")}
+            confirmText={t("post.delete")}
+            onCancel={openCloseDeleteModel}
+            onConfirm={() => {
+              onDelete();
+              openCloseDeleteModel();
+            }}
+          />
+        </div>
       )}
     </div>
   );

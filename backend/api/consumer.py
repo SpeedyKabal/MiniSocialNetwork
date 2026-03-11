@@ -34,16 +34,29 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         # Handle received data here
         try:
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'chat_message',
-                    'sender_id':data['sender_id'],
-                    'receiver_id':data['receiver_id'],
-                    'message_id': data['message_id'],
-                    'command': 'chat_message'
-                }
-            )
+            if data['command'] == 'chat_message':
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'chat_message',
+                        'sender_id':data['sender_id'],
+                        'receiver_id':data['receiver_id'],
+                        'message_id': data['message_id'],
+                        'command': 'chat_message'
+                    }
+                )
+            
+            if data['command'] == 'video_ready':
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'video_ready',
+                        'message_id': data['message_id'],
+                        'file_id': data['file_id'],
+                        'command': 'video_ready'
+                    }
+                )
+            
         except json.JSONDecodeError as e:
             print(f"Json decode error : {e}") 
         except:
@@ -67,6 +80,14 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
                 'mediaFiles': serialized_message['mediaFiles'],  # Include media files from serializer
                 'command': 'chat_message'
             }))
+
+    async def video_ready(self, event):
+        """Sent by the Celery task when HLS conversion is complete."""
+        await self.send(text_data=json.dumps({
+            "command": "video_ready",
+            "message_id": event["message_id"],
+            "file_id": event["file_id"],
+        }))
             
             
              
@@ -223,7 +244,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
                 'progress': event['progress'],
                 'fileid' : event['fileLoopID'],
             }))
-    
+
         
     @database_sync_to_async    
     def switchUserState(self, event):

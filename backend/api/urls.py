@@ -46,6 +46,7 @@ urlpatterns = [
     #Message API endpoints
     path("message/create/", MessageViews.SendMessageView.as_view(), name="Send_Message"),
     path("message/fetsh/", MessageViews.ListMessageView.as_view(), name="Fetsh_Messages"),
+    path("message/<int:pk>/", MessageViews.MessageDetailView.as_view(), name="Message_Detail"),
     path("message/unreadcounter/", MessageViews.UnreadMessageCountView.as_view(), name="Unread_Messages"),
     path("message/previous/", MessageViews.PreviousMessagesView.as_view(), name="Previous_Messages"),
 

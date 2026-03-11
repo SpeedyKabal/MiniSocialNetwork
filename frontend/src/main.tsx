@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./browser.js";
 import "./i18next.js";
+import "./index.css";
 import {
   RouterProvider,
   createBrowserRouter,

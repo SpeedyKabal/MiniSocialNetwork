@@ -72,3 +72,22 @@ class PreviousMessagesView(generics.ListAPIView):
             return Message.objects.none()
         except Message.DoesNotExist:
             return Message.objects.none()
+
+class MessageDetailView(generics.RetrieveAPIView):
+    """
+    Returns a single message by ID.
+    Used by the frontend after a video_ready event to fetch the
+    complete message (including the processed video) before broadcasting
+    it via the chat WebSocket.
+    """
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializers
+    permission_classes = [IsAuthenticated]
+    lookup_field = "pk"
+    def get(self, request, *args, **kwargs):
+        try:
+            message = self.get_object()
+            serializer = self.get_serializer(message)
+            return Response(serializer.data)
+        except Message.DoesNotExist:
+            return Response({'details':'Message Not Found'}, status=status.HTTP_404_NOT_FOUND)
