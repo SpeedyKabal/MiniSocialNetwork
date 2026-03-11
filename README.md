@@ -73,7 +73,7 @@ Ensure the following are set in your `.env` file:
 - `DB_NAME`, `DB_USER`, `DB_PASSWORD`
 - `DJANGO_SECRET_KEY` (Generate with `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`)
 - `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`
-- `WEATHER_API_KEY`
+- `WEATHER_API_KEY` (from https://openweathermap.org/)
 - `VITE_API_URL` (should be `http://localhost/api/`)
 - `VITE_WS_URL` (should be `ws://localhost/ws/online/`)
 

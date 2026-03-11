@@ -10,4 +10,4 @@ class ListNotificationsView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Notification.objects.exclude(user=user)
+        return Notification.objects.filter(user=user).order_by('-timeCreated')

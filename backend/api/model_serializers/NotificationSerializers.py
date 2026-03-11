@@ -7,7 +7,6 @@ from api.models import Notification
 class NotificationSerializers(serializers.ModelSerializer):
     user = SimpleUserSerializers(read_only=True)
     post = SimplePostSerializers(read_only=True)
-    is_read =SimpleUserSerializers(many=True, read_only=True)
     
     class Meta:
         model = Notification
