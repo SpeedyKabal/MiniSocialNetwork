@@ -121,28 +121,21 @@ def process_video(self, file_id, user_id):
     hls_relative = f"{owner_id}/{instance.id}/output.m3u8"
     File.objects.filter(id=instance.id).update(hsl_path=hls_relative)
 
-    # ── Remove original upload ────────────────────────────────────────────────
-    # try:
-    #     channel_layer = get_channel_layer()
-    #     # message.id is used to compute the room name (same logic as the frontend)
-    #     sender_id   = instance.message.sender_id
-    #     receiver_id = instance.message.reciever_id
-    #     room_name   = (
-    #         f"{sender_id}{receiver_id}"
-    #         if sender_id > receiver_id
-    #         else f"{receiver_id}{sender_id}"
-    #     )
-    #     async_to_sync(channel_layer.group_send)(
-    #         f"chat_{room_name}",
-    #         {
-    #             "type": "video_ready",
-    #             "message_id": instance.message.id,
-    #             "file_id": file_id,
-    #         },
-    #     )
-        
-    # except OSError:
-    #     pass  # Non-fatal
+    #── Remove original upload ────────────────────────────────────────────────
+    if instance.message:
+        try:
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f"chat_online",
+                {
+                    "type": "video_ready",
+                    "message_id": instance.message.id,
+                    "receiver_id": instance.message.reciever_id,
+                    "sender_id": instance.message.sender_id,
+                },
+            )
+        except OSError:
+            pass  # Non-fatal
 
     # ── Create notification ───────────────────────────────────────────────────
     try:

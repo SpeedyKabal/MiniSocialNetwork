@@ -46,17 +46,6 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
                     }
                 )
             
-            if data['command'] == 'video_ready':
-                await self.channel_layer.group_send(
-                    self.room_group_name,
-                    {
-                        'type': 'video_ready',
-                        'message_id': data['message_id'],
-                        'file_id': data['file_id'],
-                        'command': 'video_ready'
-                    }
-                )
-            
         except json.JSONDecodeError as e:
             print(f"Json decode error : {e}") 
         except:
@@ -81,13 +70,7 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
                 'command': 'chat_message'
             }))
 
-    async def video_ready(self, event):
-        """Sent by the Celery task when HLS conversion is complete."""
-        await self.send(text_data=json.dumps({
-            "command": "video_ready",
-            "message_id": event["message_id"],
-            "file_id": event["file_id"],
-        }))
+    
             
             
              
@@ -244,6 +227,18 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
                 'progress': event['progress'],
                 'fileid' : event['fileLoopID'],
             }))
+
+
+    async def video_ready(self, event):
+        """Sent by the Celery task when HLS conversion is complete."""
+        print("video_ready event triggered")
+        print(json.dumps(event))
+        await self.send(text_data=json.dumps({
+            "command": "video_ready",
+            "messageId": event["message_id"],
+            "receiverId": event["receiver_id"],
+            "senderId": event["sender_id"],
+        }))
 
         
     @database_sync_to_async    
