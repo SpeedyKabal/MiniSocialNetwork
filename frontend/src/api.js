@@ -1,5 +1,5 @@
 import axios from "axios"
-import { ACCESS_TOKEN,REFRESH_TOKEN  } from "./constants"
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants"
 
 
 
@@ -17,7 +17,7 @@ const refreshToken = async () => {
 
         const response = await axios.post(`${import.meta.env.VITE_API_URL}api/token/refresh/`, {
             refresh,
-        }).catch((e)=>alert(e));
+        }).catch((e) => alert(e));
         const newAccessToken = response.data.access;
 
         localStorage.setItem(ACCESS_TOKEN, newAccessToken);
@@ -43,7 +43,7 @@ const startTokenRefresh = () => {
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem(ACCESS_TOKEN);
-        if(token){
+        if (token) {
             config.headers.Authorization = 'Bearer ' + token
         }
         return config

@@ -10,7 +10,11 @@ from django.conf import settings
 
 class AsyncChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        
+        self.user = self.scope.get('user')
+        if not self.user or not self.user.is_authenticated:
+            await self.close()
+            return
+
         self.room_name = self.scope['url_route']['kwargs']['roomName']
         self.room_group_name = f'chat_{self.room_name}'
         await self.channel_layer.group_add(
@@ -20,7 +24,7 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
         now = datetime.now()
         now_time = now.strftime("%H:%M:%S")
-        print("Client :", self.scope['client'], "Connected on Room : ", self.room_name, "On :", now_time)
+        print("Client :", self.scope.get('client'), "Connected on Room : ", self.room_name, "On :", now_time)
 
 
     async def disconnect(self, close_code):
@@ -70,10 +74,7 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
                 'command': 'chat_message'
             }))
 
-    
-            
-            
-             
+      
     @database_sync_to_async
     def fetchMessageFromDatabase(self, id):
        # Wrap the synchronous database call with sync_to_async
@@ -82,12 +83,6 @@ class AsyncChatConsumer(AsyncWebsocketConsumer):
        except Message.DoesNotExist:
            return None
        messageSerialized = MessageSerializers(message).data
-       domain = os.getenv("DOMAIN")  # Use the DOMAIN variable from .env
-       for file in messageSerialized.get("mediaFiles", []):
-           if file["hslURL"]:  # If the file is a video
-               file["hslURL"] = f"{domain}{file['hslURL']}"
-           else:
-               file["file"] = f"{domain}{file['file']}"
 
        return messageSerialized
 
@@ -98,9 +93,14 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
     onlineUsersIds = {}
     async def connect(self):
         try:
+            self.user = self.scope.get('user')
+            if not self.user or not self.user.is_authenticated:
+                await self.close()
+                return
+
             self.room_group_name = 'chat_online'
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-            self.user = self.scope["user"]
+            
             now = datetime.now()
             now_time = now.strftime("%H:%M:%S")
             
@@ -125,6 +125,9 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
 
     async def disconnect(self, close_code):
         try:
+            if getattr(self, 'user', None) is None or not self.user.is_authenticated:
+                return
+
             now = datetime.now()
             now_time = now.strftime("%H:%M:%S")
             if self.user.id in self.onlineUsersIds:

@@ -73,6 +73,7 @@ class PreviousMessagesView(generics.ListAPIView):
         except Message.DoesNotExist:
             return Message.objects.none()
 
+
 class MessageDetailView(generics.RetrieveAPIView):
     """
     Returns a single message by ID.

@@ -76,11 +76,8 @@ const Messages = () => {
         // When the Celery task finishes processing a video, the server sends
         // a video_ready event. We then broadcast the message via the chat WebSocket.
         if (WebSocketObject["command"] == "video_ready") {
-          console.log(WebSocketObject["receiverId"]);
-          console.log(WebSocketObject["senderId"]);
-          console.log(currentUser.id);
           if (WebSocketObject["receiverId"] == currentUser.id || WebSocketObject["senderId"] == currentUser.id) {
-            sendVideoReadyMessage(WebSocketObject["messageId"]);
+            sendVideoReadyMessage(WebSocketObject["messageId"], WebSocketObject["senderId"], WebSocketObject["receiverId"]);
           }
         }
       }
@@ -121,19 +118,16 @@ const Messages = () => {
    * from the REST API and then broadcast it through the chat WebSocket so that
    * both participants see the message (with the ready video) at the same time.
    */
-  const sendVideoReadyMessage = async (messageId) => {
-    try {
-      await api.get(`api/message/${messageId}/`).then((res) => {
-        if (res.status === 200) {
-          console.log(res.data);
-          if (user.id == res.data.sender_id || user.id == res.data.reciever_id) {
-            handleReceivedSocketMessages(res.data);
-          }
-          resetFiles();
-        }
-      });
-    } catch (err) {
-      console.error("Failed to fetch video-ready message:", err);
+  const sendVideoReadyMessage = (messageId, sender_id, receiver_id) => {
+    if (currentUser.id == sender_id || currentUser.id == receiver_id) {
+      const messageContentforWebSocket = {
+        command: "chat_message",
+        sender_id: sender_id,
+        receiver_id: receiver_id,
+        message_id: messageId,
+      };
+      resetFiles();
+      WebSocketInstance.sendaMessage(messageContentforWebSocket);
     }
   };
 
@@ -213,6 +207,7 @@ const Messages = () => {
             // server fires the video_ready event (see sendVideoReadyMessage).
             if (!hasVideo) {
               const messageContentforWebSocket = {
+                command: "chat_message",
                 sender_id: currentUser?.id,
                 receiver_id: res.data.reciever.id,
                 message_id: res.data.id,

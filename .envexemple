@@ -14,7 +14,6 @@ EMAIL_USE_SSL=False_True(False)
 EMAIL_HOST_USER=email@exemple.com
 EMAIL_HOST_PASSWORD=Password
 
-DOMAIN=http://localhost/
 WEATHER_API_KEY=
 
 VITE_API_URL=http://localhost/

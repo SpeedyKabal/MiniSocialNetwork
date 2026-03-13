@@ -1,3 +1,5 @@
+import { ACCESS_TOKEN } from "../constants";
+
 class WebSocketService {
   static instance = null;
   callbacks = {};
@@ -14,7 +16,9 @@ class WebSocketService {
   }
 
   connect(url, roomName = "") {
-    const path = url + roomName + "/";
+    const basePath = url + roomName + "/";
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    const path = token ? `${basePath}?token=${token}` : basePath;
 
     this.socketRef = new WebSocket(path);
 
