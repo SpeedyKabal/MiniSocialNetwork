@@ -153,19 +153,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
     async def receive(self, text_data):
         if text_data:
             try:
-                data = json.loads(text_data)
-                if data['command'] == 'SendMessage':
-                    await self.channel_layer.group_send(
-                        self.room_group_name,
-                        {
-                            'type': 'SendMessage',
-                            'command': data['command'],
-                            'sender': data['sender'],
-                            'reciever': data['reciever'],
-                            'message':data['message'],
-                        }
-                    )
-                    
+                data = json.loads(text_data)   
                 if data['command'] == 'ReadMessages':
                     await self.channel_layer.group_send(
                         self.room_group_name,
@@ -200,9 +188,7 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
         print("SendMessage event triggered")
         await self.send(text_data=json.dumps({
                 'command': event['command'],
-                'sender':event['sender'],
                 'reciever':event['reciever'],
-                'message':event['message'],
             }))
         
         

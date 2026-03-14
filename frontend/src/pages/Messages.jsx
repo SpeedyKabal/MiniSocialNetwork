@@ -56,7 +56,7 @@ const Messages = () => {
 
   useEffect(() => {
     if (onlineSocket && onlineSocket.readyState == WebSocket.OPEN && currentUser) {
-      onlineSocket.onmessage = (e) => {
+      const handleOnlineMessage = (e) => {
         const WebSocketObject = JSON.parse(e.data);
         if (
           WebSocketObject["command"] == "SendMessage" &&
@@ -81,8 +81,14 @@ const Messages = () => {
           }
         }
       }
+
+      onlineSocket.addEventListener("message", handleOnlineMessage);
+
+      return () => {
+        onlineSocket.removeEventListener("message", handleOnlineMessage);
+      };
     }
-  }, [onlineSocket]);
+  }, [onlineSocket, currentUser]);
 
   useEffect(() => {
     // Automatically adjust the height of the textarea based on its scroll height
@@ -214,16 +220,6 @@ const Messages = () => {
               };
               WebSocketInstance.sendaMessage(messageContentforWebSocket);
             }
-          }
-          if (onlineSocket.readyState === WebSocket.OPEN) {
-            onlineSocket.send(
-              JSON.stringify({
-                command: "SendMessage",
-                sender: currentUser.id,
-                reciever: res.data.reciever.id,
-                message: res.data.message,
-              })
-            );
           }
         })
         .catch((err) => {

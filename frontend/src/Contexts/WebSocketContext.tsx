@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useUser } from "./Usercontext";
 import { ACCESS_TOKEN } from "../constants";
-import { Utilisateur } from '../types/types'
+import { Utilisateur } from '../types/types';
 
 
 const WebSocketContext = createContext<WebSocket | null>(null);
@@ -28,7 +28,7 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
             webSocketRef.current.onopen = () => {
               setOnlineStatus(webSocketRef.current as WebSocket);
             };
-            webSocketRef.current.onerror = (error) => {
+            webSocketRef.current.onerror = (error: Event) => {
               console.error("WebSocket error:", error);
               webSocketRef.current = null;
               setOnlineStatus(null);
@@ -60,19 +60,6 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
       setOnlineStatus(null);
     };
   }, []);
-
-  // useEffect(() => {
-  //   if (currentUser && webSocketRef.current) {
-  //     webSocketRef.current.send(
-  //       JSON.stringify({
-  //         command: "Online",
-  //         user: currentUser ? currentUser.id : null,
-  //         message: "isOnline",
-  //       })
-  //     );
-  //   }
-  // }, [onlineStatus]);
-
 
   return (
     <WebSocketContext.Provider value={onlineStatus}>

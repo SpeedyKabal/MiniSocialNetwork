@@ -50,7 +50,7 @@ def delete_file_from_storage(sender, instance, **kwargs):
                 
 @receiver(post_save, sender=User)
 def send_welcome_message(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.id != 1:
         admin_user = User.objects.get(id=1)
         Message.objects.create(
             sender=admin_user,
@@ -59,7 +59,7 @@ def send_welcome_message(sender, instance, created, **kwargs):
         )
         
 
-@receiver(post_save, sender=Post)
+""" @receiver(post_save, sender=Post)
 def addNotification(sender, instance, created, **kwargs):
     if created:
         notification = Notification.objects.create(
@@ -68,7 +68,7 @@ def addNotification(sender, instance, created, **kwargs):
             message=f"{instance.author.last_name} {instance.author.first_name} Posted: {instance.content[:20]}..."
         )
         notification.is_read = False
-        notification.save()
+        notification.save() """
         
 
         
@@ -95,3 +95,17 @@ def update_last_seen(sender, instance, **kwargs):
                     'message': 'isOnline' if instance.isOnline else 'isOffline'
                 }
             )
+
+
+@receiver(post_save, sender=Message)
+def addNotification(sender, instance, created, **kwargs):
+    if created:
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            'chat_online',
+            {
+                'type': 'SendMessage',
+                'command': 'SendMessage',
+                'reciever': instance.reciever.id
+            }
+        )

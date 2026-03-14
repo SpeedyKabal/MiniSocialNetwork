@@ -64,7 +64,6 @@ function User({ UserClicked, userInfos, lastReceivedMessage }) {
         }
       };
 
-      onlineSocket.onmessage = handleWebSocketMessage;
       onlineSocket.addEventListener("message", handleWebSocketMessage);
 
       return () => {

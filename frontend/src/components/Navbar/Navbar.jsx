@@ -53,11 +53,11 @@ const Navbar = () => {
         }
       };
 
-      onlineSocket.onmessage = handleMessage;
+      onlineSocket.addEventListener("message", handleMessage);
 
       // Cleanup
       return () => {
-        onlineSocket.onmessage = null;
+        onlineSocket.removeEventListener("message", handleMessage);
       };
     }
   }, [onlineSocket, currentUser]); // Re-run effect if onlineSocket or currentUser changes
