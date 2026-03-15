@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import dotenv from "dotenv";
 
+import path from "path";
+
 // Load environment variables from the new .env file location
 dotenv.config({ path: "../.env" });
 
@@ -14,4 +16,9 @@ export default defineConfig({
     // host: 'localhost'
   },
   plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 });

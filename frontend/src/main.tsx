@@ -14,6 +14,7 @@ import {
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar/Navbar";
 import { WebSocketProvider } from "./Contexts/WebSocketContext";
+import { Toaster } from "./components/ui/sonner";
 import Home from "./pages/Home.tsx";
 import SinglePost from "./components/PostComponents/SinglePost";
 import Login from "./pages/Login";
@@ -45,6 +46,7 @@ const Layout = () => (
         <Navbar />
         <Outlet />
         <Footer />
+        <Toaster />
       </div>
     </WebSocketProvider>
   </ProtectedRoute>

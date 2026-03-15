@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import api from "../api";
 import AllPosts from "../components/PostComponents/AllPosts";
 import Loading from "../components/Extensions/Loading";
@@ -23,7 +24,7 @@ function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [noMorePosts, setNoMorePosts] = useState(false);
   const onlineSocket = useWebSocket(); // This hold Websocket Context
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     if (onlineSocket && onlineSocket.readyState === WebSocket.OPEN) {
@@ -151,6 +152,16 @@ function Home() {
                 setNewPost("");
               });
           } else {
+            toast(t("home.toast"), {
+              description: t("home.toastDescription"),
+              duration: Infinity,
+              descriptionClassName: "!text-black",
+              position: "top-center",
+              action: {
+                label: t("home.toastLabel"),
+                onClick: () => toast.dismiss(),
+              },
+            });
             resetFiles();
             setNewPost("");
           }

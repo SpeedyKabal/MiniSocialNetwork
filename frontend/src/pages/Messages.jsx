@@ -227,7 +227,9 @@ const Messages = () => {
         })
         .finally(() => {
           setMessageInput("");
-          if (!hasVideo) resetFiles();
+          if (!hasVideo) {
+            resetFiles();
+          }
           setLoading(false);
         });
     } else {
