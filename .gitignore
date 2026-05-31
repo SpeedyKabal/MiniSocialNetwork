@@ -1,5 +1,6 @@
 #Backend Skipped Files and Folders
 backend/media/
+backend/static/
 !backend/media/profile_pic.png
 backend/backend/__init__.py
 backend/backend/__pycache__/

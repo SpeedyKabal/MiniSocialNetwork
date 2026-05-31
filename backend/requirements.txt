@@ -18,3 +18,4 @@ pillow
 gunicorn
 celery
 celery[redis]
+django-jazzmin
