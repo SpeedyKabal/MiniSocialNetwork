@@ -9,7 +9,7 @@ from datetime import datetime
 def generate_filename(instance, filename):
     # Extract the file extension
     extension = os.path.splitext(filename)[1].lower()
-    
+
     username = "UnkownTable"
     # Determine the base folder based on whether the file is for a Post or Message
     if instance.post:
@@ -38,7 +38,7 @@ def generate_filename(instance, filename):
         sub_folder = "Compressed"
     else:
         sub_folder = "Other"
-        
+
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     updateFileName = f"{username}HSN{timestamp}{filename}"
 
@@ -47,7 +47,7 @@ def generate_filename(instance, filename):
 
 
 class Employee(models.Model):
-    
+
     POSITIONS = (
         ('None','None'),
         ("73 Praticien spécialiste principal de sante publique","73 Praticien spécialiste principal de sante publique"),
@@ -101,7 +101,7 @@ class Employee(models.Model):
         ("Secrétaire","Secrétaire"),
         ("Technicien supérieur en informatique","Technicien supérieur en informatique"),
     )
-    
+
     GENDER = (
         ('Male','Male'),
         ('Female','Female'),
@@ -114,7 +114,7 @@ class Employee(models.Model):
         ('DSI', 'DSI'),
         ('DMM', 'DMM'),
     )
-    
+
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE, related_name="employee")
     gender = models.CharField(max_length=6, null=True, choices=GENDER)
     phone = models.CharField(max_length=10, null=True, blank=True)
@@ -135,9 +135,9 @@ class Employee(models.Model):
 
 
     def __str__(self):
-        return f"User id :{self.user.pk} , {self.full_name()}" 
-    
-    
+        return f"User id :{self.user.pk} , {self.full_name()}"
+
+
     def save(self, *args, **kwargs):
         # Ensure the username is always saved in lowercase
         self.user.username = self.user.username.lower()
@@ -166,8 +166,8 @@ class Post(models.Model):
 
     def __str__(self):
         return f"Post id :{self.pk} , By: {self.author.last_name} {self.author.first_name}"
-        
-   
+
+
 class Reaction(models.Model):
     REACTIONS = (
         ('Like' , 'Like'),
@@ -181,7 +181,7 @@ class Reaction(models.Model):
 
     def __str__(self):
         return f"Reaction on Post id : {self.post_id}"
-    
+
 
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="userCommenter")
@@ -191,15 +191,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment id :{self.pk} on Post id : {self.post_id}"
-    
-    
+
+
 class File(models.Model):
     file = models.FileField(upload_to=generate_filename, null=False, blank=False)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='postFiles', null=True, blank=True)
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='messageFiles', null=True, blank=True)
     hsl_path = models.CharField(max_length=32, null=True, blank=True)
-    
-    
+
+
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="userNotification")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="postNotification", null=True, blank=True)
@@ -209,22 +209,48 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification id :{self.pk} on Post id : {self.post_id}"
-    
+
 
 class Task(models.Model):
+
+    class Status(models.TextChoices):
+        PENDING = "PENDING"
+        IN_PROGRESS = "IN_PROGRESS"
+        COMPLETED = "COMPLETED"
+        CANCELLED = "CANCELLED"
+
     title = models.CharField(max_length=128)
-    description = models.TextField(max_length=1024)
-    assigned_by = models.ForeignKey(Employee, related_name='tasks_assigned', on_delete=models.CASCADE, limit_choices_to={'is_subdirector': True})
-    assigned_to = models.ForeignKey(Employee, related_name='tasks_received', on_delete=models.CASCADE)
+    description = models.TextField()
+
+    assigned_by = models.ForeignKey(
+        Employee,
+        related_name="assigned_tasks",
+        on_delete=models.CASCADE
+    )
+
+    assigned_to = models.ForeignKey(
+        Employee,
+        related_name="received_tasks",
+        on_delete=models.CASCADE
+    )
+
     created_at = models.DateTimeField(auto_now_add=True)
     due_date = models.DateTimeField(null=True, blank=True)
-    is_completed = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"Task: {self.title} from {self.assigned_by.full_name()} to {self.assigned_to.full_name()}"
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.PENDING
+    )
 
-    def clean(self):
-        # Ensure assigned_to is in the same department as assigned_by
-        if self.assigned_by.department != self.assigned_to.department:
-            raise ValidationError("Task can only be assigned to users in the same department.")
-    
+    priority = models.CharField(
+        max_length=10,
+        choices=[
+            ("LOW","Low"),
+            ("MEDIUM","Medium"),
+            ("HIGH","High")
+        ],
+        default="MEDIUM"
+    )
+
+    completed_at = models.DateTimeField(null=True, blank=True)

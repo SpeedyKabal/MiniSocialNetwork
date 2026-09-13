@@ -1,4 +1,5 @@
 from django.urls import re_path
+
 from api.consumer import AsyncChatConsumer, AsyncOnlineConsumer
 
 websocket_urlpatterns = [

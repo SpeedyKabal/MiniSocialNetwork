@@ -2,12 +2,18 @@ import api from "../api";
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
-import { MdAttachFile } from "react-icons/md";
+import {
+  MdAttachFile,
+  MdPhone,
+  MdVideocam,
+  MdVideocamOff,
+} from "react-icons/md";
 import WebSocketInstance from "../services/WebSocketService";
 import Loading from "../components/Extensions/Loading";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../Contexts/Usercontext";
 import { useWebSocket } from "../Contexts/WebSocketContext";
+import { useWebRTC } from "../Contexts/WebRTCContext";
 import User from "../components/MessageComponents/User";
 import ServerMessageBubble from "../components/MessageComponents/ServerMessageBubble";
 import WebSocketMessageBubble from "../components/MessageComponents/WebSocketMessageBubble";
@@ -25,9 +31,18 @@ const Messages = () => {
   const [messages, setMessages] = useState([]); // This hold Messages between Current User and The clicked User
   const [showInput, setShowInput] = useState(null); // This hold the Clicked User ID
   const [messageInput, setMessageInput] = useState(""); // This hold the text tosend as a Message
-  const [roomName, setRoomName] = useState(null); //This hold the ID of Websocket for RealTime chatting
+  const [chatRoomName, setChatRoomName] = useState(null); //This hold the ID of Websocket for RealTime chatting
   const { filePreviews, handleUpload, deleteFile, updateFile, resetFiles } =
     useFileUpload(); //This Hold The files that current user want to send
+
+  const { callUser } = useWebRTC();
+
+  const currentUserId = currentUser?.id;
+  const otherUserId = user?.id;
+  const roomName =
+    currentUserId && otherUserId
+      ? [currentUserId, otherUserId].sort().join("-")
+      : "";
   const [loading, setLoading] = useState(false); //This for showing Loading component
   const [socketMessages, setsocketMessages] = useState([]); // This hold Messages between Current User and The clicked User on Websocket RealTime chatting
   const messagesEndRef = useRef(null); //This the last div in Messages container
@@ -38,12 +53,12 @@ const Messages = () => {
 
   // Start a Websocket Channel for Two Users
   useEffect(() => {
-    if (roomName) {
-      WebSocketInstance.connect(chatWebSocketUrl, roomName);
+    if (chatRoomName) {
+      WebSocketInstance.connect(chatWebSocketUrl, chatRoomName);
 
       WebSocketInstance.addCallback(
         "chat_message",
-        handleReceivedSocketMessages
+        handleReceivedSocketMessages,
       );
 
       // Cleanup on component unmount
@@ -52,10 +67,14 @@ const Messages = () => {
         WebSocketInstance.socketRef.close();
       };
     }
-  }, [roomName]);
+  }, [chatRoomName]);
 
   useEffect(() => {
-    if (onlineSocket && onlineSocket.readyState == WebSocket.OPEN && currentUser) {
+    if (
+      onlineSocket &&
+      onlineSocket.readyState == WebSocket.OPEN &&
+      currentUser
+    ) {
       const handleOnlineMessage = (e) => {
         const WebSocketObject = JSON.parse(e.data);
         if (
@@ -66,21 +85,33 @@ const Messages = () => {
             console.error("Audio playback failed:", error);
           });
         }
-        if (WebSocketObject["command"] == "ReadMessages" && WebSocketObject["sender"] == currentUser?.id) {
+        if (
+          WebSocketObject["command"] == "ReadMessages" &&
+          WebSocketObject["sender"] == currentUser?.id
+        ) {
           // Use functional update to ensure we're working with latest state
-          setsocketMessages(prevMessages => prevMessages.map(msg => ({
-            ...msg,
-            is_read: true
-          })));
+          setsocketMessages((prevMessages) =>
+            prevMessages.map((msg) => ({
+              ...msg,
+              is_read: true,
+            })),
+          );
         }
         // When the Celery task finishes processing a video, the server sends
         // a video_ready event. We then broadcast the message via the chat WebSocket.
         if (WebSocketObject["command"] == "video_ready") {
-          if (WebSocketObject["receiverId"] == currentUser.id || WebSocketObject["senderId"] == currentUser.id) {
-            sendVideoReadyMessage(WebSocketObject["messageId"], WebSocketObject["senderId"], WebSocketObject["receiverId"]);
+          if (
+            WebSocketObject["receiverId"] == currentUser.id ||
+            WebSocketObject["senderId"] == currentUser.id
+          ) {
+            sendVideoReadyMessage(
+              WebSocketObject["messageId"],
+              WebSocketObject["senderId"],
+              WebSocketObject["receiverId"],
+            );
           }
         }
-      }
+      };
 
       onlineSocket.addEventListener("message", handleOnlineMessage);
 
@@ -116,14 +147,8 @@ const Messages = () => {
       lastMessage: lastMessage,
     });
     scrollToBottom();
-  }
+  };
 
-  /**
-   * Called when the server notifies us (via the online WebSocket) that a video
-   * attached to a message has finished processing.  We fetch the full message
-   * from the REST API and then broadcast it through the chat WebSocket so that
-   * both participants see the message (with the ready video) at the same time.
-   */
   const sendVideoReadyMessage = (messageId, sender_id, receiver_id) => {
     if (currentUser.id == sender_id || currentUser.id == receiver_id) {
       const messageContentforWebSocket = {
@@ -169,7 +194,7 @@ const Messages = () => {
                   onUploadProgress: (pregressEvent) => {
                     if (pregressEvent.total) {
                       const uploadingProgress = Math.round(
-                        (pregressEvent.loaded * 100) / pregressEvent.total
+                        (pregressEvent.loaded * 100) / pregressEvent.total,
                       );
                       updateFile(file.id, {
                         progress: uploadingProgress,
@@ -189,7 +214,9 @@ const Messages = () => {
                       // When processing finishes the server sends a video_ready
                       // event via the online WebSocket and we call sendVideoReadyMessage.
                       try {
-                        await api.post(`api/post/process-video/${fileId}/${file.id}/`);
+                        await api.post(
+                          `api/post/process-video/${fileId}/${file.id}/`,
+                        );
                         updateFile(file.id, {
                           status: "Queued",
                           progress: 100,
@@ -292,7 +319,7 @@ const Messages = () => {
           // Update local storage
           if (updatedMessages.length > 0) {
             const messagesToStore = updatedMessages.filter(
-              (msg) => msg.is_read
+              (msg) => msg.is_read,
             );
             localStorage.setItem(storageKey, JSON.stringify(messagesToStore));
           }
@@ -301,7 +328,7 @@ const Messages = () => {
               command: "ReadMessages",
               user: currentUser?.id,
               sender: senderID,
-            })
+            }),
           );
         }
       })
@@ -309,9 +336,9 @@ const Messages = () => {
       .finally(() => {
         setShowInput(senderID);
         if (currentUser?.id > senderID) {
-          setRoomName(currentUser?.id + "" + senderID);
+          setChatRoomName(currentUser?.id + "" + senderID);
         } else {
-          setRoomName(senderID + "" + currentUser?.id);
+          setChatRoomName(senderID + "" + currentUser?.id);
         }
         setContacts(true);
         scrollToBottom();
@@ -328,7 +355,7 @@ const Messages = () => {
             command: "ReadMessages",
             user: currentUser?.id,
             sender: senderID,
-          })
+          }),
         );
       } catch (e) {
         console.error(e);
@@ -351,7 +378,7 @@ const Messages = () => {
       if (previousMessages.length > 0) {
         setMessages((prevMessages) => {
           const combinedMessages = [...previousMessages, ...prevMessages].sort(
-            (a, b) => new Date(a.date_created) - new Date(b.date_created)
+            (a, b) => new Date(a.date_created) - new Date(b.date_created),
           );
           return combinedMessages;
         });
@@ -383,8 +410,9 @@ const Messages = () => {
           <div className="flex border-1 border-blue-200 rounded-2xl drop-shadow-lg h-full gap-6 bg-white/80">
             {/* <!-- Left --> */}
             <div
-              className={`lg:w-1/3 ${!contacts ? "w-full" : "w-0"
-                } border-1 border-blue-200 flex flex-col rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
+              className={`lg:w-1/3 ${
+                !contacts ? "w-full" : "w-0"
+              } border-1 border-blue-200 flex flex-col rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
             >
               <User
                 UserClicked={fetchMessages}
@@ -395,8 +423,9 @@ const Messages = () => {
 
             {/* <!-- Right --> */}
             <div
-              className={`lg:w-3/4 ${contacts ? "w-full" : "w-0"
-                } flex flex-col border-1 border-blue-200 rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
+              className={`lg:w-3/4 ${
+                contacts ? "w-full" : "w-0"
+              } flex flex-col border-1 border-blue-200 rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
             >
               {/* <!-- Header --> */}
               <div className="py-1 px-3 bg-grey-lighter flex flex-row justify-stretch items-center">
@@ -409,7 +438,7 @@ const Messages = () => {
                         setContacts(false);
                         setUser(null);
                         setMessages([]);
-                        setRoomName(null);
+                        setChatRoomName(null);
                       }}
                     >
                       <IoIosArrowForward />
@@ -418,22 +447,38 @@ const Messages = () => {
                 </div>
 
                 {user ? (
-                  <div className="flex items-center">
-                    <div>
-                      <img
-                        className={`w-10 h-10 rounded-full ${contacts ? "ml-2" : ""
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center">
+                      <div>
+                        <img
+                          className={`w-10 h-10 rounded-full ${
+                            contacts ? "ml-2" : ""
                           }`}
-                        src={user?.profile_pic}
-                      />
+                          src={user?.profile_pic}
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <Link
+                          to={`/profile/${user.username}`}
+                          className="text-grey-darkest text-md font-bold cursor-pointer"
+                        >
+                          {user.first_name} {user.last_name}
+                        </Link>
+                      </div>
                     </div>
-                    <div className="ml-4">
-                      <Link
-                        to={`/profile/${user.username}`}
-                        className="text-grey-darkest text-md font-bold cursor-pointer"
-                      >
-                        {user.first_name} {user.last_name}
-                      </Link>
-                    </div>
+                    {user?.isOnline ? (
+                      <div className="flex items-center gap-2 mr-2">
+                        <button
+                          onClick={() => user && callUser(user.id, user)}
+                          title="Video call"
+                          className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full text-indigo-500 hover:text-indigo-600 transition-colors"
+                        >
+                          <MdVideocam className="w-6 h-6" />
+                        </button>
+                      </div>
+                    ) : (
+                      <MdVideocamOff className="w-6 h-6" />
+                    )}
                   </div>
                 ) : (
                   <span className="text-grey-darkest text-md font-bold italic text-center w-full">
@@ -457,7 +502,7 @@ const Messages = () => {
                           loadPreviousMessages(
                             messages[0].id,
                             currentUser?.id,
-                            showInput
+                            showInput,
                           )
                         }
                       >
@@ -468,7 +513,10 @@ const Messages = () => {
                 <div className="py-2 px-3">
                   {messages?.map((message, index) => (
                     <div key={index} className="w-full flex flex-col">
-                      <ServerMessageBubble message={message} currentUserID={currentUser.id} />
+                      <ServerMessageBubble
+                        message={message}
+                        currentUserID={currentUser.id}
+                      />
                     </div>
                   ))}
 

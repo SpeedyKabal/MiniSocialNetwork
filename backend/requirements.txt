@@ -13,9 +13,7 @@ daphne
 channels
 channels_redis
 django-redis
-pymysql
 pillow
-gunicorn
 celery
 celery[redis]
 django-jazzmin

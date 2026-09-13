@@ -8,14 +8,14 @@ class PostAdmin(admin.ModelAdmin):
 
     def getUserFullName(self, obj):
         return f"{obj.author.last_name} {obj.author.first_name}"
-    
+
     def resumePostcontent(self, obj):
         if len(obj.content) > 30:
             return f"{obj.content[0:30]} ..."
         else:
             return obj.content
-    
-    
+
+
     getUserFullName.short_description = "Author"
     resumePostcontent.short_description = "Content"
 
@@ -26,16 +26,16 @@ class EmployeeAdmin(admin.ModelAdmin):
 
     def get_username(self, obj):
         return obj.user.username
-    
+
 
     def get_first_name(self, obj):
         return obj.user.first_name
-    
+
 
     def get_last_name(self, obj):
         return obj.user.last_name
-    
-    
+
+
     get_username.short_description = "Username"
     get_first_name.short_description = "First Name"
     get_last_name.short_description = "Last Name"
@@ -47,11 +47,11 @@ class MessageAdmin(admin.ModelAdmin):
 
     def get_sender(self, obj):
         return f"{obj.sender.first_name} {obj.sender.last_name}"
-    
+
 
     def get_reciever(self, obj):
         return f"{obj.reciever.first_name} {obj.reciever.last_name}"
-    
+
     def get_message(self, obj):
         words = obj.message.split()
         result = ' '.join(words[:3])
@@ -84,14 +84,20 @@ class CommentAdmin(admin.ModelAdmin):
 
     def getUserFullName(self, obj):
         return f"{obj.user.last_name} {obj.user.first_name}"
-    
+
 
     getUserFullName.short_description = "Commenter"
-    
+
 
 class NotificationAdmin(admin.ModelAdmin):
     list_filter = ["user", "post", "timeCreated"]
     list_display = ["message","timeCreated","post_id","user_id"]
+
+
+class TaskAdmin(admin.ModelAdmin):
+    list_filter = ["status", "assigned_by", "assigned_to", "priority", "due_date"]
+    list_display = ["title", "description", "status", "assigned_by", "assigned_to", "created_at", "due_date", "priority", "completed_at"]
+
 
 
 
@@ -106,4 +112,4 @@ admin.site.register(Post, PostAdmin)
 admin.site.register(Reaction, ReactionAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Notification, NotificationAdmin)
-
+admin.site.register(Task, TaskAdmin)

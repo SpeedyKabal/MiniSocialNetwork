@@ -14,6 +14,8 @@ import {
 import ProtectedRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar/Navbar";
 import { WebSocketProvider } from "./Contexts/WebSocketContext";
+import { WebRTCProvider } from "./Contexts/WebRTCContext";
+import { CallOverlay } from "./components/VideoCall/CallOverlay";
 import { Toaster } from "./components/ui/sonner";
 import Home from "./pages/Home.tsx";
 import SinglePost from "./components/PostComponents/SinglePost";
@@ -42,12 +44,15 @@ function RegisterAndLogout() {
 const Layout = () => (
   <ProtectedRoute>
     <WebSocketProvider>
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <Outlet />
-        <Footer />
-        <Toaster />
-      </div>
+      <WebRTCProvider>
+        <div className="min-h-screen flex flex-col">
+          <Navbar />
+          <Outlet />
+          <Footer />
+          <Toaster />
+          <CallOverlay />
+        </div>
+      </WebRTCProvider>
     </WebSocketProvider>
   </ProtectedRoute>
 );

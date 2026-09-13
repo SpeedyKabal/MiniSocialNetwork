@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from api.models import Post, Reaction, Comment, Employee
-from .UserSerializers import UserSerializers
+from .UserSerializers import SimpleUserSerializers, UserSerializers
 
 class EmployeeSerializers(serializers.ModelSerializer):
     user = UserSerializers(read_only=True)
     position = serializers.ChoiceField(choices=Employee.POSITIONS)
     gender = serializers.ChoiceField(choices=Employee.GENDER)
-    
+
     post_count = serializers.SerializerMethodField()
     reaction_count = serializers.SerializerMethodField()
     comment_count = serializers.SerializerMethodField()
@@ -19,24 +19,24 @@ class EmployeeSerializers(serializers.ModelSerializer):
 
     def get_comment_count(self, obj):
         return Comment.objects.filter(user=obj.user).count()
-    
-    
+
+
     class Meta:
         model = Employee
         fields = ["id","user","gender","phone", "adress", "position","recruitmentDate", "birthday", "profile_pic","cover_pic", "last_seen", "isOnline", "post_count", "reaction_count", "comment_count"]
         extra_kwargs = {"user":{"read_only":True}}
-        
+
 
 class EmployeeUpdateSerializers(serializers.ModelSerializer):
     position = serializers.ChoiceField(choices=Employee.POSITIONS)
     gender = serializers.ChoiceField(choices=Employee.GENDER)
-    
-    
+
+
     class Meta:
         model = Employee
         fields = ["gender","phone", "adress", "position","recruitmentDate", "birthday", "profile_pic","cover_pic"]
-    
-    
+
+
     def update(self, instance, validated_data):
         instance.gender = validated_data.get("gender", instance.gender)
         instance.position = validated_data.get("position", instance.position)
@@ -48,10 +48,16 @@ class EmployeeUpdateSerializers(serializers.ModelSerializer):
         instance.adress = validated_data.get("adress", instance.adress)
         instance.save()
         return instance
-        
+
 
 class EmployeeProfilePicture(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = ["profile_pic"]
-        
+
+
+class SimpleEmployeeSerializers(serializers.ModelSerializer):
+    user = SimpleUserSerializers(read_only=True)
+    class Meta:
+        model = Employee
+        fields = ["id", "user"]

@@ -26,7 +26,7 @@ WebSocket: ws://localhost/ws/online/
 | Backend  | django_backend  | 8000  | Django dev server (HTTP only)  |
 | Daphne   | django_daphne   | 8001  | Django Channels (WebSocket)    |
 | Frontend | react_frontend  | 5173  | Vite dev server (HMR)          |
-| DB       | mysql_db        | 3306  | MySQL 8.0                      |
+| DB       | postgres_db     | 5432  | Postgres 17                    |
 | Redis    | redis           | 6379  | Channels / cache / Celery      |
 | Celery   | django_celery   | —     | Background tasks (video HLS)   |
 
@@ -65,7 +65,7 @@ docker-compose up -d --build <service>
 - **JWT tokens** stored in `localStorage`: keys `access` (25 min) and `refresh` (1 day).
 - Access token refresh via `POST /api/token/refresh/`.
 - WebSocket auth via `?token=<access_token>` query param (see `TokenAuthMiddleware` in `api/middleware.py`).
-- Frontend: `api.js` axios instance auto-attaches `Bearer` header.
+- Frontend: `api.js` axios instance auto-attaches `Bearer`.
 
 ## Project layout
 

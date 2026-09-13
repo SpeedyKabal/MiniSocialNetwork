@@ -311,7 +311,7 @@ function Profile() {
       .then(async (res) => {
         if (res.status == 200) {
           api
-            .put(`api/updateuserinfos/${currentUser.id}/`, formuser)
+            .put(`/api/updateuserinfos/${currentUser.id}/`, formuser)
             .then((resp) => {
               if (resp.status == 200) {
                 setEmployee({

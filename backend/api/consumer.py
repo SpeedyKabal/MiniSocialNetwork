@@ -1,131 +1,145 @@
 import json
-from datetime import datetime
 import os
-from channels.generic.websocket import AsyncWebsocketConsumer
+from datetime import datetime
+
 from channels.db import database_sync_to_async
-from api.models import Message, Employee
-from api.model_serializers.MessageSerializers import MessageSerializers
+from channels.generic.websocket import AsyncWebsocketConsumer
 from django.conf import settings
+
+from api.model_serializers.MessageSerializers import MessageSerializers
+from api.models import Employee, Message
 
 
 class AsyncChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.user = self.scope.get('user')
+        self.user = self.scope.get("user")
         if not self.user or not self.user.is_authenticated:
             await self.close()
             return
 
-        self.room_name = self.scope['url_route']['kwargs']['roomName']
-        self.room_group_name = f'chat_{self.room_name}'
-        await self.channel_layer.group_add(
-            self.room_group_name, self.channel_name
-        )
-        #print(f"AsyncChatConsumer : {self.channel_name}")
+        self.room_name = self.scope["url_route"]["kwargs"]["roomName"]
+        self.room_group_name = f"chat_{self.room_name}"
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)
+        # print(f"AsyncChatConsumer : {self.channel_name}")
         await self.accept()
         now = datetime.now()
         now_time = now.strftime("%H:%M:%S")
-        print("Client :", self.scope.get('client'), "Connected on Room : ", self.room_name, "On :", now_time)
-
+        print(
+            "Client :",
+            self.scope.get("client"),
+            "Connected on Room : ",
+            self.room_name,
+            "On :",
+            now_time,
+        )
 
     async def disconnect(self, close_code):
         now = datetime.now()
         now_time = now.strftime("%H:%M:%S")
         await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
-        print("Client :", self.scope['client'], "Disconnected on Room : ", self.room_name, "On :", now_time)
-
+        print(
+            "Client :",
+            self.scope["client"],
+            "Disconnected on Room : ",
+            self.room_name,
+            "On :",
+            now_time,
+        )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
         # Handle received data here
         try:
-            if data['command'] == 'chat_message':
+            if data["command"] == "chat_message":
                 await self.channel_layer.group_send(
                     self.room_group_name,
                     {
-                        'type': 'chat_message',
-                        'sender_id':data['sender_id'],
-                        'receiver_id':data['receiver_id'],
-                        'message_id': data['message_id'],
-                        'command': 'chat_message'
-                    }
+                        "type": "chat_message",
+                        "sender_id": data["sender_id"],
+                        "receiver_id": data["receiver_id"],
+                        "message_id": data["message_id"],
+                        "command": "chat_message",
+                    },
                 )
-            
+
         except json.JSONDecodeError as e:
-            print(f"Json decode error : {e}") 
+            print(f"Json decode error : {e}")
         except:
             print("Somehtin Went Wrong !!")
-            
-    
-    async def chat_message(self, event):
-        serialized_message = await self.fetchMessageFromDatabase(event['message_id'])
-        if not serialized_message:
-            return await self.send(text_data=json.dumps({
-                'message' : "Error",
-                'command': 'chat_message'
-            }))
-        if serialized_message:
-            await self.send(text_data=json.dumps({
-                'sender_id': serialized_message['sender']['id'],  # Access nested sender ID
-                'receiver_id': serialized_message['reciever']['id'],  # Access nested receiver ID
-                'dateMessage': serialized_message['date_created'],
-                'is_read': serialized_message['is_read'],
-                'message': serialized_message['message'],
-                'mediaFiles': serialized_message['mediaFiles'],  # Include media files from serializer
-                'command': 'chat_message'
-            }))
 
-      
+    async def chat_message(self, event):
+        serialized_message = await self.fetchMessageFromDatabase(event["message_id"])
+        if not serialized_message:
+            return await self.send(
+                text_data=json.dumps({"message": "Error", "command": "chat_message"})
+            )
+        if serialized_message:
+            await self.send(
+                text_data=json.dumps(
+                    {
+                        "sender_id": serialized_message["sender"][
+                            "id"
+                        ],  # Access nested sender ID
+                        "receiver_id": serialized_message["reciever"][
+                            "id"
+                        ],  # Access nested receiver ID
+                        "dateMessage": serialized_message["date_created"],
+                        "is_read": serialized_message["is_read"],
+                        "message": serialized_message["message"],
+                        "mediaFiles": serialized_message[
+                            "mediaFiles"
+                        ],  # Include media files from serializer
+                        "command": "chat_message",
+                    }
+                )
+            )
+
     @database_sync_to_async
     def fetchMessageFromDatabase(self, id):
-       # Wrap the synchronous database call with sync_to_async
-       try:
-           message = Message.objects.get(pk=id)
-       except Message.DoesNotExist:
-           return None
-       messageSerialized = MessageSerializers(message).data
+        # Wrap the synchronous database call with sync_to_async
+        try:
+            message = Message.objects.get(pk=id)
+        except Message.DoesNotExist:
+            return None
+        messageSerialized = MessageSerializers(message).data
 
-       return messageSerialized
-
-
+        return messageSerialized
 
 
 class AsyncOnlineConsumer(AsyncChatConsumer):
     onlineUsersIds = {}
+
     async def connect(self):
         try:
-            self.user = self.scope.get('user')
+            self.user = self.scope.get("user")
             if not self.user or not self.user.is_authenticated:
                 await self.close()
                 return
 
-            self.room_group_name = 'chat_online'
+            self.room_group_name = "chat_online"
+            self.user_group_name = f"user_{self.user.id}"
             await self.channel_layer.group_add(self.room_group_name, self.channel_name)
-            
+            await self.channel_layer.group_add(self.user_group_name, self.channel_name)
+
             now = datetime.now()
             now_time = now.strftime("%H:%M:%S")
-            
+
             await self.accept()
-                
+
             print("User :", self.user, "Connected at", now_time)
             if self.user.id in self.onlineUsersIds:
                 self.onlineUsersIds[self.user.id] += 1
             else:
                 self.onlineUsersIds[self.user.id] = 1
                 # Only set user online on first connection
-                await self.switchUserState({
-                    "user": self.user,
-                    "message": "isOnline"
-                })
-            
-            
-                
-        except Exception as e:
-            print(f'Error during online connect: {e}')
+                await self.switchUserState({"user": self.user, "message": "isOnline"})
 
+        except Exception as e:
+            print(f"Error during online connect: {e}")
 
     async def disconnect(self, close_code):
         try:
-            if getattr(self, 'user', None) is None or not self.user.is_authenticated:
+            if getattr(self, "user", None) is None or not self.user.is_authenticated:
                 return
 
             now = datetime.now()
@@ -133,107 +147,145 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
             if self.user.id in self.onlineUsersIds:
                 # Decrement connection count
                 self.onlineUsersIds[self.user.id] -= 1
-                
+
                 # If this was the last connection for this user, mark them offline
                 if self.onlineUsersIds[self.user.id] <= 0:
                     del self.onlineUsersIds[self.user.id]
-                    await self.switchUserState({
-                        "user": self.user,
-                        "message": "isOffline"
-                    })
+                    await self.switchUserState(
+                        {"user": self.user, "message": "isOffline"}
+                    )
                     print(f"User {self.user} is now completely offline")
                 else:
-                    print(f"User {self.user} still has {self.onlineUsersIds[self.user.id]} active connections")
-                
-            await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+                    print(
+                        f"User {self.user} still has {self.onlineUsersIds[self.user.id]} active connections"
+                    )
+
+            await self.channel_layer.group_discard(
+                self.room_group_name, self.channel_name
+            )
+            await self.channel_layer.group_discard(
+                self.user_group_name, self.channel_name
+            )
         except Exception as e:
             print(f"Error during online disconnect: {e}")
 
-            
     async def receive(self, text_data):
         if text_data:
             try:
-                data = json.loads(text_data)   
-                if data['command'] == 'ReadMessages':
+                data = json.loads(text_data)
+                if data["command"] == "ReadMessages":
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
-                            'type': 'ReadMessages',
-                            'command': data['command'],
-                            'user': data['user'],
-                            'sender': data['sender'],
-                        }
+                            "type": "ReadMessages",
+                            "command": data["command"],
+                            "user": data["user"],
+                            "sender": data["sender"],
+                        },
                     )
-                    
-                if data['command'] == 'Online':
+
+                if data["command"] == "Online":
                     await self.channel_layer.group_send(
                         self.room_group_name,
                         {
-                            'type': 'UserConnected',
-                            'command': data['command'],
-                            'user': data['user'],
-                            'message':data['message'],
-                        } 
+                            "type": "UserConnected",
+                            "command": data["command"],
+                            "user": data["user"],
+                            "message": data["message"],
+                        },
                     )
-                
+                if data["command"] in [
+                    "call-offer",
+                    "call-answer",
+                    "ice-candidate",
+                    "call-declined",
+                    "call-ended",
+                ]:
+                    # Send to the specific receiver's group
+                    receiver_id = data.get("receiver_id")
+                    print(data)
+                    if receiver_id:
+                        await self.channel_layer.group_send(
+                            f"user_{receiver_id}",
+                            {"type": "webrtc_signal", "data": data},
+                        )
+
             except json.JSONDecodeError as e:
                 print(f"Json decode error : {e}")
             except:
                 print("Something Went Wrong on Class Online recieve ", data)
         else:
             print("Received empty message")
-        
 
     async def SendMessage(self, event):
         print("SendMessage event triggered")
-        await self.send(text_data=json.dumps({
-                'command': event['command'],
-                'reciever':event['reciever'],
-            }))
-        
-        
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "command": event["command"],
+                    "reciever": event["reciever"],
+                }
+            )
+        )
+
     async def ReadMessages(self, event):
         print("ReadMessages event triggered")
-        await self.send(text_data=json.dumps({
-                'command': event['command'],
-                'user':event['user'],
-                'sender':event['sender'],
-            }))
-        
-        
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "command": event["command"],
+                    "user": event["user"],
+                    "sender": event["sender"],
+                }
+            )
+        )
+
     async def UserConnected(self, event):
         print("UserConnected event triggered")
-        await self.send(text_data=json.dumps({
-                'command': event['command'],
-                'user':event['user'],
-                'message':event['message'],
-            }))
-        
-    
-    async def send_ffmpeg_progress(self, event):
-        await self.send(text_data=json.dumps({
-                'command': "ffmpegProgress",
-                'progress': event['progress'],
-                'fileid' : event['fileLoopID'],
-            }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "command": event["command"],
+                    "user": event["user"],
+                    "message": event["message"],
+                }
+            )
+        )
 
+    async def send_ffmpeg_progress(self, event):
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "command": "ffmpegProgress",
+                    "progress": event["progress"],
+                    "fileid": event["fileLoopID"],
+                }
+            )
+        )
 
     async def video_ready(self, event):
         """Sent by the Celery task when HLS conversion is complete."""
         print("video_ready event triggered")
         print(json.dumps(event))
-        await self.send(text_data=json.dumps({
-            "command": "video_ready",
-            "messageId": event["message_id"],
-            "receiverId": event["receiver_id"],
-            "senderId": event["sender_id"],
-        }))
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "command": "video_ready",
+                    "messageId": event["message_id"],
+                    "receiverId": event["receiver_id"],
+                    "senderId": event["sender_id"],
+                }
+            )
+        )
 
-        
-    @database_sync_to_async    
+    async def webrtc_signal(self, event):
+        """Relay WebRTC signaling data to the specific user."""
+        await self.send(text_data=json.dumps(event["data"]))
+
+    @database_sync_to_async
     def switchUserState(self, event):
         try:
-            employeeStatus = Employee.objects.get(user = event["user"])
+            employeeStatus = Employee.objects.get(user=event["user"])
             if event["message"] == "isOnline":
                 if not employeeStatus.isOnline:
                     employeeStatus.isOnline = True
@@ -241,6 +293,6 @@ class AsyncOnlineConsumer(AsyncChatConsumer):
             else:
                 employeeStatus.isOnline = False
                 employeeStatus.save()
-            
+
         except Employee.DoesNotExist as err:
             print(f"Employee does not exist : {err}")
