@@ -26,7 +26,7 @@ function Register() {
     e.preventDefault();
 
     try {
-      await api.post("api/user/register/", {
+      await api.post("/api/user/register/", {
         username: username.toLowerCase(),
         email,
         first_name,
@@ -60,12 +60,11 @@ function Register() {
           </h2>
 
           <div
-            className={`flex p-2 ${
-              getClientResolutionClass() == "phone" ||
-              getClientResolutionClass() == "desktop1080"
+            className={`flex p-2 ${getClientResolutionClass() == "phone" ||
+                getClientResolutionClass() == "desktop1080"
                 ? "flex-col space-y-2 "
                 : "flex-row space-x-2"
-            }`}
+              }`}
           >
             <div>
               <label
@@ -110,12 +109,11 @@ function Register() {
           </div>
 
           <div
-            className={`flex p-2 ${
-              getClientResolutionClass() == "phone" ||
-              getClientResolutionClass() == "desktop1080"
+            className={`flex p-2 ${getClientResolutionClass() == "phone" ||
+                getClientResolutionClass() == "desktop1080"
                 ? "flex-col space-y-2 "
                 : "flex-row space-x-2"
-            }`}
+              }`}
           >
             <div>
               <label
@@ -152,12 +150,11 @@ function Register() {
           </div>
 
           <div
-            className={`flex p-2 ${
-              getClientResolutionClass() == "phone" ||
-              getClientResolutionClass() == "desktop1080"
+            className={`flex p-2 ${getClientResolutionClass() == "phone" ||
+                getClientResolutionClass() == "desktop1080"
                 ? "flex-col space-y-2"
                 : "flex-row space-x-2"
-            }`}
+              }`}
           >
             <div>
               <label

@@ -6,10 +6,11 @@ import dotenv from "dotenv";
 import path from "path";
 
 // Load environment variables from the new .env file location
-dotenv.config({ path: "../.env" });
+dotenv.config({ path: "../.env.frontend" });
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  envDir: path.resolve(__dirname, '..'),
   server: {
     host: true,
     // port: 80,

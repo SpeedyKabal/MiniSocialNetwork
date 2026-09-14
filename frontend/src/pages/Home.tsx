@@ -91,7 +91,7 @@ function Home() {
       let containVideo = false;
 
       api
-        .post("api/post/", formData, {
+        .post("/api/post/", formData, {
           headers: { "Content-Type": "Multipart/form-data" },
         })
         .then(async (res) => {
@@ -103,7 +103,7 @@ function Home() {
               fileFormData.append("post", newPostID);
               updateFile(file.id, { status: "Uploading" });
               await api
-                .post("api/post/upload-file/", fileFormData, {
+                .post("/api/post/upload-file/", fileFormData, {
                   headers: { "Content-Type": "Multipart/form-data" },
                   onUploadProgress: (progressEvent) => {
                     if (progressEvent.total) {
@@ -124,7 +124,7 @@ function Home() {
                     if (file.type == "video") {
                       containVideo = true;
                       await api.post(
-                        `api/post/process-video/${fileId}/${file.id}/`
+                        `/api/post/process-video/${fileId}/${file.id}/`
                       );
                     } else {
                       updateFile(file.id, { status: "Success" });

@@ -12,7 +12,7 @@ function NotificationDropDown() {
     }, []);
 
     const fetchNotifications = async () => {
-        await api.get("api/notifications/").then((res) => {
+        await api.get("/api/notifications/").then((res) => {
             const sorted = res.data.sort((a, b) => b.post.id - a.post.id);
             setNotifications(sorted);
         }).catch((err) => alert(err));

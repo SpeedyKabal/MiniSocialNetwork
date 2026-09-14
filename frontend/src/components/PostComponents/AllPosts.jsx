@@ -46,7 +46,7 @@ function AllPosts({ post, OnPostDeleted, UpdatePost = () => { }, showDetails = f
   }, [isUpdate]);
 
   const handleDeletePost = async (id) => {
-    await api.delete("api/post/delete/", { data: { post_id: id } });
+    await api.delete("/api/post/delete/", { data: { post_id: id } });
     if (OnPostDeleted) {
       OnPostDeleted();
     }
@@ -58,7 +58,7 @@ function AllPosts({ post, OnPostDeleted, UpdatePost = () => { }, showDetails = f
     formdata.append("id", id);
 
     await api
-      .put("api/post/update/", formdata)
+      .put("/api/post/update/", formdata)
       .then((res) => {
         if (res.status === 200) {
           setIsUpdate(false);
@@ -99,7 +99,7 @@ function AllPosts({ post, OnPostDeleted, UpdatePost = () => { }, showDetails = f
             )}
           </div>
           <div className="postContainer"><Media urlFile={post.mediaFiles} /></div>
-          
+
           {showDetails ? (
             isUpdate ? (
               <div className="relative my-2">

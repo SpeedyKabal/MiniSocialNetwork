@@ -72,7 +72,7 @@ const Navbar = () => {
 
   const counterUnreadMessages = async () =>
     await api
-      .get("api/message/unreadcounter/")
+      .get("/api/message/unreadcounter/")
       .then((res) => setUnreadMessages(res.data.unread_count))
       .catch((err) => alert(err));
 

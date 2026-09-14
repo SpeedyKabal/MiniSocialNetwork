@@ -176,7 +176,7 @@ const Messages = () => {
         messageContent.append("message", messageInput);
       }
       await api
-        .post("api/message/create/", messageContent)
+        .post("/api/message/create/", messageContent)
         .then(async (res) => {
           if (res.status === 201) {
             newMessageid = res.data.id;
@@ -189,7 +189,7 @@ const Messages = () => {
               fileFormData.append("message_id", newMessageid);
               updateFile(file.id, { status: "Uploading" });
               await api
-                .post("api/message/upload-file/", fileFormData, {
+                .post("/api/message/upload-file/", fileFormData, {
                   headers: { "Content-Type": "multipart/form-data" },
                   onUploadProgress: (pregressEvent) => {
                     if (pregressEvent.total) {
@@ -215,7 +215,7 @@ const Messages = () => {
                       // event via the online WebSocket and we call sendVideoReadyMessage.
                       try {
                         await api.post(
-                          `api/post/process-video/${fileId}/${file.id}/`,
+                          `/api/post/process-video/${fileId}/${file.id}/`,
                         );
                         updateFile(file.id, {
                           status: "Queued",
@@ -410,9 +410,8 @@ const Messages = () => {
           <div className="flex border-1 border-blue-200 rounded-2xl drop-shadow-lg h-full gap-6 bg-white/80">
             {/* <!-- Left --> */}
             <div
-              className={`lg:w-1/3 ${
-                !contacts ? "w-full" : "w-0"
-              } border-1 border-blue-200 flex flex-col rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
+              className={`lg:w-1/3 ${!contacts ? "w-full" : "w-0"
+                } border-1 border-blue-200 flex flex-col rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
             >
               <User
                 UserClicked={fetchMessages}
@@ -423,9 +422,8 @@ const Messages = () => {
 
             {/* <!-- Right --> */}
             <div
-              className={`lg:w-3/4 ${
-                contacts ? "w-full" : "w-0"
-              } flex flex-col border-1 border-blue-200 rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
+              className={`lg:w-3/4 ${contacts ? "w-full" : "w-0"
+                } flex flex-col border-1 border-blue-200 rounded-xl overflow-hidden min-h-0 transition-all duration-300`}
             >
               {/* <!-- Header --> */}
               <div className="py-1 px-3 bg-grey-lighter flex flex-row justify-stretch items-center">
@@ -451,9 +449,8 @@ const Messages = () => {
                     <div className="flex items-center">
                       <div>
                         <img
-                          className={`w-10 h-10 rounded-full ${
-                            contacts ? "ml-2" : ""
-                          }`}
+                          className={`w-10 h-10 rounded-full ${contacts ? "ml-2" : ""
+                            }`}
                           src={user?.profile_pic}
                         />
                       </div>

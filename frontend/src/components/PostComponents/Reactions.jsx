@@ -85,7 +85,7 @@ function Reactions({ post_id }) {
         postData.append("reaction", reactionType);
 
         await api
-          .post("api/post/reaction/create/", postData)
+          .post("/api/post/reaction/create/", postData)
           .catch((err) => alert(err));
       }
     }

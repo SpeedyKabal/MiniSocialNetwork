@@ -31,7 +31,7 @@ function Login() {
     const password = formData.get("password") as string;
 
     try {
-      const res = await api.post("api/token/", { username, password });
+      const res = await api.post("/api/token/", { username, password });
       localStorage.setItem(ACCESS_TOKEN, res.data.access);
       localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
       startTokenRefresh(); // Start token refresh interval after login
