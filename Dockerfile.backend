@@ -1,11 +1,9 @@
-# Backend Dockerfile for Django (Development)
+
+FROM mwader/static-ffmpeg:latest AS ffmpeg
 FROM python:3.11-slim
+COPY --from=ffmpeg /ffmpeg /usr/local/bin/ffmpeg
+COPY --from=ffmpeg /ffprobe /usr/local/bin/ffprobe
 
-
-# Install FFmpeg and other system dependencies
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 

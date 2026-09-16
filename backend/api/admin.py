@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Message, File, Employee, Reaction, Comment, Notification
+from .models import Post, Message, File, Employee, Reaction, Comment, Notification, Task
 
 # Register your models here.
 class PostAdmin(admin.ModelAdmin):

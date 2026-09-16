@@ -292,7 +292,7 @@ function Home() {
               <div className="mt-6">
                 <React.Suspense fallback={<div>Loading To DO ...</div>}>
                   <TasksLazy />
-                </React.Suspense.Suspense>
+                </React.Suspense>
               </div>
             </>
           )}
