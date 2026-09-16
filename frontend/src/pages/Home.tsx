@@ -25,6 +25,7 @@ function Home() {
   const [noMorePosts, setNoMorePosts] = useState(false);
   const onlineSocket = useWebSocket(); // This hold Websocket Context
   const { t, i18n } = useTranslation();
+  const [viewMode, setViewMode] = useState<'posts' | 'todos'>('posts');
 
   useEffect(() => {
     if (onlineSocket && onlineSocket.readyState === WebSocket.OPEN) {
@@ -188,96 +189,120 @@ function Home() {
       <Weather />
       <div className="flex justify-center">
         <div className="mx-2 sm:w-full">
-          <div className="bg-white rounded-lg drop-shadow-lg p-1 lg:p-2 mt-6 mx-auto lg:w-2/3">
-            <div className="flex items-center lg:space-x-4 ">
-              <div className="size-10 lg:size-15 rounded-full bg-gray-200 flex items-center justify-center">
-                <img
-                  src={currentUser?.profile_pic}
-                  alt="CurrentUserProfilePic"
-                  className="size-10 lg:size-15 rounded-full object-cover"
-                />
-              </div>
-              <div className="flex-1">
-                <textarea
-                  name=""
-                  id=""
-                  rows={1}
-                  placeholder={t("createPostModel.placeholder")}
-                  onChange={handlePostInput}
-                  ref={textareaRef}
-                  value={newPost}
-                  className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl"
-                ></textarea>
-              </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex">
-                <button
-                  onClick={() => handleUpload({ accept: "image/*" })}
-                  className="relative flex items-center space-x-2 px-1 lg:px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <Image className="size-6 lg:size-8" />
-                  <span className="text-md lg:text-xl">{t("home.photo")}</span>
-                </button>
-                <button
-                  onClick={() => handleUpload({ accept: "video/*" })}
-                  className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <Video className="size-6 lg:size-8" />
-                  <span className="text-md lg:text-xl">{t("home.video")}</span>
-                </button>
-                <button
-                  onClick={() => handleUpload({ accept: "audio/*", capture: "microphone" })}
-                  className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <Music className="size-6 lg:size-8" />
-                  <span className="text-md lg:text-xl">{t("home.audio")}</span>
-                </button>
-              </div>
-              <button
-                onClick={handelCreatePost}
-                className="bg-blue-600 text-white px-6 py-2 lg:px-8 lg:py-2 lg:text-xl rounded-full hover:bg-blue-700 transition-colors"
-              >
-                {t("createPostModel.cpost")}
-              </button>
-            </div>
-            <div className="flex items-center gap-4 overflow-x-auto max-w-[90vw]">
-              {filePreviews.map((file: FilePreview, index: number) => (
-                <FilePreviews
-                  key={index}
-                  file={file}
-                  onDelete={() =>
-                    index !== null && index !== undefined && deleteFile(index)
-                  }
-                />
-              ))}
-            </div>
+          <div className="flex justify-end mt-4 mr-2">
+            <button
+              onClick={() => setViewMode(viewMode === 'posts' ? 'todos' : 'posts')}
+              className="bg-gray-200 px-3 py-2 rounded-full"
+              aria-label="Toggle posts/todos"
+            >
+              {viewMode === 'posts' ? 'Show To do' : 'Show Posts'}
+            </button>
           </div>
-          <div className="flex flex-col items-center">
-            <h2 className="text-black text-[2rem] text-center my-2">
-              {t("home.postPage")}
-            </h2>
-            {post.map((post) => (
-              <AllPosts key={post.id} post={post} OnPostDeleted={getPost} />
-            ))}
+          {viewMode === 'posts' ? (
+            <>
+              <div className="bg-white rounded-lg drop-shadow-lg p-1 lg:p-2 mt-6 mx-auto lg:w-2/3">
+                <div className="flex items-center lg:space-x-4 ">
+                  <div className="size-10 lg:size-15 rounded-full bg-gray-200 flex items-center justify-center">
+                    <img
+                      src={currentUser?.profile_pic}
+                      alt="CurrentUserProfilePic"
+                      className="size-10 lg:size-15 rounded-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <textarea
+                      name=""
+                      id=""
+                      rows={1}
+                      placeholder={t("createPostModel.placeholder")}
+                      onChange={handlePostInput}
+                      ref={textareaRef}
+                      value={newPost}
+                      className="resize-none text-xl w-full px-1 py-2 lg:px-4 lg:py-2 rounded-lg bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:placeholder:text-xl"
+                    ></textarea>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex">
+                    <button
+                      onClick={() => handleUpload({ accept: "image/*" })}
+                      className="relative flex items-center space-x-2 px-1 lg:px-2 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                    >
+                      <Image className="size-6 lg:size-8" />
+                      <span className="text-md lg:text-xl">{t("home.photo")}</span>
+                    </button>
+                    <button
+                      onClick={() => handleUpload({ accept: "video/*" })}
+                      className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                    >
+                      <Video className="size-6 lg:size-8" />
+                      <span className="text-md lg:text-xl">{t("home.video")}</span>
+                    </button>
+                    <button
+                      onClick={() => handleUpload({ accept: "audio/*", capture: "microphone" })}
+                      className="flex items-center space-x-2 px-1 lg:px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                    >
+                      <Music className="size-6 lg:size-8" />
+                      <span className="text-md lg:text-xl">{t("home.audio")}</span>
+                    </button>
+                  </div>
+                  <button
+                    onClick={handelCreatePost}
+                    className="bg-blue-600 text-white px-6 py-2 lg:px-8 lg:py-2 lg:text-xl rounded-full hover:bg-blue-700 transition-colors"
+                  >
+                    {t("createPostModel.cpost")}
+                  </button>
+                </div>
+                <div className="flex items-center gap-4 overflow-x-auto max-w-[90vw]">
+                  {filePreviews.map((file: FilePreview, index: number) => (
+                    <FilePreviews
+                      key={index}
+                      file={file}
+                      onDelete={() =>
+                        index !== null && index !== undefined && deleteFile(index)
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <h2 className="text-black text-[2rem] text-center my-2">
+                  {t("home.postPage")}
+                </h2>
+                {post.map((post) => (
+                  <AllPosts key={post.id} post={post} OnPostDeleted={getPost} />
+                ))}
 
-            {noMorePosts ? (
-              <span className="text-sm font-semibold bg-sky-50/60 italic text-red-500 rounded-lg py-1 px-6 my-2">
-                {t("home.NoMore")}
-              </span>
-            ) : (
-              <button
-                onClick={getPrevieusPosts}
-                className="bg-blue-600 text-white px-6 py-2 lg:px-8 lg:py-2 lg:text-xl rounded-full hover:bg-blue-700 transition-colors mx-4 my-2"
-              >
-                {t("home.loadMore")}
-              </button>
-            )}
-          </div>
+                {noMorePosts ? (
+                  <span className="text-sm font-semibold bg-sky-50/60 italic text-red-500 rounded-lg py-1 px-6 my-2">
+                    {t("home.NoMore")}
+                  </span>
+                ) : (
+                  <button
+                    onClick={getPrevieusPosts}
+                    className="bg-blue-600 text-white px-6 py-2 lg:px-8 lg:py-2 lg:text-xl rounded-full hover:bg-blue-700 transition-colors mx-4 my-2"
+                  >
+                    {t("home.loadMore")}
+                  </button>
+                )}
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="mt-6">
+                <React.Suspense fallback={<div>Loading To DO ...</div>}>
+                  <TasksLazy />
+                </React.Suspense.Suspense>
+              </div>
+            </>
+          )}
+
         </div>
       </div>
     </div>
   );
 }
+
+const TasksLazy = React.lazy(() => import("../components/TaskComponents/Tasks"));
 
 export default Home;

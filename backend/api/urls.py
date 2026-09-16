@@ -1,6 +1,6 @@
 from django.urls import path
 from .model_views import UserViews, EmployeeViews, MessageViews, PostViews
-from .model_views import FileViews, CommentViews, ReactionViews, NotificationViews
+from .model_views import FileViews, CommentViews, ReactionViews, NotificationViews, TaskViews
 from . import views
 
 urlpatterns = [
@@ -52,6 +52,11 @@ urlpatterns = [
 
     #Notification API endpoint
     path("notifications/", NotificationViews.ListNotificationsView.as_view(), name="List_Notifications"),
+
+    # Task API endpoints
+    path("task/", TaskViews.TaskListCreateView.as_view(), name="task_list_create"),
+    path("task/<int:pk>/", TaskViews.TaskDetailView.as_view(), name="task_detail"),
+    path("task/delete/<int:pk>/", TaskViews.TaskDeleteView.as_view(), name="task_delete"),
 
     #Weather API endpoint
     path("weather/", views.WeatherView.as_view(), name="weather"),

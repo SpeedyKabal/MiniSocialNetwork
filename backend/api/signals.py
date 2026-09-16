@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save, pre_save, pre_delete
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from .models import Employee, File, Post, Notification
+from .models import Employee, File, Post, Notification, Task
 from django.utils import timezone
 import os
 from .models import Message
@@ -109,3 +109,24 @@ def addNotification(sender, instance, created, **kwargs):
                 'reciever': instance.reciever.id
             }
         )
+
+
+@receiver(pre_save, sender=Task)
+def set_task_completed_at(sender, instance, **kwargs):
+    """
+    Automatically stamp completed_at when status changes to COMPLETED.
+    Clears the field if the task moves out of COMPLETED.
+    """
+    if instance.pk:
+        try:
+            previous = Task.objects.get(pk=instance.pk)
+        except Task.DoesNotExist:
+            return
+
+        status_changed_to_completed = (
+            previous.status != Task.Status.COMPLETED
+            and instance.status == Task.Status.COMPLETED
+        )
+
+        if status_changed_to_completed:
+            instance.completed_at = timezone.now()
