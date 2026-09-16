@@ -3,6 +3,16 @@ from .EmployeeSerializers import SimpleEmployeeSerializers
 from api.models import Task, Employee
 
 
+class AssignableEmployeeSerializer(serializers.ModelSerializer):
+    """Returns the minimal employee info needed to populate an assign-to dropdown."""
+    first_name = serializers.CharField(source='user.first_name', read_only=True)
+    last_name = serializers.CharField(source='user.last_name', read_only=True)
+
+    class Meta:
+        model = Employee
+        fields = ['id', 'first_name', 'last_name']
+
+
 class TaskSerializer(serializers.ModelSerializer):
     # For reads show nested employee info
     assigned_by = SimpleEmployeeSerializers(read_only=True)

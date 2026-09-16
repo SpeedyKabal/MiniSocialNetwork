@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api";
 import TaskItem from "./TaskItem";
+import { useTranslation } from "react-i18next";
 import { useUser } from "../../Contexts/Usercontext";
 
 export default function Tasks() {
     const currentUser = useUser();
     const [tasks, setTasks] = useState([]);
+    const [assignableEmployees, setAssignableEmployees] = useState([]);
     const [loading, setLoading] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [assignedToId, setAssignedToId] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [priority, setPriority] = useState("MEDIUM");
+
+    const { t } = useTranslation();
 
     useEffect(() => {
         fetchTasks();
@@ -21,7 +25,8 @@ export default function Tasks() {
         setLoading(true);
         try {
             const res = await api.get("/api/task/");
-            setTasks(res.data);
+            setTasks(res.data.tasks ?? []);
+            setAssignableEmployees(res.data.assignable_employees ?? []);
         } catch (err) {
             console.error(err);
         } finally {
@@ -77,7 +82,7 @@ export default function Tasks() {
     return (
         <div className="w-full">
             <div className="bg-white rounded-lg drop-shadow-lg p-4 lg:p-6 mt-6 mx-auto lg:w-2/3">
-                <h3 className="text-xl font-semibold mb-2">Create To do</h3>
+                <h3 className="text-xl font-semibold mb-2">{t("home.creatTask")}</h3>
                 <input
                     placeholder="Title"
                     value={title}
@@ -91,12 +96,18 @@ export default function Tasks() {
                     className="w-full mb-2 px-2 py-2 rounded bg-gray-100"
                 />
                 <div className="flex gap-2 mb-2">
-                    <input
-                        placeholder="Assign to (employee id)"
+                    <select
                         value={assignedToId}
                         onChange={(e) => setAssignedToId(e.target.value)}
                         className="px-2 py-2 rounded bg-gray-100"
-                    />
+                    >
+                        <option value="">{t("home.assignTo")}</option>
+                        {assignableEmployees.map((emp) => (
+                            <option key={emp.id} value={emp.id}>
+                                {emp.first_name} {emp.last_name}
+                            </option>
+                        ))}
+                    </select>
                     <input
                         type="datetime-local"
                         value={dueDate}

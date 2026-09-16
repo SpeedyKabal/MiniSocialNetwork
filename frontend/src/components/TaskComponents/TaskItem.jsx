@@ -65,10 +65,16 @@ export default function TaskItem({ task, onDelete, onUpdate }) {
                         <>
                             <div className="text-sm">{task.status}</div>
                             <div className="text-sm">{task.priority}</div>
-                            <div className="flex gap-2 mt-2">
-                                <button onClick={() => setIsEditing(true)} className="bg-blue-600 text-white px-3 py-1 rounded">Edit</button>
-                                <button onClick={onDelete} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
-                            </div>
+                            {task.status === "COMPLETED" ? (
+                                <div className="mt-2 px-3 py-1 rounded bg-green-100 text-green-700 text-sm font-medium">
+                                    Completed ✓
+                                </div>
+                            ) : (
+                                <div className="flex gap-2 mt-2">
+                                    <button onClick={() => setIsEditing(true)} className="bg-blue-600 text-white px-3 py-1 rounded">Edit</button>
+                                    <button onClick={onDelete} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>
+                                </div>
+                            )}
                         </>
                     )}
                 </div>

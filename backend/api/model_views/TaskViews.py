@@ -2,13 +2,22 @@ from rest_framework import generics, status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q
-from api.model_serializers.TaskSerializers import TaskSerializer
+from api.model_serializers.TaskSerializers import TaskSerializer, AssignableEmployeeSerializer
 from api.models import Task, Employee
 
 
 class TaskListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = TaskSerializer
+
+    def _get_assignable_employees(self, emp):
+        """Return the queryset of employees the current user is allowed to assign tasks to."""
+        if emp.department == 'DG':
+            return Employee.objects.select_related('user').all()
+        if emp.is_subdirector:
+            return Employee.objects.select_related('user').filter(department=emp.department)
+        # Regular employee can only assign to themselves
+        return Employee.objects.select_related('user').filter(pk=emp.pk)
 
     def get_queryset(self):
         user = self.request.user
@@ -26,6 +35,22 @@ class TaskListCreateView(generics.ListCreateAPIView):
 
         # normal employee sees tasks assigned to them or created by them
         return Task.objects.filter(Q(assigned_to=emp) | Q(assigned_by=emp)).order_by('-created_at')
+
+    def list(self, request, *args, **kwargs):
+        user = request.user
+        if not hasattr(user, 'employee') or user.employee is None:
+            return Response({'tasks': [], 'assignable_employees': []})
+
+        emp = user.employee
+        tasks = self.get_queryset()
+        tasks_data = TaskSerializer(tasks, many=True).data
+        assignable_qs = self._get_assignable_employees(emp)
+        assignable_data = AssignableEmployeeSerializer(assignable_qs, many=True).data
+
+        return Response({
+            'tasks': tasks_data,
+            'assignable_employees': assignable_data,
+        })
 
     def perform_create(self, serializer):
         user = self.request.user

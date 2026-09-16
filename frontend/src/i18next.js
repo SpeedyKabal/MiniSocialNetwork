@@ -63,6 +63,8 @@ i18next
             toast: "Post Succefully Created",
             toastDescription: "You will Be notified When your Post is ready",
             toastLabel: "Ok",
+            assignTo: "— Assign to —",
+            creatTask: "Create To do",
           },
           post: {
             postedBy: "Posted By",
@@ -186,6 +188,8 @@ i18next
             toast: "La publication a été créée avec succès",
             toastDescription: "Vous serez notifié lorsque votre publication sera prête",
             toastLabel: "Ok",
+            assignTo: "attribuer à",
+            creatTask: "Créer une tâche",
           },
           post: {
             postedBy: "Publié Par",
@@ -310,6 +314,8 @@ i18next
             toast: "تم إنشاء المنشور بنجاح",
             toastDescription: "سيتم إشعارك عندما يكون المنشور جاهزا للعرض",
             toastLabel: "حسنا",
+            assignTo: "تعيين لـ",
+            creatTask: "إنشاء مهمة",
           },
           post: {
             postedBy: "نشره ",
