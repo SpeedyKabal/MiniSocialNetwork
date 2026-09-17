@@ -1,0 +1,21 @@
+# Backend Dockerfile for Django (Development)
+FROM mwader/static-ffmpeg:latest AS ffmpeg
+FROM python:3.11-slim
+
+COPY --from=ffmpeg /ffmpeg /usr/local/bin/ffmpeg
+COPY --from=ffmpeg /ffprobe /usr/local/bin/ffprobe
+
+WORKDIR /app
+
+# Install Python dependencies
+COPY backend/requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Copy project (will be overridden by volume mount ./backend:/app in dev)
+COPY backend /app
+
+# Expose Django dev server port
+EXPOSE 8000
+
+# Default command (overridden by docker-compose in dev)
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
