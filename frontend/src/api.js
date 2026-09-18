@@ -1,10 +1,10 @@
-import axios from "axios"
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants"
-
+import axios from "axios";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
+import { VITE_API_URL } from "../apisConstante";
 
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL
+    baseURL: VITE_API_URL
 })
 
 const refreshToken = async () => {
@@ -15,7 +15,7 @@ const refreshToken = async () => {
             return null;
         }
 
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}api/token/refresh/`, {
+        const response = await axios.post(`${VITE_API_URL}api/token/refresh/`, {
             refresh,
         }).catch((e) => alert(e));
         const newAccessToken = response.data.access;

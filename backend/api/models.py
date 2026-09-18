@@ -113,6 +113,7 @@ class Employee(models.Model):
         ('DRH', 'DRH'),
         ('DSI', 'DSI'),
         ('DMM', 'DMM'),
+        ('DG', 'DG'),
     )
 
     user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE, related_name="employee")

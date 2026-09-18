@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from "r
 import { useUser } from "./Usercontext";
 import { ACCESS_TOKEN } from "../constants";
 import { Utilisateur } from '../types/types';
+import { VITE_WS_URL } from "../../apisConstante";
 
 
 const WebSocketContext = createContext<WebSocket | null>(null);
@@ -22,7 +23,7 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
             return;
           }
 
-          const wsUrl = (import.meta as any).env.VITE_WS_URL;
+          const wsUrl = VITE_WS_URL;
           if (wsUrl) {
             webSocketRef.current = new WebSocket(`${wsUrl}?token=${token}`);
             webSocketRef.current.onopen = () => {

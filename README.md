@@ -18,7 +18,7 @@ A modern, Docker-based social networking platform for small businesses with real
 ### Backend
 - **Framework**: Django 5.2
 - **API**: Django Rest Framework
-- **Database**: MySQL 8.0
+- **Database**: PostgreSQL 17
 - **Channels**: Django Channels for WebSocket support
 - **Tasks**: Celery with Redis
 - **Security**: JWT Authentication
@@ -39,13 +39,14 @@ A modern, Docker-based social networking platform for small businesses with real
 ## 📦 Docker Setup
 
 ### Prerequisites
-- Docker Desktop installed and running.
+- Docker Desktop installed and running for windows.
+- Docker compose v2 installed and running for linux.
 
 ### Installation
 1.  **Clone the repository**:
     ```bash
     git clone <repository-url>
-    cd backend
+    cd MiniSocialNetwork
     ```
 
 2.  **Create Environment File**:
@@ -74,8 +75,11 @@ Ensure the following are set in your `.env` file:
 - `DJANGO_SECRET_KEY` (Generate with `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`)
 - `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`
 - `WEATHER_API_KEY` (from https://openweathermap.org/)
-- `VITE_API_URL` (should be `http://localhost/api/`)
-- `VITE_WS_URL` (should be `ws://localhost/ws/online/`)
+
+** Environment Variables IN FRONTEND/APISCONSTANTES.JS **:
+- `VITE_API_URL` (should be `http://[IP_ADDRESS]`)
+- `VITE_WS_URL` (should be `ws://[IP_ADDRESS]/ws/online/`)
+- `VITE_CHAT_WS_URL` (should be `ws://[IP_ADDRESS]/ws/chat/`)
 
 ## 📂 Project Structure
 
@@ -96,10 +100,11 @@ frontend/
 │   ├── api/          # API service layer
 │   └── ...
 ├── Dockerfile.frontend
+├── apisConstantes.js # Environment variables IN FRONTEND
 ├── vite.config.ts
 └── package.json
 
-nginx/              # Nginx configuration
+nginx.conf            # Nginx configuration
 ```
 
 ## 🤝 Contributing

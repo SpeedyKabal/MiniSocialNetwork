@@ -15,7 +15,3 @@ EMAIL_HOST_USER=email@exemple.com
 EMAIL_HOST_PASSWORD=Password
 
 WEATHER_API_KEY=
-
-VITE_API_URL=http://localhost/
-VITE_WS_URL=ws://localhost/ws/online/
-VITE_CHAT_WS_URL=ws://localhost/ws/chat/

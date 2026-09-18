@@ -19,8 +19,10 @@ import ServerMessageBubble from "../components/MessageComponents/ServerMessageBu
 import WebSocketMessageBubble from "../components/MessageComponents/WebSocketMessageBubble";
 import { useFileUpload } from "../customhooks/useFileUpload";
 import { FilePreviews } from "../components/FilePreviews";
+import { VITE_CHAT_WS_URL } from "../../apisConstante";
 
-const chatWebSocketUrl = import.meta.env.VITE_CHAT_WS_URL;
+
+const chatWebSocketUrl = VITE_CHAT_WS_URL;
 
 const Messages = () => {
   const currentUser = useUser(); // This hold Current User infos
